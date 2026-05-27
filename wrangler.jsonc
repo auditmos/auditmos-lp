@@ -1,0 +1,44 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "astro-on-cf",
+	"main": "@astrojs/cloudflare/entrypoints/server",
+	"compatibility_date": "2026-05-25",
+	"compatibility_flags": ["nodejs_compat"],
+	"assets": {
+		"directory": "./dist",
+		"binding": "ASSETS"
+	},
+	"observability": {
+		"enabled": true,
+		"head_sampling_rate": 1
+	},
+	"vars": {
+		"CLOUDFLARE_ENV": "dev"
+	},
+	"env": {
+		"dev": {
+			"name": "astro-on-cf-dev",
+			"vars": {
+				"CLOUDFLARE_ENV": "dev"
+			}
+		},
+		"staging": {
+			"name": "astro-on-cf-staging",
+			"vars": {
+				"CLOUDFLARE_ENV": "staging"
+			}
+		},
+		"production": {
+			"name": "astro-on-cf-production",
+			"vars": {
+				"CLOUDFLARE_ENV": "production"
+			}
+		}
+	}
+	// Uncomment to enable scheduled jobs:
+	// "triggers": { "crons": ["0 * * * *"] },
+	// Uncomment to bind a KV namespace:
+	// "kv_namespaces": [{ "binding": "CACHE", "id": "" }],
+	// Uncomment to bind a queue:
+	// "queues": { "producers": [{ "binding": "QUEUE", "queue": "my-queue" }] }
+}

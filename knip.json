@@ -1,0 +1,7 @@
+{
+	"$schema": "https://unpkg.com/knip@6/schema.json",
+	"entry": ["src/pages/**/*.{astro,ts}", "scripts/*.ts", "taze.config.ts"],
+	"project": ["src/**/*.{ts,tsx,astro}", "scripts/**/*.ts"],
+	"ignore": ["src/__fixtures__/**"],
+	"ignoreDependencies": ["cloudflare", "tailwindcss"]
+}
