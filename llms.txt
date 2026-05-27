@@ -1,35 +1,32 @@
-# tstack-on-cf
+# auditmos-lp
 
-> TanStack Start frontend + Hono API backend on Cloudflare Workers (single-app, no monorepo).
+> The Auditmos landing page (auditmos.com rebuild) — Astro on Cloudflare Workers. Static-first, every URL also serves `text/markdown` at `<url>.md` for AI agent ingestion.
+
+This repo-level `llms.txt` indexes documentation for AI agents working **on the codebase**. For the runtime LLM index served on the deployed site (which lists every page's `.md` twin), see `src/pages/llms.txt.ts` once that route lands (Phase 4).
 
 ## Project
 
-- [Project overview](AGENTS.md): Stack, project structure, scripts, conventions
+- [README](README.md): Stack, quick start, scripts, structure, Cloudflare configuration
+- [Project overview (CLAUDE.md)](CLAUDE.md): Conventions, verification gates, agent-facing instructions
+- [PRD: auditmos.com rebuild](docs/prd-website-rebuild.md): Problem, solution, user stories, implementation decisions, validation strategy
+- [Implementation plan](plans/website-rebuild.md): 7 phased tracer-bullet slices with acceptance criteria
 
 ## Rules
 
 ### General
 - [General TypeScript & Cloudflare](.claude/rules/general.md): Type safety, error handling, naming, array access, bug fix workflow
-- [Cloudflare Deployment](.claude/rules/cloudflare-deployment.md): Hostname separation, custom domains, SSL/TLS, Vite plugin environments
-- [Error Handling](.claude/rules/error-handling.md): Drizzle error unwrapping, Result pattern, AppError flow
+- [Cloudflare Deployment](.claude/rules/cloudflare-deployment.md): Custom domains, SSL/TLS, redirect rules, Vite plugin environments
+- [Error Handling](.claude/rules/error-handling.md): Drizzle error unwrapping, Result pattern, AppError flow (when applicable)
 - [Atomic Imports](.claude/rules/atomic-imports.md): Combine import + usage in one Edit (PostToolUse cleanup)
 - [Deep Modules](.claude/rules/deep-modules.md): Narrow interface, hidden implementation; module boundaries
 
-### api
-- [Hono](.claude/rules/api/hono.md): Handler/service/query pattern, middleware chain, Result type
-- [Cloudflare Workers](.claude/rules/api/cloudflare-workers.md): Worker patterns, bindings, WorkerEntrypoint
+### Frontend
+- [Astro](.claude/rules/frontend/astro.md): Pages, layouts, server vs client, endpoints, content collections, Cloudflare runtime
+- [Tailwind v4](.claude/rules/frontend/tailwind-v4.md): `@theme` tokens, `@utility`, variants, no `tailwind.config.js`
 
-### db
-- [Drizzle ORM](.claude/rules/db/drizzle.md): Schema definitions, migrations, query patterns
-- [Zod Validation](.claude/rules/db/zod.md): Schema naming conventions, request/response patterns
-- [Neon Postgres](.claude/rules/db/neon.md): Serverless DB connection patterns
-
-### frontend
-- [TanStack](.claude/rules/frontend/tanstack.md): Router, Query, server functions, SSR patterns
-- [React](.claude/rules/frontend/react.md): Component patterns, hooks
-- [UI](.claude/rules/frontend/ui.md): Component library patterns
-- [shadcn/tweakcn](.claude/rules/frontend/shadcn-tweakcn.md): UI primitives
-- [Forms](.claude/rules/frontend/form-patterns.md): Form validation and submission
+### API
+- [Astro Endpoints](.claude/rules/api/astro-endpoints.md): Handler shape, Zod validation, response conventions
+- [Cloudflare Workers](.claude/rules/api/cloudflare-workers.md): Worker patterns, bindings, secrets
 
 ## Agents
 
@@ -41,3 +38,14 @@
 
 - [Implement](.claude/commands/implement.md): Implement a design doc
 - [Verify Design Docs](.claude/commands/verify-dd.md): Review design docs for implementation readiness
+
+## GitHub issues
+
+- [#1 PRD](https://github.com/auditmos/auditmos-lp/issues/1) — parent tracking issue
+- [#2 Phase 1: Brand skeleton (HITL)](https://github.com/auditmos/auditmos-lp/issues/2) — no blockers
+- [#3 Phase 2: Static content pages (AFK)](https://github.com/auditmos/auditmos-lp/issues/3)
+- [#4 Phase 3: Projects collection (AFK)](https://github.com/auditmos/auditmos-lp/issues/4)
+- [#5 Phase 4: MD-mirror + /llms.txt (AFK)](https://github.com/auditmos/auditmos-lp/issues/5)
+- [#6 Phase 5: Contact form (HITL)](https://github.com/auditmos/auditmos-lp/issues/6)
+- [#7 Phase 6: OSS aggregator (AFK)](https://github.com/auditmos/auditmos-lp/issues/7)
+- [#8 Phase 7: Production cutover (HITL)](https://github.com/auditmos/auditmos-lp/issues/8)

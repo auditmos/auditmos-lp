@@ -1,5 +1,5 @@
 {
-	"name": "astro-on-cf",
+	"name": "auditmos-lp",
 	"private": true,
 	"version": "0.0.0",
 	"type": "module",
@@ -32,9 +32,9 @@
 		"deps:major:update": "taze -r major -w"
 	},
 	"dependencies": {
-		"@astrojs/cloudflare": "^13.5.4",
+		"@astrojs/cloudflare": "^13.5.5",
 		"@tailwindcss/vite": "^4.3.0",
-		"astro": "^6.3.7",
+		"astro": "^6.3.8",
 		"tailwindcss": "^4.3.0"
 	},
 	"devDependencies": {
@@ -52,7 +52,7 @@
 		"tsx": "^4.22.3",
 		"typescript": "^5.9.3",
 		"vitest": "^4.1.7",
-		"wrangler": "^4.94.0"
+		"wrangler": "^4.95.0"
 	},
 	"overrides": {
 		"vite": "^7.3.3"

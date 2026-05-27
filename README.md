@@ -1,139 +1,140 @@
-# Astro on Cloudflare
+# auditmos.com
 
-*AI agent index: [llms.txt](./llms.txt)*
+The Auditmos landing page — Astro on Cloudflare Workers.
 
-A production-ready **template** for building content-first sites and SSR apps on Cloudflare Workers with Astro. Ships with Tailwind CSS v4, native Astro API endpoints, a strict Biome + Vitest toolchain, an optional Drizzle + Neon data layer, and the full Auditmos baseline (simple-git-hooks, knip, taze, semantic-release, `.claude/` rules).
+Static-first, SEO-friendly site replacing the previous auditmos.com. Built as a credibility/trust signal for prospects who arrive via referrals, LinkedIn, conferences, or partner introductions. Every URL also serves `text/markdown` at `<url>.md` (indexed via `/llms.txt`) so AI agents can ingest the entire site without scraping HTML.
 
-Use it as the starting point for your next project — clone it, rename it, decide whether you want the data layer, and start shipping.
+- **PRD:** [`docs/prd-website-rebuild.md`](./docs/prd-website-rebuild.md) ([issue #1](https://github.com/auditmos/auditmos-lp/issues/1))
+- **Plan:** [`plans/website-rebuild.md`](./plans/website-rebuild.md) — 7 phased tracer-bullet issues ([#2–#8](https://github.com/auditmos/auditmos-lp/issues))
+- **Brand:** accent `#04d9ff`, logos vendored from [`auditmos/branding`](https://github.com/auditmos/branding)
+- **Entity:** Auditmos OÜ · Reg 17025406 · VAT EE102758111 · Tallinn, Estonia
 
-## Using this Template
+## Architecture
 
-1. Click **Use this template** on GitHub (or `gh repo create --template`).
-2. `pnpm install`.
-3. `pnpm run init-project` — prompts for a kebab-case project name, renames `wrangler.jsonc` + `package.json`, and fans out `.env.example` → `.env` and `.{dev,staging,production}.vars.example` → `.dev.vars` / `.staging.vars` / `.production.vars`. Pass `--with-db` to add the Drizzle/Neon data layer scaffolding. Idempotent — re-runnable, never overwrites filled-in files.
-4. *(Only if `--with-db`)* Provision a Neon database and fill `DATABASE_HOST/USERNAME/PASSWORD` in `.dev.vars` (and the staging/production variants when you deploy them).
-5. Run `pnpm cf-typegen && pnpm dev`.
+Every page is prerendered HTML served from Cloudflare's edge. **Exactly one** request-time route — `/api/contact` — runs on the Worker (Zod → Turnstile verify → Resend notify + confirm, atomic semantics).
 
-See [Quick Start](#quick-start) below for the dev-loop commands.
+- **Content:** Astro Content Collections + Zod for projects. Authoring = drop MD in `src/content/projects/`, commit, push.
+- **MD-mirror:** every URL has a `.md` twin via `*.md.ts` endpoints; `/llms.txt` is the index. A single page-enumerator is the source of truth — adding a route extends both surfaces.
+- **OSS page:** auto-aggregated from `github.com/auditmos` at build time with cached/empty fallback so GitHub outages never break a deploy.
+- **Confidentiality:** project `client` field is either `{ name, url? }` (public) or `{ sector }` (anonymised NDA work). Same pipeline serves both.
+- **Analytics:** Cloudflare Web Analytics only — no cookies, no consent banner.
 
-## Why this template
+See [`docs/prd-website-rebuild.md`](./docs/prd-website-rebuild.md) for the full specification.
 
-- **Edge-first** — Astro `output: "server"` running on Cloudflare Workers via `@astrojs/cloudflare`. Bindings typed automatically through `worker-configuration.d.ts`.
-- **No framework lock-in** — pure Astro by default. Add React/Vue/Svelte islands per project with `pnpm astro add <integration>` only when you actually need them.
-- **Type-safe end-to-end** — `astro check` + strict TypeScript, Zod at every endpoint boundary, typed Cloudflare `Env`.
-- **Three-env wrangler** — `dev`, `staging`, `production` blocks shipped out of the box. Deploy with `wrangler deploy --env <name>`.
-- **Agent-friendly** — project rules in `.claude/rules/` activate automatically based on the files you touch. Mirrors the conventions of every other Auditmos template repo (`saas-on-cf`, `tstack-on-cf`, `hono-on-cf`).
+## Stack
 
-## Quick Start
+| Layer | Technology |
+|-------|-----------|
+| Framework | Astro 6 (mostly `prerender = true`) |
+| Adapter | `@astrojs/cloudflare` |
+| Runtime | Cloudflare Workers (`nodejs_compat`) |
+| Styling | Tailwind CSS v4 (`@tailwindcss/vite`) |
+| Content | Astro Content Collections + Zod |
+| Email | Resend (transactional) |
+| Anti-spam | Cloudflare Turnstile |
+| Analytics | Cloudflare Web Analytics |
+| Language | TypeScript (strict, `@/*` → `src/*`) |
+| Linter | Biome 2 |
+| Testing | Vitest |
+| Dead-code | knip |
+| Release | semantic-release |
+| Package manager | pnpm 10 |
+
+## Quick start
 
 ```bash
-# Install dependencies
 pnpm install
-
-# Generate Cloudflare Env types
 pnpm cf-typegen
-
-# Start the dev server
-pnpm dev
+pnpm dev          # http://localhost:3000
 ```
 
-The app runs on http://localhost:3000.
+## Authoring projects
+
+```bash
+pnpm new-project "Acme audit"   # scaffolds src/content/projects/acme-audit.md
+```
+
+Edit the frontmatter + body, commit, push to `main`. GitHub Actions deploys to staging automatically. Production cutover is a Cloudflare custom-domain swap.
 
 ## Scripts
 
 | Script | Purpose |
 |--------|---------|
-| `pnpm dev` | Dev server on port 3000 (Astro + Vite) |
+| `pnpm dev` | Dev server on port 3000 |
 | `pnpm build` | Production build to `./dist` |
 | `pnpm preview` | Preview the production build locally |
-| `pnpm deploy` | Build and deploy to Cloudflare Workers |
-| `pnpm cf-typegen` | Generate `Env` types from `wrangler.jsonc` |
+| `pnpm deploy` | Build + `wrangler deploy` |
+| `pnpm cf-typegen` | Regenerate `Env` types from `wrangler.jsonc` |
+| `pnpm new-project "<title>"` | Scaffold a new project MD with frontmatter |
 | `pnpm test` / `pnpm test:watch` / `pnpm test:coverage` | Vitest |
 | `pnpm types` | `astro check` + `tsc --noEmit` |
-| `pnpm lint` / `pnpm lint:fix` | Biome check / auto-fix |
-| `pnpm knip` | Detect unused files, deps, and exports |
-| `pnpm deps` / `pnpm deps:update` | Check / apply dependency updates via taze |
+| `pnpm lint` / `pnpm lint:fix` | Biome |
+| `pnpm knip` | Unused files / deps / exports |
+| `pnpm deps` / `pnpm deps:update` | Dependency updates via taze |
 | `pnpm release` | semantic-release (CI only) |
 
-If you opted into the data layer with `--with-db`, you also get `db:generate:{dev,staging,production}`, `db:migrate:*`, `db:pull:*`, `db:studio`, and `db:seed:*` — all wired through `@dotenvx/dotenvx`.
-
-## Project Structure
+## Project structure
 
 ```
 src/
-├── pages/                       # File-based routes
-│   ├── index.astro              # Landing page
-│   └── api/                     # API endpoints (./api/<name>.ts)
-├── layouts/
-│   └── Layout.astro             # Shared HTML shell
+├── pages/                       # File-based routes (mostly prerender = true)
+│   ├── index.astro              # Home
+│   ├── software-development.astro
+│   ├── r-and-d.astro
+│   ├── security-audits.astro
+│   ├── projects/                # /projects + /projects/[slug]
+│   ├── open-source.astro
+│   ├── about.astro
+│   ├── contact.astro
+│   ├── privacy.astro
+│   ├── llms.txt.ts              # AI agent index
+│   └── api/contact.ts           # Worker route (only non-prerendered route)
+├── content/
+│   └── projects/                # Markdown source for projects
+├── layouts/Layout.astro         # Shared HTML shell + footer
 ├── components/                  # Reusable Astro components
-├── styles/
-│   └── globals.css              # Tailwind v4 entry
-└── env.d.ts                     # App.Locals typed against CF Env
+├── assets/logos/                # Vendored from github.com/auditmos/branding
+└── styles/globals.css           # Tailwind v4 entry + @theme tokens
 ```
 
 Path alias `@/*` resolves to `src/*`.
 
-## Cloudflare Integration
+## Cloudflare
 
-### `wrangler.jsonc`
+Three Wrangler env blocks (`dev`, `staging`, `production`), each with its own Worker name. Deploy a specific env with `wrangler deploy --env <name>`.
 
-```jsonc
-{
-  "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "astro-on-cf",
-  "main": "@astrojs/cloudflare/entrypoints/server",
-  "compatibility_date": "2025-09-02",
-  "compatibility_flags": ["nodejs_compat"],
-  "assets": { "directory": "./dist", "binding": "ASSETS" },
-  "observability": { "enabled": true },
-  "env": {
-    "dev":        { "name": "astro-on-cf-dev" },
-    "staging":    { "name": "astro-on-cf-staging" },
-    "production": { "name": "astro-on-cf-production" }
-  }
-}
-```
+### Secrets
 
-- Use `wrangler.jsonc` (not `.toml`).
-- Prefer `custom_domain: true` over routes with `zone_name` — see `.claude/rules/cloudflare-deployment.md`.
-- Run `pnpm cf-typegen` whenever you add bindings to regenerate `worker-configuration.d.ts`.
+Set per env via `wrangler secret put --env <name>`:
 
-### Accessing bindings
+| Secret | Purpose |
+|---|---|
+| `RESEND_API_KEY` | Resend transactional email |
+| `TURNSTILE_SECRET_KEY` | Cloudflare Turnstile siteverify |
+| `CONTACT_TO_EMAIL` | Form recipient inbox (`contact@auditmos.com` in production) |
+| `GITHUB_TOKEN` *(optional)* | Raises OSS aggregator rate limit at build time |
+
+Resend sends from `noreply@auditmos.com` — DKIM + SPF on auditmos.com DNS must be verified in Resend before launch.
+
+### Bindings access
 
 ```ts
-// src/pages/api/hello.ts
-import type { APIRoute } from "astro";
 import { env } from "cloudflare:workers";
 
-export const GET: APIRoute = () => Response.json({ env: env.CLOUDFLARE_ENV });
+const apiKey = env.RESEND_API_KEY;  // typed via worker-configuration.d.ts
 ```
 
-In Astro v6 + `@astrojs/cloudflare` v13 the `Astro.locals.runtime` proxy is gone — `import { env } from "cloudflare:workers"` is the only supported path for bindings and vars.
+`Astro.locals.runtime` is removed in Astro v6 + `@astrojs/cloudflare` v13 — `import { env } from "cloudflare:workers"` is the only supported path. Run `pnpm cf-typegen` after editing `wrangler.jsonc` bindings.
 
-### Secrets & environments
+DNS is on Cloudflare. Prefer `custom_domain: true` over routes with `zone_name` — see `.claude/rules/cloudflare-deployment.md`.
 
-Per-environment vars live in `.dev.vars` / `.staging.vars` / `.production.vars`, never committed. For staging/production, mirror the same keys as Cloudflare secrets via `wrangler secret put --env <name>`.
+## Agent rules
 
-## Optional: Drizzle + Neon data layer
-
-Re-run `pnpm run init-project --with-db` (or pass the flag the first time) to scaffold:
-
-- `drizzle-{dev,staging,production}.config.ts`
-- `src/db/{client,health,schema.ts,setup.ts}`
-- `db:*` scripts wired through `@dotenvx/dotenvx`
-- `DATABASE_HOST/USERNAME/PASSWORD` keys in every `.{env}.vars.example`
-
-Same conventions as `tstack-on-cf` and `hono-on-cf`: domain-per-folder, narrow public API, per-env migration directories.
-
-## Agent Rules & Design Docs
-
-This template is set up for agent-assisted development:
-
-- `CLAUDE.md` → symlink to `AGENTS.md` — project-wide agent guide.
-- `.claude/rules/` — topic rules (`general.md`, `deep-modules.md`, `error-handling.md`, `atomic-imports.md`, `cloudflare-deployment.md`, plus `frontend/{astro,tailwind-v4}.md` and `api/{cloudflare-workers,astro-endpoints}.md`) that activate automatically based on the files being edited.
+- `CLAUDE.md` — project-level agent guide.
+- `.claude/rules/` — topic rules that activate automatically based on the files being edited.
 - `.claude/agents/` — `dd-w` (design-doc writer), `dd-i` (design-doc implementer), `mvp-e` (MVP enforcer).
-- `/docs` — single source of truth for business requirements / design docs.
+- `/docs` — single source of truth for business requirements.
+- `/plans` — phased implementation plans derived from docs.
 
 ## Learn More
 
@@ -141,9 +142,9 @@ This template is set up for agent-assisted development:
 - **[@astrojs/cloudflare](https://docs.astro.build/en/guides/integrations-guide/cloudflare/)** — Cloudflare Workers adapter
 - **[Tailwind CSS v4](https://tailwindcss.com/docs/installation/using-vite)** — utility-first CSS, configured via CSS
 - **[Cloudflare Workers](https://developers.cloudflare.com/workers/)** — edge computing platform
+- **[Resend](https://resend.com/docs)** — transactional email
+- **[Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/)** — privacy-respecting anti-spam
 - **[Biome](https://biomejs.dev/)** — fast formatter and linter
-- **[Drizzle ORM](https://orm.drizzle.team/)** *(when `--with-db`)* — type-safe SQL
-- **[Neon](https://neon.tech/)** *(when `--with-db`)* — serverless Postgres
 
 ## License
 

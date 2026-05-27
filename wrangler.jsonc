@@ -1,6 +1,6 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "astro-on-cf",
+	"name": "auditmos-lp",
 	"main": "@astrojs/cloudflare/entrypoints/server",
 	"compatibility_date": "2026-05-25",
 	"compatibility_flags": ["nodejs_compat"],
@@ -17,19 +17,19 @@
 	},
 	"env": {
 		"dev": {
-			"name": "astro-on-cf-dev",
+			"name": "auditmos-lp-dev",
 			"vars": {
 				"CLOUDFLARE_ENV": "dev"
 			}
 		},
 		"staging": {
-			"name": "astro-on-cf-staging",
+			"name": "auditmos-lp-staging",
 			"vars": {
 				"CLOUDFLARE_ENV": "staging"
 			}
 		},
 		"production": {
-			"name": "astro-on-cf-production",
+			"name": "auditmos-lp-production",
 			"vars": {
 				"CLOUDFLARE_ENV": "production"
 			}
