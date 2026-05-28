@@ -1,2 +1,5 @@
 # Staging secrets — copy this to `.staging.vars` and fill in.
 # Push to Cloudflare with `wrangler secret put <KEY> --env staging`.
+RESEND_API_KEY=
+TURNSTILE_SECRET_KEY=
+CONTACT_TO_EMAIL=

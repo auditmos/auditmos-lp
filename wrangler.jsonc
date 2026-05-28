@@ -24,6 +24,7 @@
 		},
 		"staging": {
 			"name": "auditmos-lp-staging",
+			"routes": [{ "pattern": "staging.auditmos.com", "custom_domain": true }],
 			"vars": {
 				"CLOUDFLARE_ENV": "staging"
 			}

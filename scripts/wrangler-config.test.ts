@@ -12,9 +12,18 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { stripJsonc } from "./init-project-lib";
 
+type WranglerConfig = {
+	observability?: { enabled?: boolean; head_sampling_rate?: unknown };
+	env?: Record<string, { name?: string; routes?: { pattern?: string; custom_domain?: boolean }[] }>;
+};
+
 const wranglerConfig = JSON.parse(
 	stripJsonc(readFileSync(resolve(import.meta.dirname, "..", "wrangler.jsonc"), "utf8")),
-) as { observability?: { enabled?: boolean; head_sampling_rate?: unknown } };
+) as WranglerConfig;
+const stagingVarsExample = readFileSync(
+	resolve(import.meta.dirname, "..", ".staging.vars.example"),
+	"utf8",
+);
 
 describe("wrangler.jsonc observability", () => {
 	const observability = wranglerConfig.observability;
@@ -32,5 +41,35 @@ describe("wrangler.jsonc observability", () => {
 		expect(typeof rate).toBe("number");
 		expect(rate).toBeGreaterThan(0);
 		expect(rate).toBeLessThanOrEqual(1);
+	});
+});
+
+describe("wrangler.jsonc deployment envs", () => {
+	it("declares dev, staging, and production with distinct Worker names", () => {
+		expect(wranglerConfig.env).toMatchObject({
+			dev: { name: "auditmos-lp-dev" },
+			staging: { name: "auditmos-lp-staging" },
+			production: { name: "auditmos-lp-production" },
+		});
+
+		const names = Object.values(wranglerConfig.env ?? {}).map((env) => env.name);
+		expect(new Set(names).size).toBe(names.length);
+	});
+
+	it("maps staging.auditmos.com as a custom domain", () => {
+		expect(wranglerConfig.env?.staging?.routes).toContainEqual({
+			pattern: "staging.auditmos.com",
+			custom_domain: true,
+		});
+	});
+});
+
+describe(".staging.vars.example", () => {
+	it.each([
+		"RESEND_API_KEY",
+		"TURNSTILE_SECRET_KEY",
+		"CONTACT_TO_EMAIL",
+	])("declares %s for staging", (secretName) => {
+		expect(stagingVarsExample).toContain(`${secretName}=`);
 	});
 });
