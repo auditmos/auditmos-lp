@@ -1,0 +1,84 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { legalEntity, site } from "@/brand/site";
+import { aboutPage } from "@/site/pages";
+
+export const prerender = true;
+---
+
+<Layout title={aboutPage.title} description={aboutPage.description} path={aboutPage.path}>
+	<main>
+		<section class="border-neutral-800 border-b">
+			<div class="mx-auto max-w-6xl px-6 py-16 lg:py-20">
+				<p class="mb-4 font-medium text-brand-accent text-sm uppercase tracking-[0.18em]">
+					Company
+				</p>
+				<h1 class="max-w-4xl text-4xl font-semibold text-white leading-tight sm:text-5xl">
+					Auditmos is a small technical company built for serious software, R&D, and security work.
+				</h1>
+				<p class="mt-6 max-w-3xl text-lg text-neutral-300 leading-8">
+					The company works with teams that already have a real problem to solve: shipping a
+					system, validating an uncertain technical path, or getting clear evidence about
+					security risk before a business decision.
+				</p>
+			</div>
+		</section>
+
+		<section class="border-neutral-800 border-b bg-neutral-900/40">
+			<div class="mx-auto grid max-w-6xl gap-8 px-6 py-14 md:grid-cols-3">
+				<article>
+					<h2 class="text-2xl font-semibold text-white">Substance first</h2>
+					<p class="mt-4 text-neutral-300 leading-7">
+						Auditmos keeps the public surface focused on services, work, legal identity, and
+						contact paths rather than broad marketing claims.
+					</p>
+				</article>
+				<article>
+					<h2 class="text-2xl font-semibold text-white">Technical ownership</h2>
+					<p class="mt-4 text-neutral-300 leading-7">
+						Engagements are scoped around clear outcomes, explicit tradeoffs, and artifacts
+						that a client team can maintain or defend after handoff.
+					</p>
+				</article>
+				<article>
+					<h2 class="text-2xl font-semibold text-white">EU vendor clarity</h2>
+					<p class="mt-4 text-neutral-300 leading-7">
+						Company identity, privacy posture, and contact information are kept visible because
+						procurement and due diligence should not require guesswork.
+					</p>
+				</article>
+			</div>
+		</section>
+
+		<section>
+			<div class="mx-auto max-w-6xl px-6 py-14">
+				<div class="rounded-lg border border-neutral-800 bg-neutral-900/60 p-6">
+					<h2 class="text-3xl font-semibold text-white">Legal entity</h2>
+					<dl class="mt-6 grid gap-4 text-neutral-300 sm:grid-cols-2">
+						<div>
+							<dt class="text-neutral-500 text-sm">Name</dt>
+							<dd class="mt-1 text-white">{legalEntity.name}</dd>
+						</div>
+						<div>
+							<dt class="text-neutral-500 text-sm">Registration</dt>
+							<dd class="mt-1 text-white">{legalEntity.registration}</dd>
+						</div>
+						<div>
+							<dt class="text-neutral-500 text-sm">VAT</dt>
+							<dd class="mt-1 text-white">{legalEntity.vat}</dd>
+						</div>
+						<div>
+							<dt class="text-neutral-500 text-sm">Address</dt>
+							<dd class="mt-1 text-white">{legalEntity.address}</dd>
+						</div>
+					</dl>
+					<p class="mt-6 text-neutral-300">
+						Contact: <a class="text-brand-accent hover:text-white" href={`mailto:${site.contactEmail}`}>
+							{site.contactEmail}
+						</a>
+					</p>
+				</div>
+			</div>
+		</section>
+	</main>
+</Layout>

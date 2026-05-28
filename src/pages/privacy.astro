@@ -1,0 +1,42 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { legalEntity } from "@/brand/site";
+import { privacyPage } from "@/site/pages";
+
+export const prerender = true;
+---
+
+<Layout title={privacyPage.title} description={privacyPage.description} path={privacyPage.path}>
+	<main>
+		<section class="border-neutral-800 border-b">
+			<div class="mx-auto max-w-6xl px-6 py-16 lg:py-20">
+				<p class="mb-4 font-medium text-brand-accent text-sm uppercase tracking-[0.18em]">
+					Privacy
+				</p>
+				<h1 class="max-w-4xl text-4xl font-semibold text-white leading-tight sm:text-5xl">
+					How Auditmos handles site and contact form data.
+				</h1>
+				<p class="mt-6 max-w-3xl text-lg text-neutral-300 leading-8">
+					This page covers the baseline GDPR information for visitors and people who contact
+					Auditmos through the website. Auditmos is operated by {legalEntity.name}, registered
+					in Estonia.
+				</p>
+			</div>
+		</section>
+
+		<section>
+			<div class="mx-auto grid max-w-6xl gap-6 px-6 py-14">
+				{
+					privacyPage.sections.map((section) => (
+						<article class="rounded-lg border border-neutral-800 bg-neutral-900/60 p-6">
+							<h2 class="text-2xl font-semibold text-white">{section.heading}</h2>
+							<div class="mt-4 grid gap-3 text-neutral-300 leading-7">
+								{section.body.map((paragraph) => <p>{paragraph}</p>)}
+							</div>
+						</article>
+					))
+				}
+			</div>
+		</section>
+	</main>
+</Layout>

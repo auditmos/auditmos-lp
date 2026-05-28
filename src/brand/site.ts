@@ -1,7 +1,11 @@
+export { navigationItems } from "@/site/pages";
+
 export const site = {
 	name: "Auditmos",
 	defaultTitle: "Auditmos: Security, Software Development & R&D",
 	defaultDescription: "Security, software development, and R&D from Auditmos.",
+	url: "https://auditmos.com",
+	contactEmail: "contact@auditmos.com",
 } as const;
 
 export const brand = {
@@ -26,11 +30,30 @@ export const legalEntity = {
 	address: "Narva mnt 13-27, 10151 Tallinn, Estonia",
 } as const;
 
-export const navigationItems = [
-	{ label: "Services", href: "/" },
-	{ label: "Projects", href: "/" },
-	{ label: "Contact", href: "/" },
-] as const;
+export const organizationJsonLd = {
+	"@context": "https://schema.org",
+	"@type": "Organization",
+	"@id": `${site.url}/#organization`,
+	name: site.name,
+	legalName: legalEntity.name,
+	url: site.url,
+	identifier: legalEntity.registration,
+	vatID: legalEntity.vat,
+	address: {
+		"@type": "PostalAddress",
+		streetAddress: "Narva mnt 13-27",
+		postalCode: "10151",
+		addressLocality: "Tallinn",
+		addressCountry: "EE",
+	},
+	contactPoint: {
+		"@type": "ContactPoint",
+		contactType: "customer support",
+		email: site.contactEmail,
+		areaServed: "EU",
+		availableLanguage: "en",
+	},
+} as const;
 
 export function buildCloudflareAnalyticsScript(token: string | undefined): string {
 	if (!token) return "";

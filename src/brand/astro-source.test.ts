@@ -7,15 +7,20 @@ const layoutSource = readFileSync(
 );
 const homeSource = readFileSync(resolve(import.meta.dirname, "..", "pages", "index.astro"), "utf8");
 
-describe("Astro Phase 1 source contract", () => {
+describe("Astro static source contract", () => {
 	it("keeps the home route prerendered", () => {
 		expect(homeSource).toContain("export const prerender = true");
 	});
 
-	it("renders the placeholder hero through the shared layout contract", () => {
-		expect(homeSource).toContain("Auditmos: Security, Software Development & R&D");
+	it("renders the Phase 2 home page through the shared layout contract", () => {
+		expect(homeSource).toContain("Defensible software work");
 		expect(layoutSource).toContain("legalEntity");
 		expect(layoutSource).toContain("navigationItems");
+	});
+
+	it("renders site-wide Organization JSON-LD from the shared layout", () => {
+		expect(layoutSource).toContain("organizationJsonLd");
+		expect(layoutSource).toContain('type="application/ld+json"');
 	});
 
 	it("does not add hydrated islands or page scripts", () => {

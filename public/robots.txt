@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://auditmos.com/sitemap.xml
+LLMs: https://auditmos.com/llms.txt

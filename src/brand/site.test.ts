@@ -14,6 +14,7 @@ import {
 	legalEntity,
 	logoAssets,
 	navigationItems,
+	organizationJsonLd,
 	site,
 } from "./site";
 
@@ -32,10 +33,18 @@ describe("site identity", () => {
 		expect(legalEntity.address).toBe("Narva mnt 13-27, 10151 Tallinn, Estonia");
 	});
 
-	it("keeps the Phase 1 navigation as local skeleton links", () => {
+	it("declares site-wide Organization JSON-LD with legal and contact data", () => {
+		expect(organizationJsonLd["@type"]).toBe("Organization");
+		expect(organizationJsonLd.legalName).toBe("Auditmos OÜ");
+		expect(organizationJsonLd.vatID).toBe("EE102758111");
+		expect(organizationJsonLd.address.streetAddress).toBe("Narva mnt 13-27");
+		expect(organizationJsonLd.contactPoint.email).toBe("contact@auditmos.com");
+	});
+
+	it("keeps the Phase 2 navigation as local content links", () => {
 		expect(navigationItems.length).toBeGreaterThan(0);
 		expect(navigationItems.every((item) => item.href.startsWith("/"))).toBe(true);
-		expect(navigationItems.map((item) => item.label)).toContain("Services");
+		expect(navigationItems.map((item) => item.label)).toContain("Security Audits");
 	});
 
 	it("exposes vendored SVG logo lockups and icons", () => {

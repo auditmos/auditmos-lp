@@ -1,0 +1,42 @@
+---
+import ServicePage from "@/components/ServicePage.astro";
+import { servicePages } from "@/site/pages";
+
+export const prerender = true;
+
+const page = servicePages.find((service) => service.path === "/software-development");
+
+if (!page) {
+	throw new Error("Missing software development page metadata");
+}
+---
+
+<ServicePage
+	page={page}
+	headline="Build reliable software without turning every delivery risk into your team’s problem."
+	intro="Auditmos takes on focused engineering work where senior judgment matters: product foundations, internal systems, integrations, technical rescue, and codebases that need to be left understandable after delivery."
+	bestFor={[
+		"Founders who need senior implementation without building a full internal team first.",
+		"CTOs dealing with brittle systems, unclear ownership, or a delivery deadline that needs fewer surprises.",
+		"Teams that need software built with security, maintainability, and procurement context in mind.",
+	]}
+	sections={[
+		{
+			heading: "Product delivery",
+			body: "From scoped product slices to internal tools, the work is planned around usable increments, clear tradeoffs, and code that another senior engineer can pick up later.",
+		},
+		{
+			heading: "System repair",
+			body: "Auditmos can stabilize fragile services, unwind risky integrations, and turn opaque behavior into documented, testable paths before the next feature push.",
+		},
+		{
+			heading: "Technical due care",
+			body: "Implementation decisions are made with the audit trail in mind: architecture notes, dependency choices, and risk calls are explicit enough for buyers and stakeholders.",
+		},
+	]}
+	deliverables={[
+		"Production-ready application slices with source, tests, and deployment notes.",
+		"Architecture and implementation notes for maintainers and reviewers.",
+		"Integration plans for third-party systems, APIs, and internal tools.",
+		"Stabilization reports covering risks found, fixes shipped, and remaining decisions.",
+	]}/>

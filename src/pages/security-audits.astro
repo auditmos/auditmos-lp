@@ -1,0 +1,42 @@
+---
+import ServicePage from "@/components/ServicePage.astro";
+import { servicePages } from "@/site/pages";
+
+export const prerender = true;
+
+const page = servicePages.find((service) => service.path === "/security-audits");
+
+if (!page) {
+	throw new Error("Missing security audits page metadata");
+}
+---
+
+<ServicePage
+	page={page}
+	headline="Find exploitable risk before buyers, attackers, or regulators do."
+	intro="Auditmos security audits focus on practical findings, defensible severity, and reports that help technical teams fix issues while giving business stakeholders the evidence they need."
+	bestFor={[
+		"CISOs and CTOs preparing for procurement, compliance review, or a high-stakes launch.",
+		"Teams that need actionable audit findings rather than a generic scanner export.",
+		"EU buyers who need clear vendor-vetting and risk documentation.",
+	]}
+	sections={[
+		{
+			heading: "Scope clarity",
+			body: "The audit starts with the surfaces that matter: application flows, APIs, infrastructure assumptions, data exposure, and the business impact of likely failures.",
+		},
+		{
+			heading: "Actionable findings",
+			body: "Each issue is written with impact, reproduction detail, remediation guidance, and severity reasoning so engineers can act without a second discovery phase.",
+		},
+		{
+			heading: "Review support",
+			body: "Reports are structured for technical owners and procurement readers, with concise summaries and enough detail to support vendor or compliance review.",
+		},
+	]}
+	deliverables={[
+		"Security audit report with severity, impact, reproduction notes, and remediation guidance.",
+		"Executive summary for procurement, leadership, or partner review.",
+		"Risk register of accepted, mitigated, and unresolved findings.",
+		"Retest notes when remediation validation is in scope.",
+	]}/>

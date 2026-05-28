@@ -1,0 +1,42 @@
+---
+import ServicePage from "@/components/ServicePage.astro";
+import { servicePages } from "@/site/pages";
+
+export const prerender = true;
+
+const page = servicePages.find((service) => service.path === "/r-and-d");
+
+if (!page) {
+	throw new Error("Missing R&D page metadata");
+}
+---
+
+<ServicePage
+	page={page}
+	headline="Turn technical uncertainty into evidence your stakeholders can use."
+	intro="Auditmos supports applied R&D work where the output must survive review: prototypes, feasibility studies, technical validation, and work-package evidence for grants or innovation programs."
+	bestFor={[
+		"Research teams that need an implementation partner for a technical work package.",
+		"Companies validating whether an idea is technically feasible before committing a full build budget.",
+		"Grant applicants that need credible engineering evidence, assumptions, and risk notes.",
+	]}
+	sections={[
+		{
+			heading: "Feasibility",
+			body: "The first goal is to reduce ambiguity: define the question, build the smallest useful proof, and document what the result does and does not prove.",
+		},
+		{
+			heading: "Prototype delivery",
+			body: "Prototypes are built to answer a real technical question, not to impress in isolation. Code, assumptions, limits, and next steps are handed over together.",
+		},
+		{
+			heading: "Review evidence",
+			body: "Outputs are written for funders, partners, and technical reviewers: concise enough to read, specific enough to defend.",
+		},
+	]}
+	deliverables={[
+		"Technical feasibility notes with assumptions, risks, and validation outcomes.",
+		"Prototype code or demonstrators scoped to the research question.",
+		"Architecture sketches and implementation options for next-phase delivery.",
+		"Grant or partner-ready technical summaries and work-package input.",
+	]}/>
