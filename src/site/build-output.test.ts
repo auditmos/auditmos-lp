@@ -48,6 +48,82 @@ function generatedSitemapSource(): string {
 	return sitemapFiles.map((file) => readFileSync(join(distClient, file), "utf8")).join("\n");
 }
 
+function workerEntrySource(): string {
+	const chunksDir = resolve(root, "dist", "server", "chunks");
+	const workerEntry = readdirSync(chunksDir).find(
+		(file) => file.startsWith("worker-entry_") && file.endsWith(".mjs"),
+	);
+
+	if (!workerEntry) {
+		throw new Error("No Cloudflare worker entry chunk found in build output");
+	}
+
+	return readFileSync(resolve(chunksDir, workerEntry), "utf8");
+}
+
+function astroBuildPageRoutePatterns(): string[] {
+	const source = workerEntrySource();
+	const marker = "const _manifest = deserializeManifest(";
+	const start = source.indexOf(marker);
+
+	if (start === -1) {
+		throw new Error("No serialized Astro manifest found in worker entry");
+	}
+
+	const jsonStart = start + marker.length;
+	const jsonEnd = source.indexOf(");\n", jsonStart);
+	const manifest = JSON.parse(source.slice(jsonStart, jsonEnd)) as {
+		routes: {
+			routeData: {
+				origin: string;
+				params: string[];
+				prerender: boolean;
+				route: string;
+				type: string;
+			};
+		}[];
+	};
+
+	return manifest.routes
+		.map((route) => route.routeData)
+		.filter(
+			(route) =>
+				route.origin === "project" &&
+				route.prerender &&
+				route.type === "page" &&
+				!route.route.startsWith("/_"),
+		)
+		.map((route) => route.route)
+		.sort();
+}
+
+function walkFiles(dir: string): string[] {
+	return readdirSync(dir).flatMap((entry) => {
+		const file = resolve(dir, entry);
+		return statSync(file).isDirectory() ? walkFiles(file) : [file];
+	});
+}
+
+function routeFromHtmlFile(file: string): string {
+	const relativePath = file.slice(distClient.length + 1);
+	if (relativePath === "index.html") return "/";
+	if (relativePath.endsWith("/index.html"))
+		return `/${relativePath.slice(0, -"/index.html".length)}`;
+	return `/${relativePath.slice(0, -".html".length)}`;
+}
+
+function generatedHtmlRoutes(): string[] {
+	return walkFiles(distClient)
+		.filter((file) => file.endsWith(".html"))
+		.map(routeFromHtmlFile)
+		.sort();
+}
+
+function markdownPathForRoute(route: string): string {
+	if (route === "/") return resolve(distClient, "index.md");
+	return resolve(distClient, `${route.slice(1)}.md`);
+}
+
 describe("static build output", () => {
 	beforeAll(async () => {
 		await execa("pnpm", ["build"], { cwd: root });
@@ -87,6 +163,27 @@ describe("static build output", () => {
 
 		for (const route of prerenderedRoutes) {
 			expect(advertisedSitemap).toContain(`https://auditmos.com${route}`);
+		}
+	});
+
+	it("keeps the MD mirror registry aligned with Astro's prerendered page route list", () => {
+		const configuredStaticRoutes = new Set<string>(staticPages.map((page) => page.path));
+
+		for (const route of astroBuildPageRoutePatterns()) {
+			if (route === "/projects/[slug]") continue;
+			expect(configuredStaticRoutes.has(route)).toBe(true);
+		}
+	});
+
+	it("prerenders markdown mirrors and llms.txt entries for every generated HTML page", () => {
+		const llmsTxt = readFileSync(resolve(distClient, "llms.txt"), "utf8");
+
+		for (const route of generatedHtmlRoutes()) {
+			const markdownPath = route === "/" ? "/index.md" : `${route}.md`;
+
+			expect(existsSync(markdownPathForRoute(route))).toBe(true);
+			expect(readFileSync(markdownPathForRoute(route), "utf8")).toMatch(/^# /);
+			expect(llmsTxt).toContain(`https://auditmos.com${markdownPath}`);
 		}
 	});
 
