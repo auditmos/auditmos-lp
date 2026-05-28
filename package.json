@@ -10,6 +10,7 @@
 	"scripts": {
 		"prepare": "simple-git-hooks && wrangler types",
 		"init-project": "tsx scripts/init-project.ts",
+		"new-project": "tsx scripts/new-project.ts",
 		"dev": "astro dev --port 3000",
 		"build": "astro build",
 		"preview": "astro preview",

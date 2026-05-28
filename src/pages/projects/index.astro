@@ -1,0 +1,66 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "@/layouts/Layout.astro";
+import { getClientDisplay, sortProjects } from "@/projects";
+import { projectsIndexPage } from "@/site/pages";
+
+export const prerender = true;
+
+const projects = sortProjects(await getCollection("projects"));
+---
+
+<Layout
+	title={projectsIndexPage.title}
+	description={projectsIndexPage.description}
+	path={projectsIndexPage.path}
+>
+	<main>
+		<section class="border-neutral-800 border-b">
+			<div class="mx-auto max-w-6xl px-6 py-16 lg:py-20">
+				<p class="mb-4 font-medium text-brand-accent text-sm uppercase tracking-[0.18em]">
+					Projects
+				</p>
+				<h1 class="max-w-4xl text-4xl font-semibold text-white leading-tight sm:text-5xl">
+					Selected work with enough context to evaluate fit.
+				</h1>
+				<p class="mt-6 max-w-2xl text-lg text-neutral-300 leading-8">
+					Named work appears where permission exists. Anonymised sector case studies use the
+					same pipeline when confidentiality matters.
+				</p>
+			</div>
+		</section>
+
+		<section>
+			<div class="mx-auto grid max-w-6xl gap-5 px-6 py-14 md:grid-cols-2">
+				{
+					projects.map((project) => (
+						<a
+							class="rounded-lg border border-neutral-800 bg-neutral-900/60 p-6 transition hover:border-brand-accent/70"
+							href={`/projects/${project.data.slug}`}
+						>
+							<article class="flex h-full flex-col">
+								<div class="flex flex-wrap items-center gap-x-3 gap-y-2 text-neutral-400 text-sm">
+									<span>{getClientDisplay(project.data)}</span>
+									{project.data.year && <span>{project.data.year}</span>}
+								</div>
+								<h2 class="mt-4 text-2xl font-semibold text-white">{project.data.title}</h2>
+								<p class="mt-4 text-neutral-300 leading-7">{project.data.summary}</p>
+								{
+									project.data.stack.length > 0 && (
+										<ul class="mt-6 flex flex-wrap gap-2">
+											{project.data.stack.map((item) => (
+												<li class="rounded border border-neutral-700 px-2 py-1 text-neutral-300 text-xs">
+													{item}
+												</li>
+											))}
+										</ul>
+									)
+								}
+							</article>
+						</a>
+					))
+				}
+			</div>
+		</section>
+	</main>
+</Layout>

@@ -116,6 +116,13 @@ export const aboutPage = {
 	description: "Auditmos OÜ is an Estonia-based software, R&D, and security audit company.",
 } as const satisfies SitePage;
 
+export const projectsIndexPage = {
+	path: "/projects",
+	title: "Projects | Auditmos",
+	description:
+		"Selected Auditmos software, R&D, and security audit projects, including named and anonymised work.",
+} as const satisfies SitePage;
+
 export const privacyPage = {
 	path: "/privacy",
 	title: "Privacy | Auditmos",
@@ -167,10 +174,16 @@ export const phaseTwoPages = [
 	privacyPage,
 ] as const satisfies readonly SitePage[];
 
+export const staticPages = [
+	...phaseTwoPages,
+	projectsIndexPage,
+] as const satisfies readonly SitePage[];
+
 export const navigationItems = [
 	{ label: "Software Development", href: "/software-development" },
 	{ label: "R&D", href: "/r-and-d" },
 	{ label: "Security Audits", href: "/security-audits" },
+	{ label: "Projects", href: "/projects" },
 	{ label: "About", href: "/about" },
 	{ label: "Privacy", href: "/privacy" },
 ] as const;

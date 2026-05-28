@@ -1,5 +1,6 @@
+import { getCollection } from "astro:content";
 import { site } from "@/brand/site";
-import { phaseTwoPages } from "@/site/pages";
+import { staticPages } from "@/site/pages";
 
 export const prerender = true;
 
@@ -12,9 +13,12 @@ function escapeXml(value: string): string {
 		.replaceAll("'", "&apos;");
 }
 
-export function GET(): Response {
-	const urls = phaseTwoPages
-		.map((page) => new URL(page.path, `${site.url}/`).toString())
+export async function GET(): Promise<Response> {
+	const projectPaths = (await getCollection("projects")).map(
+		(project) => `/projects/${project.data.slug}` as const,
+	);
+	const urls = [...staticPages.map((page) => page.path), ...projectPaths]
+		.map((path) => new URL(path, `${site.url}/`).toString())
 		.map((url) => `<url><loc>${escapeXml(url)}</loc></url>`)
 		.join("");
 

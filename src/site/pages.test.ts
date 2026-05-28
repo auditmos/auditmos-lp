@@ -7,7 +7,7 @@
  *   validation, or browser timing metrics.
  */
 
-import { navigationItems, phaseTwoPages, privacyPage, servicePages } from "./pages";
+import { navigationItems, phaseTwoPages, privacyPage, servicePages, staticPages } from "./pages";
 
 const requiredRoutes = [
 	"/",
@@ -24,7 +24,7 @@ describe("phaseTwoPages", () => {
 	});
 
 	it("keeps primary navigation links pointed at declared routes", () => {
-		const declaredRoutes = new Set(phaseTwoPages.map((page) => page.path));
+		const declaredRoutes = new Set(staticPages.map((page) => page.path));
 
 		expect(navigationItems.length).toBeGreaterThan(0);
 		expect(navigationItems.every((item) => declaredRoutes.has(item.href))).toBe(true);
