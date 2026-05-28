@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/auditmos/auditmos-lp/compare/v1.1.0...v1.2.0) (2026-05-28)
+
+
+### Features
+
+* add projects collection pipeline ([3934474](https://github.com/auditmos/auditmos-lp/commit/3934474ab2920ffa0c5b1617dd2d088443f0e759)), closes [#4](https://github.com/auditmos/auditmos-lp/issues/4)
+
 # [1.1.0](https://github.com/auditmos/auditmos-lp/compare/v1.0.0...v1.1.0) (2026-05-28)
 
 
