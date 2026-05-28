@@ -1,3 +1,10 @@
+# 1.0.0 (2026-05-28)
+
+
+### Features
+
+* add deployable brand skeleton ([2ca6498](https://github.com/auditmos/auditmos-lp/commit/2ca649849e27d8f77951c72b5b7c55a7c8f34321)), closes [#2](https://github.com/auditmos/auditmos-lp/issues/2)
+
 # [1.1.0](https://github.com/auditmos/astro-on-cf/compare/v1.0.0...v1.1.0) (2026-05-25)
 
 
