@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/auditmos/auditmos-lp/compare/v1.2.0...v1.3.0) (2026-05-28)
+
+
+### Features
+
+* add markdown mirror endpoints ([6d4b0b4](https://github.com/auditmos/auditmos-lp/commit/6d4b0b46a17b19f7d6c7f4a03747145469876b3f)), closes [#5](https://github.com/auditmos/auditmos-lp/issues/5)
+
 # [1.2.0](https://github.com/auditmos/auditmos-lp/compare/v1.1.0...v1.2.0) (2026-05-28)
 
 
