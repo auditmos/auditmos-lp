@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/auditmos/auditmos-lp/compare/v1.0.0...v1.1.0) (2026-05-28)
+
+
+### Features
+
+* add static content pages ([f417329](https://github.com/auditmos/auditmos-lp/commit/f41732994a04cc3875ea18b20cacee6b114dda53)), closes [#3](https://github.com/auditmos/auditmos-lp/issues/3)
+
 # 1.0.0 (2026-05-28)
 
 
