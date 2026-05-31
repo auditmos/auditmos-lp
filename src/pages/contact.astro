@@ -1,0 +1,173 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { contactPage } from "@/site/pages";
+
+export const prerender = true;
+
+const turnstileSiteKey =
+	import.meta.env.TURNSTILE_SITE_KEY ?? "1x00000000000000000000AA";
+---
+
+<Layout title={contactPage.title} description={contactPage.description} path={contactPage.path}>
+	<main>
+		<section class="border-neutral-800 border-b">
+			<div class="mx-auto grid max-w-6xl gap-10 px-6 py-14 lg:grid-cols-[0.85fr_1.15fr] lg:py-18">
+				<div>
+					<p class="mb-4 font-medium text-brand-accent text-sm uppercase tracking-[0.18em]">
+						Contact
+					</p>
+					<h1 class="max-w-3xl text-4xl font-semibold text-white leading-tight sm:text-5xl">
+						Tell Auditmos what you need to verify, build, or secure.
+					</h1>
+					<p class="mt-6 max-w-2xl text-lg text-neutral-300 leading-8">
+						Send enough context to make the first reply useful: the system or product, the
+						decision you are trying to make, and any timing constraints already known.
+					</p>
+					<p class="mt-6 text-neutral-400 text-sm leading-6">
+						You can also email <a
+							class="text-brand-accent transition hover:text-white"
+							href="mailto:contact@auditmos.com">contact@auditmos.com</a
+						>.
+					</p>
+				</div>
+
+				<form
+					id="contact-form"
+					class="grid gap-5 rounded-lg border border-neutral-800 bg-neutral-900/70 p-6"
+					action="/api/contact"
+					method="post"
+					novalidate
+				>
+					<div>
+						<label class="block font-medium text-sm text-white" for="name">Name</label>
+						<input
+							class="mt-2 w-full rounded-md border border-neutral-700 bg-neutral-950 px-3 py-3 text-white outline-none transition placeholder:text-neutral-600 focus:border-brand-accent"
+							id="name"
+							name="name"
+							type="text"
+							autocomplete="name"
+							required
+							aria-describedby="name-help"
+						/>
+						<p id="name-help" class="mt-2 text-neutral-500 text-sm">Your name or company contact.</p>
+					</div>
+
+					<div>
+						<label class="block font-medium text-sm text-white" for="email">Email</label>
+						<input
+							class="mt-2 w-full rounded-md border border-neutral-700 bg-neutral-950 px-3 py-3 text-white outline-none transition placeholder:text-neutral-600 focus:border-brand-accent"
+							id="email"
+							name="email"
+							type="email"
+							autocomplete="email"
+							inputmode="email"
+							required
+							aria-describedby="email-help"
+						/>
+						<p id="email-help" class="mt-2 text-neutral-500 text-sm">
+							Used only to reply to this inquiry.
+						</p>
+					</div>
+
+					<div>
+						<label class="block font-medium text-sm text-white" for="message">Message</label>
+						<textarea
+							class="mt-2 min-h-40 w-full resize-y rounded-md border border-neutral-700 bg-neutral-950 px-3 py-3 text-white outline-none transition placeholder:text-neutral-600 focus:border-brand-accent"
+							id="message"
+							name="message"
+							required
+							aria-describedby="message-help"
+						></textarea>
+						<p id="message-help" class="mt-2 text-neutral-500 text-sm">
+							Include scope, timing, and any constraints worth knowing before the first reply.
+						</p>
+					</div>
+
+					<div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-theme="dark"></div>
+
+					<div
+						id="contact-success"
+						class="hidden rounded-md border border-emerald-400/40 bg-emerald-400/10 p-4 text-emerald-100 text-sm leading-6"
+						tabindex="-1"
+						role="status"
+					>
+						Message sent. Check your inbox for the confirmation email.
+					</div>
+					<div
+						id="contact-error"
+						class="hidden rounded-md border border-red-400/40 bg-red-400/10 p-4 text-red-100 text-sm leading-6"
+						tabindex="-1"
+						role="alert"
+					>
+						The message could not be sent. Try again, or email contact@auditmos.com directly.
+					</div>
+
+					<button
+						id="contact-submit"
+						class="rounded-md bg-brand-accent px-5 py-3 font-semibold text-neutral-950 transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-60"
+						type="submit"
+					>
+						Send message
+					</button>
+				</form>
+			</div>
+		</section>
+	</main>
+	<script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+	<script is:inline>
+		const form = document.querySelector("#contact-form");
+		const success = document.querySelector("#contact-success");
+		const error = document.querySelector("#contact-error");
+		const submit = document.querySelector("#contact-submit");
+
+		function showNotice(target, message) {
+			success.classList.add("hidden");
+			error.classList.add("hidden");
+			target.textContent = message;
+			target.classList.remove("hidden");
+			target.focus();
+		}
+
+		form.addEventListener("submit", async (event) => {
+			event.preventDefault();
+			success.classList.add("hidden");
+			error.classList.add("hidden");
+			submit.disabled = true;
+
+			const formData = new FormData(form);
+			const payload = {
+				name: formData.get("name"),
+				email: formData.get("email"),
+				message: formData.get("message"),
+				turnstileToken: formData.get("cf-turnstile-response") ?? "",
+			};
+
+			try {
+				const response = await fetch("/api/contact", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify(payload),
+				});
+				const body = await response.json().catch(() => ({}));
+
+				if (response.ok) {
+					form.reset();
+					globalThis.turnstile?.reset();
+					showNotice(success, "Message sent. Check your inbox for the confirmation email.");
+					return;
+				}
+
+				globalThis.turnstile?.reset();
+				showNotice(
+					error,
+					body.error ?? "The message could not be sent. Try again, or email contact@auditmos.com directly.",
+				);
+			} catch {
+				globalThis.turnstile?.reset();
+				showNotice(error, "Network error. Try again, or email contact@auditmos.com directly.");
+			} finally {
+				submit.disabled = false;
+			}
+		});
+	</script>
+</Layout>

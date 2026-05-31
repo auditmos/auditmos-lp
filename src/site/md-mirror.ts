@@ -154,6 +154,13 @@ Named work appears where permission exists. Anonymised sector case studies use t
 
 Project detail pages include context, client display information, year, stack, links where available, and the case study body authored in Markdown.
 `,
+	"/contact": `
+Use this page to contact Auditmos about software development, R&D, or security audit work.
+
+The contact form asks for name, email address, and message, then protects the submission with Cloudflare Turnstile. Successful submissions send a notification to Auditmos and a confirmation email to the submitter.
+
+If the form is unavailable, email contact@auditmos.com directly.
+`,
 	"/privacy": privacyPage.sections
 		.map((section) => [`## ${section.heading}`, "", ...section.body].join("\n\n"))
 		.join("\n\n"),

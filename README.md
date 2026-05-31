@@ -103,12 +103,14 @@ Path alias `@/*` resolves to `src/*`.
 
 Three Wrangler env blocks (`dev`, `staging`, `production`), each with its own Worker name. Deploy a specific env with `wrangler deploy --env <name>`.
 
-### Secrets
+### Contact form vars
 
-Set per env via `wrangler secret put --env <name>`:
+Copy `.dev.vars.example`, `.staging.vars.example`, or `.production.vars.example` to the
+matching ignored `.*.vars` file and fill these values:
 
-| Secret | Purpose |
+| Name | Purpose |
 |---|---|
+| `TURNSTILE_SITE_KEY` | Public Cloudflare Turnstile widget key for `/contact` |
 | `RESEND_API_KEY` | Resend transactional email |
 | `TURNSTILE_SECRET_KEY` | Cloudflare Turnstile siteverify |
 | `CONTACT_TO_EMAIL` | Form recipient inbox (`contact@auditmos.com` in production) |

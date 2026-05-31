@@ -20,9 +20,11 @@ type WranglerConfig = {
 const wranglerConfig = JSON.parse(
 	stripJsonc(readFileSync(resolve(import.meta.dirname, "..", "wrangler.jsonc"), "utf8")),
 ) as WranglerConfig;
-const stagingVarsExample = readFileSync(
-	resolve(import.meta.dirname, "..", ".staging.vars.example"),
-	"utf8",
+const varsExamples = [".dev.vars.example", ".staging.vars.example", ".production.vars.example"].map(
+	(fileName) => ({
+		fileName,
+		source: readFileSync(resolve(import.meta.dirname, "..", fileName), "utf8"),
+	}),
 );
 
 describe("wrangler.jsonc observability", () => {
@@ -64,12 +66,15 @@ describe("wrangler.jsonc deployment envs", () => {
 	});
 });
 
-describe(".staging.vars.example", () => {
+describe("per-environment vars examples", () => {
 	it.each([
+		"TURNSTILE_SITE_KEY",
 		"RESEND_API_KEY",
 		"TURNSTILE_SECRET_KEY",
 		"CONTACT_TO_EMAIL",
-	])("declares %s for staging", (secretName) => {
-		expect(stagingVarsExample).toContain(`${secretName}=`);
+	])("declares %s for every environment", (varName) => {
+		for (const example of varsExamples) {
+			expect(example.source, example.fileName).toContain(`${varName}=`);
+		}
 	});
 });

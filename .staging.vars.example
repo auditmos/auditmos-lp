@@ -1,5 +1,6 @@
-# Staging secrets — copy this to `.staging.vars` and fill in.
-# Push to Cloudflare with `wrangler secret put <KEY> --env staging`.
+# Staging vars — copy this to `.staging.vars` and fill in.
+# Do not commit `.staging.vars`.
+TURNSTILE_SITE_KEY=
 RESEND_API_KEY=
 TURNSTILE_SECRET_KEY=
 CONTACT_TO_EMAIL=

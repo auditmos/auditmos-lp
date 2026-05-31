@@ -167,6 +167,12 @@ export const privacyPage = {
 	],
 } as const satisfies PrivacyPage;
 
+export const contactPage = {
+	path: "/contact",
+	title: "Contact Auditmos",
+	description: "Contact Auditmos about software development, R&D, or security audit work.",
+} as const satisfies SitePage;
+
 export const phaseTwoPages = [
 	homePage,
 	...servicePages,
@@ -177,6 +183,7 @@ export const phaseTwoPages = [
 export const staticPages = [
 	...phaseTwoPages,
 	projectsIndexPage,
+	contactPage,
 ] as const satisfies readonly SitePage[];
 
 export const navigationItems = [
@@ -185,5 +192,6 @@ export const navigationItems = [
 	{ label: "Security Audits", href: "/security-audits" },
 	{ label: "Projects", href: "/projects" },
 	{ label: "About", href: "/about" },
+	{ label: "Contact", href: "/contact" },
 	{ label: "Privacy", href: "/privacy" },
 ] as const;

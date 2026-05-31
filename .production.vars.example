@@ -1,2 +1,6 @@
-# Production secrets — copy this to `.production.vars` and fill in.
-# Push to Cloudflare with `wrangler secret put <KEY> --env production`.
+# Production vars — copy this to `.production.vars` and fill in.
+# Do not commit `.production.vars`.
+TURNSTILE_SITE_KEY=
+RESEND_API_KEY=
+TURNSTILE_SECRET_KEY=
+CONTACT_TO_EMAIL=

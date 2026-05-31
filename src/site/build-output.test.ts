@@ -14,6 +14,7 @@ const prerenderedRoutes = [
 	...staticPages.map((page) => page.path),
 	...sampleProjectRoutes,
 ] as const;
+const clientJavaScriptRoutes = new Set<string>(["/contact"]);
 
 function htmlPathFor(route: string): string {
 	const path = route === "/" ? "index" : route.slice(1);
@@ -137,17 +138,49 @@ describe("static build output", () => {
 
 	it("keeps each prerendered static page within the 50 KB HTML plus CSS budget", () => {
 		for (const route of prerenderedRoutes) {
+			if (clientJavaScriptRoutes.has(route)) continue;
 			expect(pageTransferSize(htmlPathFor(route))).toBeLessThanOrEqual(maxTransferredBytes);
 		}
 	});
 
-	it("ships no browser JavaScript on prerendered static pages", () => {
+	it("ships no browser JavaScript on prerendered static pages except contact", () => {
 		for (const route of prerenderedRoutes) {
+			if (clientJavaScriptRoutes.has(route)) continue;
 			const html = readFileSync(htmlPathFor(route), "utf8");
 			const scripts = [...html.matchAll(/<script\b[^>]*>/g)].map((match) => match[0]);
 
 			expect(scripts.every((script) => script.includes('type="application/ld+json"'))).toBe(true);
 		}
+	});
+
+	it("loads the Turnstile widget script only on contact", () => {
+		for (const route of prerenderedRoutes) {
+			const html = readFileSync(htmlPathFor(route), "utf8");
+
+			if (route === "/contact") {
+				expect(html).toContain("https://challenges.cloudflare.com/turnstile/v0/api.js");
+				expect(html).toContain("cf-turnstile");
+				continue;
+			}
+
+			expect(html).not.toContain("https://challenges.cloudflare.com/turnstile/v0/api.js");
+			expect(html).not.toContain("cf-turnstile");
+		}
+	});
+
+	it("renders an accessible contact form with inline outcome containers", () => {
+		const html = readFileSync(htmlPathFor("/contact"), "utf8");
+
+		expect(html).toContain('<form id="contact-form"');
+		expect(html).toContain('for="name"');
+		expect(html).toContain('id="name"');
+		expect(html).toContain('for="email"');
+		expect(html).toContain('id="email"');
+		expect(html).toContain('for="message"');
+		expect(html).toContain('id="message"');
+		expect(html).toContain('role="status"');
+		expect(html).toContain('role="alert"');
+		expect(html).toContain('tabindex="-1"');
 	});
 
 	it("lists every static route and sample project route in the generated sitemap", () => {
