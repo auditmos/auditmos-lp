@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/auditmos/auditmos-lp/compare/v1.3.0...v1.4.0) (2026-05-31)
+
+
+### Features
+
+* add contact form with Turnstile and Resend ([573a183](https://github.com/auditmos/auditmos-lp/commit/573a1836461971706df009cab54fc2441dff284a))
+
 # [1.3.0](https://github.com/auditmos/auditmos-lp/compare/v1.2.0...v1.3.0) (2026-05-28)
 
 
