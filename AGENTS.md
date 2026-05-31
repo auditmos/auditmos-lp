@@ -87,7 +87,7 @@ Access bindings through `import { env } from "cloudflare:workers"` — this is t
 
 `wrangler.jsonc` ships with three env blocks (`dev`, `staging`, `production`) — each gets its own Worker name. Deploy a specific env with `wrangler deploy --env <name>`.
 
-Per-env contact vars live in `.dev.vars` / `.staging.vars` / `.production.vars` locally (never committed). Required for the contact form: `TURNSTILE_SITE_KEY` (public widget key), `RESEND_API_KEY`, `TURNSTILE_SECRET_KEY`, `CONTACT_TO_EMAIL`. Optional: `GITHUB_TOKEN` for the OSS aggregator's build-time rate limit.
+Per-env contact vars live in `.dev.vars` / `.dev.vars.staging` / `.dev.vars.production` locally (never committed). This matches the wrangler convention — `.dev.vars.<env>` is loaded ahead of `.dev.vars` when `CLOUDFLARE_ENV=<env>` is set. Required for the contact form: `TURNSTILE_SITE_KEY` (public widget key), `RESEND_API_KEY`, `TURNSTILE_SECRET_KEY`, `CONTACT_TO_EMAIL`. Optional: `GITHUB_TOKEN` for the OSS aggregator's build-time rate limit.
 
 ## Verification
 

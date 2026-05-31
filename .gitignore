@@ -18,13 +18,12 @@ pnpm-debug.log*
 .env.*
 !.env.example
 
-# per-environment vars (dotenvx + wrangler)
+# per-environment vars (dotenvx + wrangler — .dev.vars.<env> convention)
 .dev.vars
-.staging.vars
-.production.vars
+.dev.vars.*
 !.dev.vars.example
-!.staging.vars.example
-!.production.vars.example
+!.dev.vars.staging.example
+!.dev.vars.production.example
 
 # macOS-specific files
 .DS_Store

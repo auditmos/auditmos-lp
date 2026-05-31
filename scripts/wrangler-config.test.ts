@@ -20,12 +20,14 @@ type WranglerConfig = {
 const wranglerConfig = JSON.parse(
 	stripJsonc(readFileSync(resolve(import.meta.dirname, "..", "wrangler.jsonc"), "utf8")),
 ) as WranglerConfig;
-const varsExamples = [".dev.vars.example", ".staging.vars.example", ".production.vars.example"].map(
-	(fileName) => ({
-		fileName,
-		source: readFileSync(resolve(import.meta.dirname, "..", fileName), "utf8"),
-	}),
-);
+const varsExamples = [
+	".dev.vars.example",
+	".dev.vars.staging.example",
+	".dev.vars.production.example",
+].map((fileName) => ({
+	fileName,
+	source: readFileSync(resolve(import.meta.dirname, "..", fileName), "utf8"),
+}));
 
 describe("wrangler.jsonc observability", () => {
 	const observability = wranglerConfig.observability;

@@ -105,8 +105,10 @@ Three Wrangler env blocks (`dev`, `staging`, `production`), each with its own Wo
 
 ### Contact form vars
 
-Copy `.dev.vars.example`, `.staging.vars.example`, or `.production.vars.example` to the
-matching ignored `.*.vars` file and fill these values:
+Copy `.dev.vars.example`, `.dev.vars.staging.example`, or `.dev.vars.production.example`
+to the matching ignored `.dev.vars` / `.dev.vars.staging` / `.dev.vars.production` file
+and fill these values. This matches the wrangler convention — `.dev.vars.<env>` is loaded
+ahead of `.dev.vars` when `CLOUDFLARE_ENV=<env>` is set.
 
 | Name | Purpose |
 |---|---|

@@ -34,8 +34,8 @@ const RENAME_TARGETS: RenameTarget[] = [
 const ENV_TEMPLATES: EnvTemplate[] = [
 	{ template: ".env.example", target: ".env" },
 	{ template: ".dev.vars.example", target: ".dev.vars" },
-	{ template: ".staging.vars.example", target: ".staging.vars" },
-	{ template: ".production.vars.example", target: ".production.vars" },
+	{ template: ".dev.vars.staging.example", target: ".dev.vars.staging" },
+	{ template: ".dev.vars.production.example", target: ".dev.vars.production" },
 ];
 
 const WRANGLER_FILES = ["wrangler.jsonc"];
@@ -45,24 +45,24 @@ const DB_SCRIPTS = {
 	"db:generate:dev":
 		"dotenvx run -f .dev.vars -- drizzle-kit generate --config drizzle-dev.config.ts",
 	"db:generate:staging":
-		"dotenvx run -f .staging.vars -- drizzle-kit generate --config drizzle-staging.config.ts",
+		"dotenvx run -f .dev.vars.staging -- drizzle-kit generate --config drizzle-staging.config.ts",
 	"db:generate:production":
-		"dotenvx run -f .production.vars -- drizzle-kit generate --config drizzle-production.config.ts",
+		"dotenvx run -f .dev.vars.production -- drizzle-kit generate --config drizzle-production.config.ts",
 	"db:migrate:dev":
 		"dotenvx run -f .dev.vars -- drizzle-kit migrate --config drizzle-dev.config.ts",
 	"db:migrate:staging":
-		"dotenvx run -f .staging.vars -- drizzle-kit migrate --config drizzle-staging.config.ts",
+		"dotenvx run -f .dev.vars.staging -- drizzle-kit migrate --config drizzle-staging.config.ts",
 	"db:migrate:production":
-		"dotenvx run -f .production.vars -- drizzle-kit migrate --config drizzle-production.config.ts",
+		"dotenvx run -f .dev.vars.production -- drizzle-kit migrate --config drizzle-production.config.ts",
 	"db:pull:dev": "dotenvx run -f .dev.vars -- drizzle-kit pull --config drizzle-dev.config.ts",
 	"db:pull:staging":
-		"dotenvx run -f .staging.vars -- drizzle-kit pull --config drizzle-staging.config.ts",
+		"dotenvx run -f .dev.vars.staging -- drizzle-kit pull --config drizzle-staging.config.ts",
 	"db:pull:production":
-		"dotenvx run -f .production.vars -- drizzle-kit pull --config drizzle-production.config.ts",
+		"dotenvx run -f .dev.vars.production -- drizzle-kit pull --config drizzle-production.config.ts",
 	"db:studio": "dotenvx run -f .dev.vars -- drizzle-kit studio --config drizzle-dev.config.ts",
 	"db:seed:dev": "dotenvx run -f .dev.vars -- tsx scripts/seed.ts",
-	"db:seed:staging": "dotenvx run -f .staging.vars -- tsx scripts/seed.ts",
-	"db:seed:production": "dotenvx run -f .production.vars -- tsx scripts/seed.ts",
+	"db:seed:staging": "dotenvx run -f .dev.vars.staging -- tsx scripts/seed.ts",
+	"db:seed:production": "dotenvx run -f .dev.vars.production -- tsx scripts/seed.ts",
 } as const;
 
 const DB_DEPENDENCIES = {
@@ -136,7 +136,7 @@ const NEXT_STEPS_BASE = [
 ];
 
 const NEXT_STEPS_WITH_DB = [
-	"Fill DB credentials in .dev.vars / .staging.vars / .production.vars",
+	"Fill DB credentials in .dev.vars / .dev.vars.staging / .dev.vars.production",
 	"  Get from https://console.neon.tech (DATABASE_HOST/USERNAME/PASSWORD).",
 	"Generate + apply initial migration: pnpm run db:generate:dev && pnpm run db:migrate:dev",
 	...NEXT_STEPS_BASE,
@@ -308,11 +308,15 @@ function stepScaffoldDb(): void {
 		console.log(`      ${result === "created" ? "✓" : "·"} ${rel} (${result})`);
 	}
 
-	for (const target of [".dev.vars.example", ".staging.vars.example", ".production.vars.example"]) {
+	for (const target of [
+		".dev.vars.example",
+		".dev.vars.staging.example",
+		".dev.vars.production.example",
+	]) {
 		const result = appendVarsBody(target, DB_VARS_BODY);
 		console.log(`      ${result === "appended" ? "✓" : "·"} ${target} (${result})`);
 	}
-	for (const target of [".dev.vars", ".staging.vars", ".production.vars"]) {
+	for (const target of [".dev.vars", ".dev.vars.staging", ".dev.vars.production"]) {
 		const result = appendVarsBody(target, DB_VARS_BODY);
 		console.log(`      ${result === "appended" ? "✓" : "·"} ${target} (${result})`);
 	}
