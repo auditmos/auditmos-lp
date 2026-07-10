@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/auditmos/auditmos-lp/compare/v1.4.0...v1.5.0) (2026-07-10)
+
+
+### Features
+
+* add open-source aggregator and /open-source page ([7187ef1](https://github.com/auditmos/auditmos-lp/commit/7187ef12cdfd2ed642c494c661f0fdf820938af2)), closes [#7](https://github.com/auditmos/auditmos-lp/issues/7)
+
 # [1.4.0](https://github.com/auditmos/auditmos-lp/compare/v1.3.0...v1.4.0) (2026-05-31)
 
 
