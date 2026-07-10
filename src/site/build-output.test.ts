@@ -50,30 +50,55 @@ function generatedSitemapSource(): string {
 }
 
 function workerEntrySource(): string {
-	const chunksDir = resolve(root, "dist", "server", "chunks");
-	const workerEntry = readdirSync(chunksDir).find(
-		(file) => file.startsWith("worker-entry_") && file.endsWith(".mjs"),
-	);
+	const entryFile = resolve(root, "dist", "server", "entry.mjs");
 
-	if (!workerEntry) {
-		throw new Error("No Cloudflare worker entry chunk found in build output");
+	if (!existsSync(entryFile)) {
+		throw new Error("No Cloudflare worker entry found in build output");
 	}
 
-	return readFileSync(resolve(chunksDir, workerEntry), "utf8");
+	return readFileSync(entryFile, "utf8");
+}
+
+// Extracts the JSON object literal that starts at or after `fromIndex`,
+// brace-matching while skipping over string literals so serialized values
+// containing braces don't throw off the depth count.
+function extractJsonObject(source: string, fromIndex: number): string {
+	const objectStart = source.indexOf("{", fromIndex);
+
+	if (objectStart === -1) {
+		throw new Error("No serialized Astro manifest object found in worker entry");
+	}
+
+	let depth = 0;
+	let inString = false;
+	let escaped = false;
+
+	for (let i = objectStart; i < source.length; i++) {
+		const char = source[i];
+
+		if (escaped) escaped = false;
+		else if (char === "\\") escaped = true;
+		else if (char === '"') inString = !inString;
+		else if (inString) continue;
+		else if (char === "{") depth++;
+		else if (char === "}" && --depth === 0) return source.slice(objectStart, i + 1);
+	}
+
+	throw new Error("Unterminated serialized Astro manifest object in worker entry");
 }
 
 function astroBuildPageRoutePatterns(): string[] {
 	const source = workerEntrySource();
-	const marker = "const _manifest = deserializeManifest(";
+	// Astro emits `var _manifest = deserializeManifest({...})` in the SSR entry;
+	// match on the assignment so a `const`/`var` change doesn't break parsing.
+	const marker = "_manifest = deserializeManifest(";
 	const start = source.indexOf(marker);
 
 	if (start === -1) {
 		throw new Error("No serialized Astro manifest found in worker entry");
 	}
 
-	const jsonStart = start + marker.length;
-	const jsonEnd = source.indexOf(");\n", jsonStart);
-	const manifest = JSON.parse(source.slice(jsonStart, jsonEnd)) as {
+	const manifest = JSON.parse(extractJsonObject(source, start + marker.length)) as {
 		routes: {
 			routeData: {
 				origin: string;

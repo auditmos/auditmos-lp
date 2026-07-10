@@ -1,0 +1,9 @@
+allowBuilds:
+  esbuild: true
+  sharp: true
+  simple-git-hooks: true
+  workerd: true
+minimumReleaseAgeExclude:
+  - knip@6.26.0
+  - miniflare@4.20260708.1
+  - wrangler@4.110.0
