@@ -154,6 +154,13 @@ Named work appears where permission exists. Anonymised sector case studies use t
 
 Project detail pages include context, client display information, year, stack, links where available, and the case study body authored in Markdown.
 `,
+	"/open-source": `
+Auditmos publishes open-source work under the github.com/auditmos organization: templates, tooling, and public audit resources.
+
+Each repository is listed with its description, primary language, and star count, and links directly to GitHub. The list is generated at build time from the GitHub API and falls back to a checked-in snapshot when the API is unavailable, so the page always renders.
+
+Watch our work on [github.com/auditmos](https://github.com/auditmos).
+`,
 	"/contact": `
 Use this page to contact Auditmos about software development, R&D, or security audit work.
 

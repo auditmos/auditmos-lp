@@ -1,0 +1,186 @@
+[
+  {
+    "name": "auditmos-lp",
+    "description": "auditmos.com landing page — static-first Astro 6 on Cloudflare Workers, with MD-mirrored content for AI agents.",
+    "url": "https://github.com/auditmos/auditmos-lp",
+    "stars": 0,
+    "language": "TypeScript",
+    "updatedAt": "2026-07-10T12:15:07Z"
+  },
+  {
+    "name": "ogsfrompoly-lp",
+    "description": "Public landing page for ogsfrompoly.com — Polymarket skilled-trader detection: weekly strategy track record + monthly project P&L. Astro on Cloudflare Workers.",
+    "url": "https://github.com/auditmos/ogsfrompoly-lp",
+    "stars": 0,
+    "language": "TypeScript",
+    "updatedAt": "2026-07-10T07:08:47Z"
+  },
+  {
+    "name": "brainstormer",
+    "description": "Structured planning toolkit that takes ideas from rough concept to dev-ready deliverables — PRD, phased plan, and dependency-ordered GitHub issues.",
+    "url": "https://github.com/auditmos/brainstormer",
+    "stars": 1,
+    "language": "Shell",
+    "updatedAt": "2026-07-09T08:36:09Z"
+  },
+  {
+    "name": "tstack-on-cf-onchain",
+    "description": "Full-stack on-chain dApp template — TanStack Start + Hono on Cloudflare Workers, Solidity (Foundry), wagmi/viem, Neon Postgres + Drizzle, shadcn/ui.",
+    "url": "https://github.com/auditmos/tstack-on-cf-onchain",
+    "stars": 0,
+    "language": "TypeScript",
+    "updatedAt": "2026-07-08T12:03:08Z"
+  },
+  {
+    "name": "saas-on-cf",
+    "description": "Multi-app SaaS monorepo — TanStack Start frontend + Hono API on Cloudflare Workers, Better Auth, Neon Postgres + Drizzle, shadcn/ui, service bindings.",
+    "url": "https://github.com/auditmos/saas-on-cf",
+    "stars": 12,
+    "language": "TypeScript",
+    "updatedAt": "2026-07-08T11:56:15Z"
+  },
+  {
+    "name": "astro-on-cf",
+    "description": "Content-first SSR template — Astro 6 on Cloudflare Workers, Tailwind v4, native API endpoints, optional Neon Postgres + Drizzle data layer.",
+    "url": "https://github.com/auditmos/astro-on-cf",
+    "stars": 0,
+    "language": "TypeScript",
+    "updatedAt": "2026-07-08T11:40:35Z"
+  },
+  {
+    "name": "hono-on-cf",
+    "description": "Hono REST API monorepo template on Cloudflare Workers — Better Auth, Neon Postgres + Drizzle, scaffolding for durable objects, queues and workflows.",
+    "url": "https://github.com/auditmos/hono-on-cf",
+    "stars": 0,
+    "language": "TypeScript",
+    "updatedAt": "2026-07-08T11:37:25Z"
+  },
+  {
+    "name": "skills",
+    "description": "Public repository for Agent Skills from Auditmos",
+    "url": "https://github.com/auditmos/skills",
+    "stars": 12,
+    "language": null,
+    "updatedAt": "2026-07-06T07:19:09Z"
+  },
+  {
+    "name": "signmos",
+    "description": "No-account e-signature pilot for PDF upload, signature/date fields, magic-link signing, change requests, final PDFs, and agent-ready lifecycle APIs.",
+    "url": "https://github.com/auditmos/signmos",
+    "stars": 0,
+    "language": "TypeScript",
+    "updatedAt": "2026-05-25T18:16:36Z"
+  },
+  {
+    "name": "devit",
+    "description": "",
+    "url": "https://github.com/auditmos/devit",
+    "stars": 0,
+    "language": "TypeScript",
+    "updatedAt": "2026-05-08T15:10:50Z"
+  },
+  {
+    "name": "brainstormer-co",
+    "description": "AI consulting company — Brainstormer skills deployed as an Agent Companies package for Paperclip",
+    "url": "https://github.com/auditmos/brainstormer-co",
+    "stars": 1,
+    "language": null,
+    "updatedAt": "2026-05-07T12:50:48Z"
+  },
+  {
+    "name": "grota",
+    "description": "Google Reorganize, Onboard, Transfer, Archive",
+    "url": "https://github.com/auditmos/grota",
+    "stars": 0,
+    "language": "TypeScript",
+    "updatedAt": "2026-04-13T07:46:17Z"
+  },
+  {
+    "name": "single-autoquant",
+    "description": "Autonomous quant strategy optimizer — single-experiment Docker setup",
+    "url": "https://github.com/auditmos/single-autoquant",
+    "stars": 0,
+    "language": "Python",
+    "updatedAt": "2026-03-23T19:35:25Z"
+  },
+  {
+    "name": "autoresearch",
+    "description": "",
+    "url": "https://github.com/auditmos/autoresearch",
+    "stars": 1,
+    "language": "Python",
+    "updatedAt": "2026-03-19T12:33:22Z"
+  },
+  {
+    "name": "autoquant",
+    "description": "",
+    "url": "https://github.com/auditmos/autoquant",
+    "stars": 0,
+    "language": "Python",
+    "updatedAt": "2026-03-18T20:53:04Z"
+  },
+  {
+    "name": "conductor",
+    "description": "",
+    "url": "https://github.com/auditmos/conductor",
+    "stars": 0,
+    "language": "TypeScript",
+    "updatedAt": "2026-03-15T14:18:58Z"
+  },
+  {
+    "name": "autolab",
+    "description": "",
+    "url": "https://github.com/auditmos/autolab",
+    "stars": 0,
+    "language": null,
+    "updatedAt": "2026-03-13T21:08:45Z"
+  },
+  {
+    "name": "ts-template",
+    "description": "",
+    "url": "https://github.com/auditmos/ts-template",
+    "stars": 0,
+    "language": "TypeScript",
+    "updatedAt": "2026-03-09T15:19:55Z"
+  },
+  {
+    "name": "google-workspace-demo",
+    "description": "",
+    "url": "https://github.com/auditmos/google-workspace-demo",
+    "stars": 0,
+    "language": "HTML",
+    "updatedAt": "2026-02-19T20:38:24Z"
+  },
+  {
+    "name": "landing-page",
+    "description": "🏠 Project landing page",
+    "url": "https://github.com/auditmos/landing-page",
+    "stars": 0,
+    "language": "TypeScript",
+    "updatedAt": "2026-01-02T17:12:47Z"
+  },
+  {
+    "name": "audits",
+    "description": "🧾 Collection of reports after audits and source code reviews",
+    "url": "https://github.com/auditmos/audits",
+    "stars": 9,
+    "language": null,
+    "updatedAt": "2025-08-31T14:44:58Z"
+  },
+  {
+    "name": "branding",
+    "description": "🌌 Repository with visual assets of our company",
+    "url": "https://github.com/auditmos/branding",
+    "stars": 0,
+    "language": null,
+    "updatedAt": "2021-12-02T19:29:30Z"
+  },
+  {
+    "name": "docs-resources",
+    "description": "📋 Documentation about our way of working and usefull security resources",
+    "url": "https://github.com/auditmos/docs-resources",
+    "stars": 0,
+    "language": null,
+    "updatedAt": "2021-11-21T09:10:44Z"
+  }
+]

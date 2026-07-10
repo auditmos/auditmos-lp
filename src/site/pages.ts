@@ -167,6 +167,13 @@ export const privacyPage = {
 	],
 } as const satisfies PrivacyPage;
 
+export const openSourcePage = {
+	path: "/open-source",
+	title: "Open Source | Auditmos",
+	description:
+		"Open-source repositories from the Auditmos GitHub organization, with language and star context.",
+} as const satisfies SitePage;
+
 export const contactPage = {
 	path: "/contact",
 	title: "Contact Auditmos",
@@ -183,6 +190,7 @@ export const phaseTwoPages = [
 export const staticPages = [
 	...phaseTwoPages,
 	projectsIndexPage,
+	openSourcePage,
 	contactPage,
 ] as const satisfies readonly SitePage[];
 
@@ -191,6 +199,7 @@ export const navigationItems = [
 	{ label: "R&D", href: "/r-and-d" },
 	{ label: "Security Audits", href: "/security-audits" },
 	{ label: "Projects", href: "/projects" },
+	{ label: "Open Source", href: "/open-source" },
 	{ label: "About", href: "/about" },
 	{ label: "Contact", href: "/contact" },
 	{ label: "Privacy", href: "/privacy" },
