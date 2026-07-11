@@ -1,3 +1,10 @@
+# [1.6.0](https://github.com/auditmos/auditmos-lp/compare/v1.5.0...v1.6.0) (2026-07-11)
+
+
+### Features
+
+* redesign site experience and content hierarchy ([07949d9](https://github.com/auditmos/auditmos-lp/commit/07949d9a7dac2f3b3100868120fc9d86c776ce1a))
+
 # [1.5.0](https://github.com/auditmos/auditmos-lp/compare/v1.4.0...v1.5.0) (2026-07-10)
 
 
