@@ -10,55 +10,56 @@ const turnstileSiteKey =
 
 <Layout title={contactPage.title} description={contactPage.description} path={contactPage.path}>
 	<main>
-		<section class="border-neutral-800 border-b">
-			<div class="mx-auto grid max-w-6xl gap-10 px-6 py-14 lg:grid-cols-[0.85fr_1.15fr] lg:py-18">
-				<div>
-					<p class="mb-4 font-medium text-brand-accent text-sm uppercase tracking-[0.18em]">
-						Contact
-					</p>
-					<h1 class="max-w-3xl text-4xl font-semibold text-white leading-tight sm:text-5xl">
-						Tell Auditmos what you need to verify, build, or secure.
+		<section>
+			<div class="mx-auto grid max-w-7xl lg:grid-cols-[0.85fr_1.15fr]">
+				<div class="px-5 py-16 sm:px-8 sm:py-24 lg:border-neutral-800 lg:border-r lg:py-28">
+					<p class="font-mono text-brand-accent text-xs uppercase">Start a conversation</p>
+					<h1 class="mt-7 max-w-3xl text-balance font-semibold text-5xl text-white leading-[1.03] sm:text-7xl">
+						What needs to be built, tested, or made clear?
 					</h1>
-					<p class="mt-6 max-w-2xl text-lg text-neutral-300 leading-8">
-						Send enough context to make the first reply useful: the system or product, the
-						decision you are trying to make, and any timing constraints already known.
+					<p class="mt-8 max-w-2xl text-pretty text-lg text-neutral-300 leading-8">
+						A useful first message names the system or idea, the decision in front of you, and
+						any timing or constraints already known.
 					</p>
-					<p class="mt-6 text-neutral-400 text-sm leading-6">
-						You can also email <a
-							class="text-brand-accent transition hover:text-white"
-							href="mailto:contact@auditmos.com">contact@auditmos.com</a
-						>.
-					</p>
+					<div class="mt-10 border-neutral-800 border-t pt-6">
+						<p class="font-mono text-neutral-500 text-xs uppercase">Prefer email?</p>
+						<a class="mt-2 inline-block text-brand-accent hover:text-white" href="mailto:contact@auditmos.com">contact@auditmos.com ↗</a>
+					</div>
 				</div>
 
 				<form
 					id="contact-form"
-					class="grid gap-5 rounded-lg border border-neutral-800 bg-neutral-900/70 p-6"
+					class="grid content-center gap-6 bg-neutral-900/40 px-5 py-12 sm:px-8 sm:py-16 lg:p-12"
 					action="/api/contact"
 					method="post"
-					novalidate
 				>
+					<div class="mb-2">
+						<p class="font-mono text-brand-accent text-xs uppercase">Project inquiry</p>
+						<h2 class="mt-3 text-balance font-semibold text-2xl text-white sm:text-3xl">Tell us just enough to begin.</h2>
+					</div>
 					<div>
-						<label class="block font-medium text-sm text-white" for="name">Name</label>
+						<label class="block font-medium text-sm text-white" for="name">Your name</label>
 						<input
-							class="mt-2 w-full rounded-md border border-neutral-700 bg-neutral-950 px-3 py-3 text-white outline-none transition placeholder:text-neutral-600 focus:border-brand-accent"
+							class="mt-2 w-full rounded-sm border border-neutral-700 bg-neutral-950 px-4 py-3.5 text-white outline-none transition-colors duration-150 placeholder:text-neutral-600 focus:border-brand-accent focus:ring-1 focus:ring-brand-accent"
 							id="name"
 							name="name"
 							type="text"
+							placeholder="Name or company contact"
 							autocomplete="name"
 							required
 							aria-describedby="name-help"
 						/>
-						<p id="name-help" class="mt-2 text-neutral-500 text-sm">Your name or company contact.</p>
+						<p id="name-help" class="sr-only">Your name or company contact.</p>
 					</div>
 
 					<div>
 						<label class="block font-medium text-sm text-white" for="email">Email</label>
 						<input
-							class="mt-2 w-full rounded-md border border-neutral-700 bg-neutral-950 px-3 py-3 text-white outline-none transition placeholder:text-neutral-600 focus:border-brand-accent"
+							class="mt-2 w-full rounded-sm border border-neutral-700 bg-neutral-950 px-4 py-3.5 text-white outline-none transition-colors duration-150 placeholder:text-neutral-600 focus:border-brand-accent focus:ring-1 focus:ring-brand-accent"
 							id="email"
 							name="email"
 							type="email"
+							placeholder="you@company.com"
 							autocomplete="email"
 							inputmode="email"
 							required
@@ -72,9 +73,10 @@ const turnstileSiteKey =
 					<div>
 						<label class="block font-medium text-sm text-white" for="message">Message</label>
 						<textarea
-							class="mt-2 min-h-40 w-full resize-y rounded-md border border-neutral-700 bg-neutral-950 px-3 py-3 text-white outline-none transition placeholder:text-neutral-600 focus:border-brand-accent"
+							class="mt-2 min-h-40 w-full resize-y rounded-sm border border-neutral-700 bg-neutral-950 px-4 py-3.5 text-white outline-none transition-colors duration-150 placeholder:text-neutral-600 focus:border-brand-accent focus:ring-1 focus:ring-brand-accent"
 							id="message"
 							name="message"
+							placeholder="What are you working on, and what needs to become clearer?"
 							required
 							aria-describedby="message-help"
 						></textarea>
@@ -87,7 +89,7 @@ const turnstileSiteKey =
 
 					<div
 						id="contact-success"
-						class="hidden rounded-md border border-emerald-400/40 bg-emerald-400/10 p-4 text-emerald-100 text-sm leading-6"
+						class="hidden rounded-sm border border-emerald-400/40 bg-emerald-400/10 p-4 text-emerald-100 text-sm leading-6"
 						tabindex="-1"
 						role="status"
 					>
@@ -95,7 +97,7 @@ const turnstileSiteKey =
 					</div>
 					<div
 						id="contact-error"
-						class="hidden rounded-md border border-red-400/40 bg-red-400/10 p-4 text-red-100 text-sm leading-6"
+						class="hidden rounded-sm border border-red-400/40 bg-red-400/10 p-4 text-red-100 text-sm leading-6"
 						tabindex="-1"
 						role="alert"
 					>
@@ -104,11 +106,14 @@ const turnstileSiteKey =
 
 					<button
 						id="contact-submit"
-						class="rounded-md bg-brand-accent px-5 py-3 font-semibold text-neutral-950 transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-60"
+						class="rounded-sm bg-brand-accent px-5 py-3.5 font-semibold text-neutral-950 transition-colors duration-150 hover:bg-white focus-visible:outline-2 focus-visible:outline-brand-accent focus-visible:outline-offset-4 disabled:cursor-not-allowed disabled:opacity-60"
 						type="submit"
 					>
 						Send message
 					</button>
+					<p class="text-pretty text-neutral-500 text-xs leading-5">
+						By sending this form, you agree to the handling described in our <a class="underline hover:text-brand-accent" href="/privacy">privacy notice</a>.
+					</p>
 				</form>
 			</div>
 		</section>

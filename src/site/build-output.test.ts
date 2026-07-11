@@ -253,8 +253,8 @@ describe("static build output", () => {
 		);
 
 		expect(namedClientHtml).toContain("Auditmos OÜ");
-		expect(namedClientHtml).toContain("Contact us about this");
+		expect(namedClientHtml).toContain("Discuss it with Auditmos");
 		expect(anonymisedHtml).toContain("Banking");
-		expect(anonymisedHtml).toContain("Contact us about this");
+		expect(anonymisedHtml).toContain("Discuss it with Auditmos");
 	});
 });

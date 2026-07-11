@@ -7,6 +7,7 @@ import {
 	site,
 } from "@/brand/site";
 import "@/styles/globals.css";
+import fullLogoUrl from "@/assets/logos/auditmos-full-logo-transparent.svg?url";
 import iconUrl from "@/assets/logos/auditmos-icon-transparent.svg?url";
 
 interface Props {
@@ -28,6 +29,7 @@ const analyticsScript = buildCloudflareAnalyticsScript(
 const canonicalUrl = new URL(path, `${site.url}/`).toString();
 const extraSchemas = Array.isArray(schema) ? schema : [schema];
 const jsonLdItems = [organizationJsonLd, ...extraSchemas];
+const footerServiceLinks = navigationItems.slice(0, 3);
 ---
 
 <!doctype html>
@@ -53,40 +55,119 @@ const jsonLdItems = [organizationJsonLd, ...extraSchemas];
 		{analyticsScript && <Fragment set:html={analyticsScript} />}
 	</head>
 	<body class="min-h-screen bg-neutral-950 font-sans text-neutral-100 antialiased">
-		<header class="border-neutral-800 border-b">
-			<div class="mx-auto flex max-w-6xl flex-col gap-4 px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
-				<a class="font-semibold text-lg text-white" href="/" aria-label={`${site.name} home`}>
-					{site.name}
+		<a
+			class="fixed top-3 left-3 z-50 -translate-y-20 bg-brand-accent px-4 py-2 font-semibold text-neutral-950 focus:translate-y-0"
+			href="#main-content"
+		>
+			Skip to content
+		</a>
+		<header class="sticky top-0 z-40 border-neutral-800 border-b bg-neutral-950/95">
+			<div class="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 sm:px-8">
+				<a class="inline-flex items-center" href="/" aria-label={`${site.name} home`}>
+					<img class="h-auto w-36" src={fullLogoUrl} alt="Auditmos" />
 				</a>
-				<nav aria-label="Primary navigation">
-					<ul class="flex flex-wrap items-center gap-x-5 gap-y-2 text-neutral-300 text-sm">
+
+				<div class="hidden items-center gap-7 lg:flex">
+					<nav aria-label="Primary navigation">
+						<ul class="flex items-center gap-6 text-neutral-300 text-sm">
+							{
+								navigationItems.map((item) => (
+									<li>
+										<a
+											class:list={[
+												"rounded-sm py-2 transition-colors duration-150 hover:text-white focus-visible:outline-2 focus-visible:outline-brand-accent focus-visible:outline-offset-4",
+												path === item.href && "text-brand-accent",
+											]}
+											href={item.href}
+										>
+											{item.label}
+										</a>
+									</li>
+								))
+							}
+						</ul>
+					</nav>
+					<a
+						class="inline-flex items-center gap-2 rounded-sm bg-brand-accent px-4 py-2.5 font-semibold text-neutral-950 text-sm transition-colors duration-150 hover:bg-white focus-visible:outline-2 focus-visible:outline-brand-accent focus-visible:outline-offset-4"
+						href="/contact"
+					>
+						Start a conversation <span aria-hidden="true">↗</span>
+					</a>
+				</div>
+
+				<details class="group relative lg:hidden">
+					<summary class="flex cursor-pointer list-none items-center gap-2 rounded-sm border border-neutral-700 px-3 py-2 text-sm text-white marker:content-none focus-visible:outline-2 focus-visible:outline-brand-accent focus-visible:outline-offset-4">
+						Menu
+						<svg class="size-4" aria-hidden="true" viewBox="0 0 16 16" fill="none">
+							<path d="M2 5h12M2 11h12" stroke="currentColor" stroke-width="1.5" />
+						</svg>
+					</summary>
+					<nav
+						class="absolute top-12 right-0 w-64 border border-neutral-700 bg-neutral-950 p-2 shadow-xl"
+						aria-label="Mobile navigation"
+					>
+						<ul class="grid text-sm">
 						{
 							navigationItems.map((item) => (
 								<li>
-									<a class="transition hover:text-brand-accent" href={item.href}>
+									<a
+										class:list={[
+											"block rounded-sm px-3 py-3 text-neutral-200 hover:bg-neutral-900 hover:text-white focus-visible:outline-2 focus-visible:outline-brand-accent",
+											path === item.href && "text-brand-accent",
+										]}
+										href={item.href}
+									>
 										{item.label}
 									</a>
 								</li>
 							))
 						}
-					</ul>
-				</nav>
+							<li class="mt-2 border-neutral-800 border-t pt-2">
+								<a class="block bg-brand-accent px-3 py-3 font-semibold text-neutral-950" href="/contact">
+									Start a conversation
+								</a>
+							</li>
+						</ul>
+					</nav>
+				</details>
 			</div>
 		</header>
-		<slot />
-		<footer class="border-neutral-800 border-t">
-			<div class="mx-auto flex max-w-6xl flex-col gap-4 px-6 py-8 text-neutral-400 text-sm md:flex-row md:items-center md:justify-between">
-				<p>
-					{legalEntity.name} · Registration {legalEntity.registration} · VAT {legalEntity.vat} · {
-						legalEntity.address
-					}
-				</p>
-				<p class="flex flex-wrap gap-x-4 gap-y-2">
-					<a class="transition hover:text-brand-accent" href={`mailto:${site.contactEmail}`}>
-						{site.contactEmail}
-					</a>
-					<a class="transition hover:text-brand-accent" href="/privacy">Privacy</a>
-				</p>
+		<div id="main-content">
+			<slot />
+		</div>
+		<footer class="border-neutral-800 border-t bg-neutral-900/40">
+			<div class="mx-auto grid max-w-7xl gap-10 px-5 py-12 sm:px-8 lg:grid-cols-[1.4fr_0.8fr_0.8fr] lg:py-16">
+				<div>
+					<img class="h-auto w-36" src={fullLogoUrl} alt="Auditmos" />
+					<p class="mt-5 max-w-md text-pretty text-neutral-400 text-sm leading-6">
+						Senior software development, applied R&D, and security audits for teams that need
+						technical outcomes they can defend.
+					</p>
+				</div>
+				<div>
+					<p class="font-mono text-neutral-500 text-xs uppercase">Expertise</p>
+					<ul class="mt-4 grid gap-3 text-neutral-300 text-sm">
+						{footerServiceLinks.map((item) => <li><a class="hover:text-brand-accent" href={item.href}>{item.label}</a></li>)}
+					</ul>
+				</div>
+				<div>
+					<p class="font-mono text-neutral-500 text-xs uppercase">Explore</p>
+					<ul class="mt-4 grid gap-3 text-neutral-300 text-sm">
+						<li><a class="hover:text-brand-accent" href="/projects">Selected work</a></li>
+						<li><a class="hover:text-brand-accent" href="/open-source">Open source</a></li>
+						<li><a class="hover:text-brand-accent" href="/about">Company</a></li>
+						<li><a class="hover:text-brand-accent" href="/privacy">Privacy</a></li>
+					</ul>
+				</div>
+			</div>
+			<div class="border-neutral-800 border-t">
+				<div class="mx-auto flex max-w-7xl flex-col gap-4 px-5 py-6 text-neutral-500 text-xs sm:px-8 lg:flex-row lg:items-center lg:justify-between">
+					<p>{legalEntity.name} · Reg {legalEntity.registration} · VAT {legalEntity.vat}</p>
+					<div class="flex flex-col gap-2 sm:flex-row sm:gap-5">
+						<a class="hover:text-brand-accent" href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a>
+						<p>{legalEntity.address}</p>
+					</div>
+				</div>
 			</div>
 		</footer>
 	</body>

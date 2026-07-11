@@ -44,7 +44,7 @@ describe("site identity", () => {
 	it("keeps the Phase 2 navigation as local content links", () => {
 		expect(navigationItems.length).toBeGreaterThan(0);
 		expect(navigationItems.every((item) => item.href.startsWith("/"))).toBe(true);
-		expect(navigationItems.map((item) => item.label)).toContain("Security Audits");
+		expect(navigationItems.map((item) => item.label)).toContain("Security");
 	});
 
 	it("exposes vendored SVG logo lockups and icons", () => {

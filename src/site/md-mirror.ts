@@ -16,7 +16,7 @@ type StaticPagePath = (typeof staticPages)[number]["path"];
 
 const staticMarkdownBodyByPath = {
 	"/": `
-Auditmos helps EU-based founders, CTOs, CISOs, and research teams ship reliable software, validate technical bets, and document security risk clearly enough for procurement, grants, and executive review.
+Auditmos helps teams build reliable software, validate uncertain ideas, and expose security risk—then leaves the evidence needed to act with confidence.
 
 ## Services
 
@@ -24,9 +24,9 @@ Auditmos helps EU-based founders, CTOs, CISOs, and research teams ship reliable 
 - R&D services for technical validation, prototypes, feasibility studies, and grant work.
 - Security audits for actionable findings, defensible severity, and procurement-ready reporting.
 
-## How Auditmos works
+## Working standard
 
-The public site is intentionally narrow because most visitors arrive through referral, partner conversation, or procurement review. These pages answer what Auditmos does, where the company is registered, and what kind of technical work it can credibly carry.
+The work is senior-led, direct, and written to survive handoff. Technical output is designed to support the next decision inside engineering, leadership, procurement, or external review.
 `,
 	"/software-development": `
 Build reliable software without turning every delivery risk into your team's problem.
@@ -119,7 +119,7 @@ Reports are structured for technical owners and procurement readers, with concis
 - Retest notes when remediation validation is in scope.
 `,
 	"/about": `
-Auditmos is a small technical company built for serious software, R&D, and security work.
+Auditmos is a small, independent technical company for software delivery, applied R&D, and security work where judgment, evidence, and clear ownership matter.
 
 The company works with teams that already have a real problem to solve: shipping a system, validating an uncertain technical path, or getting clear evidence about security risk before a business decision.
 
@@ -131,9 +131,9 @@ Auditmos keeps the public surface focused on services, work, legal identity, and
 
 Engagements are scoped around clear outcomes, explicit tradeoffs, and artifacts that a client team can maintain or defend after handoff.
 
-## EU vendor clarity
+## Business-aware evidence
 
-Company identity, privacy posture, and contact information are kept visible because procurement and due diligence should not require guesswork.
+Technical output is written so engineering, leadership, procurement, and external reviewers can make the decision in front of them.
 
 ## Legal entity
 
@@ -157,7 +157,7 @@ Project detail pages include context, client display information, year, stack, l
 	"/open-source": `
 Auditmos publishes open-source work under the github.com/auditmos organization: templates, tooling, and public audit resources.
 
-Each repository is listed with its description, primary language, and star count, and links directly to GitHub. The list is generated at build time from the GitHub API and falls back to a checked-in snapshot when the API is unavailable, so the page always renders.
+The site shows a focused selection with descriptions, primary language, and star count. The full public inventory remains available on GitHub.
 
 Watch our work on [github.com/auditmos](https://github.com/auditmos).
 `,

@@ -13,7 +13,7 @@ describe("Astro static source contract", () => {
 	});
 
 	it("renders the Phase 2 home page through the shared layout contract", () => {
-		expect(homeSource).toContain("Defensible software work");
+		expect(homeSource).toContain("Technical work that stands up to scrutiny");
 		expect(layoutSource).toContain("legalEntity");
 		expect(layoutSource).toContain("navigationItems");
 	});

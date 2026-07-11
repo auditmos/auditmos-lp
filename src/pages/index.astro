@@ -1,5 +1,4 @@
 ---
-import fullLogoUrl from "@/assets/logos/auditmos-full-logo-transparent.svg?url";
 import Layout from "@/layouts/Layout.astro";
 import { getClientDisplay, getFeaturedProjects } from "@/projects";
 import { homePage, servicePages } from "@/site/pages";
@@ -8,35 +7,144 @@ import { getCollection } from "astro:content";
 export const prerender = true;
 
 const featuredProjects = getFeaturedProjects(await getCollection("projects"));
+
+const serviceDetails = [
+	{
+		number: "01",
+		name: "Software development",
+		promise: "Build and repair systems without inheriting avoidable delivery risk.",
+	},
+	{
+		number: "02",
+		name: "Applied R&D",
+		promise: "Turn an uncertain technical bet into evidence for the next decision.",
+	},
+	{
+		number: "03",
+		name: "Security audits",
+		promise: "Find material risk and leave your team with a credible path to fix it.",
+	},
+] as const;
 ---
 
 <Layout title={homePage.title} description={homePage.description} path={homePage.path}>
 	<main>
-		<section class="border-neutral-800 border-b">
-			<div class="mx-auto grid max-w-6xl gap-10 px-6 py-10 lg:grid-cols-[1.1fr_0.9fr] lg:py-14">
-				<div>
-					<img class="mb-8 h-auto w-56 sm:w-72" src={fullLogoUrl} alt="Auditmos" />
-					<p class="mb-4 font-medium text-brand-accent text-sm uppercase tracking-[0.18em]">
-						Security, software development, and R&D
+		<section class="relative overflow-hidden border-neutral-800 border-b">
+			<div class="mx-auto grid max-w-7xl lg:grid-cols-[1.45fr_0.55fr]">
+				<div class="px-5 py-16 sm:px-8 sm:py-24 lg:border-neutral-800 lg:border-r lg:py-32">
+					<p class="font-mono text-brand-accent text-xs uppercase sm:text-sm">
+						Independent technical partner · Tallinn, EU
 					</p>
-					<h1 class="max-w-4xl text-4xl font-semibold text-white leading-tight sm:text-5xl">
-						Defensible software work for teams that need substance before scale.
+					<h1 class="mt-7 max-w-5xl text-balance font-semibold text-5xl text-white leading-[1.02] sm:text-7xl lg:text-8xl">
+						Technical work that stands up to scrutiny.
 					</h1>
-					<p class="mt-6 max-w-2xl text-lg text-neutral-300 leading-8">
-						Auditmos helps EU-based founders, CTOs, CISOs, and research teams ship reliable
-						software, validate technical bets, and document security risk clearly enough for
-						procurement, grants, and executive review.
+					<p class="mt-8 max-w-2xl text-pretty text-lg text-neutral-300 leading-8 sm:text-xl">
+						Auditmos helps teams build reliable software, validate uncertain ideas, and expose
+						security risk—then leaves the evidence needed to act with confidence.
 					</p>
+					<div class="mt-10 flex flex-col gap-3 sm:flex-row">
+						<a
+							class="inline-flex items-center justify-center gap-2 rounded-sm bg-brand-accent px-5 py-3.5 font-semibold text-neutral-950 transition-colors duration-150 hover:bg-white focus-visible:outline-2 focus-visible:outline-brand-accent focus-visible:outline-offset-4"
+							href="/contact"
+						>
+							Discuss a project <span aria-hidden="true">↗</span>
+						</a>
+						<a
+							class="inline-flex items-center justify-center rounded-sm border border-neutral-700 px-5 py-3.5 font-semibold text-white transition-colors duration-150 hover:border-neutral-500 hover:bg-neutral-900 focus-visible:outline-2 focus-visible:outline-brand-accent focus-visible:outline-offset-4"
+							href="/projects"
+						>
+							See selected work
+						</a>
+					</div>
 				</div>
-				<div class="grid gap-4 self-end">
+
+				<aside class="flex min-h-80 flex-col justify-between bg-neutral-900/40 p-5 sm:p-8 lg:min-h-0 lg:py-12">
+					<div class="flex items-start justify-between border-neutral-800 border-b pb-6">
+						<p class="font-mono text-neutral-500 text-xs uppercase">Auditmos / 2026</p>
+						<span class="flex size-3 items-center justify-center" aria-hidden="true">
+							<span class="size-2 rounded-full bg-brand-accent"></span>
+						</span>
+					</div>
+					<div class="py-10 lg:py-0">
+						<p class="font-mono text-brand-accent text-7xl leading-none sm:text-8xl">A/</p>
+						<p class="mt-6 max-w-xs text-balance font-medium text-2xl text-white leading-snug">
+							Software. Research. Security.
+						</p>
+					</div>
+					<p class="border-neutral-800 border-t pt-6 text-pretty text-neutral-400 text-sm leading-6">
+						Senior-led work for founders, technical leaders, research teams, and security buyers.
+					</p>
+				</aside>
+			</div>
+		</section>
+
+		<section class="border-neutral-800 border-b">
+			<div class="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-24">
+				<div class="grid gap-8 lg:grid-cols-[0.55fr_1.45fr] lg:gap-16">
+					<div>
+						<p class="font-mono text-brand-accent text-xs uppercase">Where we help</p>
+						<h2 class="mt-4 max-w-sm text-balance font-semibold text-3xl text-white leading-tight sm:text-4xl">
+							Three capabilities. One standard of evidence.
+						</h2>
+					</div>
+
+					<div class="border-neutral-800 border-t">
+						{
+							servicePages.map((service, index) => {
+								const detail = serviceDetails[index];
+								if (!detail) return null;
+
+								return (
+									<a
+										class="group grid gap-4 border-neutral-800 border-b py-7 transition-colors duration-150 hover:bg-neutral-900/50 focus-visible:outline-2 focus-visible:outline-brand-accent sm:grid-cols-[3rem_0.75fr_1.25fr_auto] sm:items-center sm:px-4"
+										href={service.path}
+									>
+										<span class="font-mono text-brand-accent text-xs">{detail.number}</span>
+										<h3 class="text-balance font-semibold text-white text-xl sm:text-2xl">{detail.name}</h3>
+										<p class="max-w-lg text-pretty text-neutral-400 leading-7">{detail.promise}</p>
+										<span class="text-brand-accent text-xl transition-transform duration-150 group-hover:translate-x-1" aria-hidden="true">→</span>
+									</a>
+								);
+							})
+						}
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<section class="border-neutral-800 border-b bg-neutral-900/30">
+			<div class="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-24">
+				<div class="flex flex-col gap-5 border-neutral-800 border-b pb-8 sm:flex-row sm:items-end sm:justify-between">
+					<div>
+						<p class="font-mono text-brand-accent text-xs uppercase">Evidence, not claims</p>
+						<h2 class="mt-4 text-balance font-semibold text-3xl text-white sm:text-4xl">Selected work</h2>
+					</div>
+					<a class="font-medium text-neutral-300 text-sm hover:text-brand-accent" href="/projects">
+						View all projects <span aria-hidden="true">→</span>
+					</a>
+				</div>
+
+				<div class="grid md:grid-cols-2">
 					{
-						servicePages.map((service) => (
+						featuredProjects.map((project, index) => (
 							<a
-								class="rounded-lg border border-neutral-800 bg-neutral-900/70 p-5 transition hover:border-brand-accent/70"
-								href={service.path}
+								class:list={[
+									"group flex min-h-80 flex-col justify-between border-neutral-800 py-8 transition-colors duration-150 hover:bg-neutral-900/60 focus-visible:outline-2 focus-visible:outline-brand-accent sm:p-8",
+									index === 0 ? "md:border-r" : "border-t md:border-t-0",
+								]}
+								href={`/projects/${project.data.slug}`}
 							>
-								<h2 class="font-semibold text-white text-xl">{service.jsonLd.name}</h2>
-								<p class="mt-3 text-neutral-300 text-sm leading-6">{service.description}</p>
+								<div class="flex items-center justify-between gap-4 font-mono text-neutral-500 text-xs">
+									<span>{getClientDisplay(project.data)}</span>
+									{project.data.year && <span class="tabular-nums">{project.data.year}</span>}
+								</div>
+								<div class="mt-16">
+									<h3 class="max-w-lg text-balance font-semibold text-2xl text-white sm:text-3xl">
+										{project.data.title}
+									</h3>
+									<p class="mt-4 max-w-xl text-pretty text-neutral-400 leading-7">{project.data.summary}</p>
+								</div>
+								<span class="mt-8 text-brand-accent transition-transform duration-150 group-hover:translate-x-1" aria-hidden="true">Read case study →</span>
 							</a>
 						))
 					}
@@ -44,49 +152,25 @@ const featuredProjects = getFeaturedProjects(await getCollection("projects"));
 			</div>
 		</section>
 
-		<section class="border-neutral-800 border-b bg-neutral-900/40">
-			<div class="mx-auto grid max-w-6xl gap-8 px-6 py-14 md:grid-cols-3">
-				<div>
-					<p class="font-medium text-brand-accent text-sm uppercase tracking-[0.18em]">How we work</p>
-					<h2 class="mt-3 text-3xl font-semibold text-white">Senior, direct, and evidence-led.</h2>
-				</div>
-				<div class="md:col-span-2">
-					<p class="text-neutral-300 leading-8">
-						The site is intentionally narrow because the work is usually introduced by referral,
-						partner conversation, or procurement review. These pages are built to answer the
-						next question fast: what Auditmos does, where the company is registered, and what
-						kind of technical work it can credibly carry.
-					</p>
-				</div>
-			</div>
-		</section>
-
 		<section>
-			<div class="mx-auto max-w-6xl px-6 py-14">
-				<div class="grid gap-6 md:grid-cols-[0.8fr_1.2fr]">
-					<div>
-						<p class="font-medium text-brand-accent text-sm uppercase tracking-[0.18em]">
-							Featured projects
-						</p>
-						<h2 class="mt-3 text-3xl font-semibold text-white">Case studies from the same pipeline.</h2>
-					</div>
-					<div class="grid gap-4">
-						{
-							featuredProjects.map((project) => (
-								<a
-									class="rounded-lg border border-neutral-800 bg-neutral-900/60 p-5 transition hover:border-brand-accent/70"
-									href={`/projects/${project.data.slug}`}
-								>
-									<div class="flex flex-wrap items-center gap-x-3 gap-y-2 text-neutral-400 text-sm">
-										<span>{getClientDisplay(project.data)}</span>
-										{project.data.year && <span>{project.data.year}</span>}
-									</div>
-									<h3 class="mt-3 font-semibold text-white text-xl">{project.data.title}</h3>
-									<p class="mt-3 text-neutral-300 text-sm leading-6">{project.data.summary}</p>
-								</a>
-							))
-						}
-					</div>
+			<div class="mx-auto grid max-w-7xl gap-10 px-5 py-16 sm:px-8 sm:py-24 lg:grid-cols-[1fr_1.2fr] lg:items-end">
+				<div>
+					<p class="font-mono text-brand-accent text-xs uppercase">A useful first conversation</p>
+					<h2 class="mt-5 max-w-3xl text-balance font-semibold text-4xl text-white leading-tight sm:text-6xl">
+						Bring the hard part. We’ll make the next decision clearer.
+					</h2>
+				</div>
+				<div class="lg:pb-2">
+					<p class="max-w-xl text-pretty text-neutral-300 text-lg leading-8">
+						Share the system, uncertainty, or risk you are dealing with. Auditmos will respond
+						with the context needed for a focused scoping conversation.
+					</p>
+					<a
+						class="mt-7 inline-flex items-center gap-2 border-brand-accent border-b pb-1 font-semibold text-brand-accent hover:text-white"
+						href="/contact"
+					>
+						Start a conversation <span aria-hidden="true">↗</span>
+					</a>
 				</div>
 			</div>
 		</section>

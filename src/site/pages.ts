@@ -41,7 +41,8 @@ const organizationId = `${siteUrl}/#organization`;
 export const homePage = {
 	path: "/",
 	title: "Auditmos: Security, Software Development & R&D",
-	description: "Security, software development, and R&D from Auditmos.",
+	description:
+		"Senior software development, applied R&D, and security audits for teams that need clear, defensible technical outcomes.",
 } as const satisfies SitePage;
 
 export const servicePages = [
@@ -195,12 +196,9 @@ export const staticPages = [
 ] as const satisfies readonly SitePage[];
 
 export const navigationItems = [
-	{ label: "Software Development", href: "/software-development" },
+	{ label: "Software", href: "/software-development" },
 	{ label: "R&D", href: "/r-and-d" },
-	{ label: "Security Audits", href: "/security-audits" },
-	{ label: "Projects", href: "/projects" },
-	{ label: "Open Source", href: "/open-source" },
+	{ label: "Security", href: "/security-audits" },
+	{ label: "Work", href: "/projects" },
 	{ label: "About", href: "/about" },
-	{ label: "Contact", href: "/contact" },
-	{ label: "Privacy", href: "/privacy" },
 ] as const;

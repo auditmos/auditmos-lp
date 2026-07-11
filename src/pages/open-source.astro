@@ -6,6 +6,7 @@ import { openSourcePage } from "@/site/pages";
 export const prerender = true;
 
 const projects = ossProjects;
+const visibleProjects = projects.slice(0, 8);
 
 const updatedFormatter = new Intl.DateTimeFormat("en", { year: "numeric", month: "short" });
 const formatUpdated = (iso: string): string => updatedFormatter.format(new Date(iso));
@@ -18,27 +19,25 @@ const formatUpdated = (iso: string): string => updatedFormatter.format(new Date(
 >
 	<main>
 		<section class="border-neutral-800 border-b">
-			<div class="mx-auto max-w-6xl px-6 py-16 lg:py-20">
-				<p class="mb-4 font-medium text-brand-accent text-sm uppercase tracking-[0.18em]">
-					Open Source
-				</p>
-				<h1 class="max-w-4xl text-4xl font-semibold text-white leading-tight sm:text-5xl">
-					Public repositories from the Auditmos organization.
-				</h1>
-				<p class="mt-6 max-w-2xl text-lg text-neutral-300 leading-8">
-					Templates, tooling, and audit resources published under
-					<a class="text-brand-accent hover:text-white" href="https://github.com/auditmos">
-						github.com/auditmos</a>. The list is generated at build time and mirrors what is live
-					on GitHub.
+			<div class="mx-auto grid max-w-7xl gap-10 px-5 py-16 sm:px-8 sm:py-24 lg:grid-cols-[1.2fr_0.8fr] lg:items-end lg:py-28">
+				<div>
+					<p class="font-mono text-brand-accent text-xs uppercase">Open source</p>
+					<h1 class="mt-7 max-w-5xl text-balance font-semibold text-5xl text-white leading-[1.03] sm:text-7xl">
+						Work you can inspect, use, and challenge.
+					</h1>
+				</div>
+				<p class="max-w-xl text-pretty text-lg text-neutral-300 leading-8">
+					Templates, tooling, and audit resources published through
+					<a class="text-brand-accent hover:text-white" href="https://github.com/auditmos"> github.com/auditmos</a>. This list is generated from what is live on GitHub.
 				</p>
 			</div>
 		</section>
 
 		<section>
-			<div class="mx-auto max-w-6xl px-6 py-14">
+			<div class="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-24">
 				{
 					projects.length === 0 ? (
-						<div class="rounded-lg border border-neutral-800 bg-neutral-900/60 p-8 text-center">
+						<div class="border border-neutral-800 bg-neutral-900/40 p-8 text-center">
 							<p class="text-lg text-neutral-300 leading-8">
 								Watch our work on{" "}
 								<a class="text-brand-accent hover:text-white" href="https://github.com/auditmos">
@@ -48,26 +47,26 @@ const formatUpdated = (iso: string): string => updatedFormatter.format(new Date(
 							</p>
 						</div>
 					) : (
-						<ul class="grid gap-5 md:grid-cols-2">
-							{projects.map((project) => (
+						<ul class="grid border-neutral-800 border-t md:grid-cols-2">
+							{visibleProjects.map((project) => (
 								<li>
 									<a
-										class="flex h-full flex-col rounded-lg border border-neutral-800 bg-neutral-900/60 p-6 transition hover:border-brand-accent/70"
+										class="flex h-full min-h-64 flex-col justify-between border-neutral-800 border-b p-6 transition-colors duration-150 hover:bg-neutral-900/60 focus-visible:outline-2 focus-visible:outline-brand-accent md:odd:border-r"
 										href={project.url}
 										rel="noopener"
 									>
-										<h2 class="text-xl font-semibold text-white">{project.name}</h2>
+										<div><h2 class="text-balance font-semibold text-white text-xl">{project.name}</h2>
 										{project.description && (
-											<p class="mt-3 text-neutral-300 leading-7">{project.description}</p>
+											<p class="mt-3 text-pretty text-neutral-400 leading-7">{project.description}</p>
 										)}
-										<div class="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-neutral-400 text-sm">
+										</div><div class="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-neutral-500 text-xs">
 											{project.language && (
 												<span class="inline-flex items-center gap-1.5">
 													<span class="size-2 rounded-full bg-brand-accent" aria-hidden="true" />
 													{project.language}
 												</span>
 											)}
-											<span aria-label={`${project.stars} stars`}>★ {project.stars}</span>
+											<span class="tabular-nums" aria-label={`${project.stars} stars`}>★ {project.stars}</span>
 											<span>Updated {formatUpdated(project.updatedAt)}</span>
 										</div>
 									</a>
@@ -76,6 +75,16 @@ const formatUpdated = (iso: string): string => updatedFormatter.format(new Date(
 						</ul>
 					)
 				}
+				{visibleProjects.length < projects.length && (
+					<div class="mt-10 flex flex-col gap-5 border-neutral-800 border-t pt-8 sm:flex-row sm:items-center sm:justify-between">
+						<p class="text-pretty text-neutral-400 text-sm">
+							Showing {visibleProjects.length} of {projects.length} public repositories.
+						</p>
+						<a class="font-semibold text-brand-accent hover:text-white" href="https://github.com/auditmos">
+							Explore the full organization <span aria-hidden="true">↗</span>
+						</a>
+					</div>
+				)}
 			</div>
 		</section>
 	</main>

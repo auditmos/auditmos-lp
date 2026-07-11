@@ -3,7 +3,8 @@ export { navigationItems } from "@/site/pages";
 export const site = {
 	name: "Auditmos",
 	defaultTitle: "Auditmos: Security, Software Development & R&D",
-	defaultDescription: "Security, software development, and R&D from Auditmos.",
+	defaultDescription:
+		"Senior software development, applied R&D, and security audits for teams that need clear, defensible technical outcomes.",
 	url: "https://auditmos.com",
 	contactEmail: "contact@auditmos.com",
 } as const;
