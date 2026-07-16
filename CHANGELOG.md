@@ -1,3 +1,10 @@
+# [1.7.0](https://github.com/auditmos/auditmos-lp/compare/v1.6.0...v1.7.0) (2026-07-16)
+
+
+### Features
+
+* reposition site around public-receipts brand ([b049d4f](https://github.com/auditmos/auditmos-lp/commit/b049d4ff035a943ff511c654136b07bd7b24d60c))
+
 # [1.6.0](https://github.com/auditmos/auditmos-lp/compare/v1.5.0...v1.6.0) (2026-07-11)
 
 
