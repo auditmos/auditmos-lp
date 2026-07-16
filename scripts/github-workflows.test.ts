@@ -12,8 +12,8 @@ describe("ci.yml", () => {
 		expect(ciWorkflow).toContain("pnpm types && pnpm lint && pnpm knip && pnpm test");
 	});
 
-	it("deploys staging on pushes to main after validation", () => {
+	it("validates pushes to main without deploying", () => {
 		expect(ciWorkflow).toContain("branches: [main]");
-		expect(ciWorkflow).toContain("wrangler deploy --env staging");
+		expect(ciWorkflow).not.toContain("wrangler deploy");
 	});
 });
