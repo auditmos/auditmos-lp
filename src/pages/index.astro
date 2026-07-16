@@ -1,30 +1,83 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import { site } from "@/brand/site";
 import { getClientDisplay, getFeaturedProjects } from "@/projects";
 import { homePage, servicePages } from "@/site/pages";
 import { getCollection } from "astro:content";
 
 export const prerender = true;
 
-const featuredProjects = getFeaturedProjects(await getCollection("projects"));
+const featuredProjects = getFeaturedProjects(await getCollection("projects"), 2);
+
+const proofItems = [
+	{
+		value: "24",
+		label: "Public audit reports since 2021",
+		href: site.auditsRepoUrl,
+		external: true,
+	},
+	{
+		value: "3,000+",
+		label: "GPU compute network architected, nine EU countries",
+		href: "/projects",
+		external: false,
+	},
+	{ value: "2", label: "Own products live", href: "/projects", external: false },
+	{ value: "7", label: "Open-source repositories", href: "/open-source", external: false },
+] as const;
+
+const workingPrinciples = [
+	{
+		number: "01",
+		name: "Public receipts",
+		detail:
+			"The audit reports are on GitHub — actual PDFs with findings, not logos on a slide. Judge the standard before we ever talk.",
+	},
+	{
+		number: "02",
+		name: "Built to be read",
+		detail:
+			"Code, architecture notes, and tradeoffs written for the next engineer who opens the repo — or the next auditor.",
+	},
+	{
+		number: "03",
+		name: "Handover is the deliverable",
+		detail:
+			"Documentation, tests, and deployment notes ship with the work. It still runs after I leave — that's the point.",
+	},
+	{
+		number: "04",
+		name: "One name on the work",
+		detail:
+			"No bench, no juniors behind the curtain. The person you brief is the person who builds, and I sign what I ship.",
+	},
+] as const;
 
 const serviceDetails = [
 	{
 		number: "01",
 		name: "Software development",
-		promise: "Build and repair systems without inheriting avoidable delivery risk.",
+		promise: "Senior delivery, built as if it will be audited — by someone who knows exactly what an auditor finds.",
 	},
 	{
 		number: "02",
-		name: "Applied R&D",
-		promise: "Turn an uncertain technical bet into evidence for the next decision.",
+		name: "Security audits",
+		promise: "Findings with impact, reproduction, and fixes — written to the same standard as the 24 public reports.",
 	},
 	{
 		number: "03",
-		name: "Security audits",
-		promise: "Find material risk and leave your team with a credible path to fix it.",
+		name: "Applied R&D",
+		promise: "Turn an uncertain technical bet into evidence for the next decision.",
 	},
 ] as const;
+
+interface Testimonial {
+	quote: string;
+	name: string;
+	role: string;
+}
+
+const testimonials: readonly Testimonial[] = [];
 ---
 
 <Layout title={homePage.title} description={homePage.description} path={homePage.path}>
@@ -33,34 +86,36 @@ const serviceDetails = [
 			<div class="mx-auto grid max-w-7xl lg:grid-cols-[1.45fr_0.55fr]">
 				<div class="px-5 py-16 sm:px-8 sm:py-24 lg:border-neutral-800 lg:border-r lg:py-32">
 					<p class="font-mono text-brand-accent text-xs uppercase sm:text-sm">
-						Independent technical partner · Tallinn, EU
+						Independent technical practice · Tallinn, EU
 					</p>
 					<h1 class="mt-7 max-w-5xl text-balance font-semibold text-5xl text-white leading-[1.02] sm:text-7xl lg:text-8xl">
-						Technical work that stands up to scrutiny.
+						Don’t take my word for it. Read the audits.
 					</h1>
 					<p class="mt-8 max-w-2xl text-pretty text-lg text-neutral-300 leading-8 sm:text-xl">
-						Auditmos helps teams build reliable software, validate uncertain ideas, and expose
-						security risk—then leaves the evidence needed to act with confidence.
+						Auditmos is the independent practice of {site.founder.name}. Since 2021 I’ve published
+						24 audit reports for anyone to read — and I build software the same way I audit it:
+						assuming someone like me will look at it later.
 					</p>
 					<div class="mt-10 flex flex-col gap-3 sm:flex-row">
 						<a
-							class="inline-flex items-center justify-center gap-2 rounded-sm bg-brand-accent px-5 py-3.5 font-semibold text-neutral-950 transition-colors duration-150 hover:bg-white focus-visible:outline-2 focus-visible:outline-brand-accent focus-visible:outline-offset-4"
-							href="/contact"
+							class="inline-flex items-center justify-center gap-2 rounded-sm bg-brand-accent px-5 py-3.5 font-semibold text-neutral-950 hover:bg-white"
+							href={site.auditsRepoUrl}
+							rel="noopener"
 						>
-							Discuss a project <span aria-hidden="true">↗</span>
+							Read the audits <span aria-hidden="true">↗</span>
 						</a>
 						<a
-							class="inline-flex items-center justify-center rounded-sm border border-neutral-700 px-5 py-3.5 font-semibold text-white transition-colors duration-150 hover:border-neutral-500 hover:bg-neutral-900 focus-visible:outline-2 focus-visible:outline-brand-accent focus-visible:outline-offset-4"
+							class="inline-flex items-center justify-center rounded-sm border border-neutral-700 px-5 py-3.5 font-semibold text-white hover:border-neutral-500 hover:bg-neutral-900"
 							href="/projects"
 						>
-							See selected work
+							See what I’ve shipped
 						</a>
 					</div>
 				</div>
 
 				<aside class="flex min-h-80 flex-col justify-between bg-neutral-900/40 p-5 sm:p-8 lg:min-h-0 lg:py-12">
 					<div class="flex items-start justify-between border-neutral-800 border-b pb-6">
-						<p class="font-mono text-neutral-500 text-xs uppercase">Auditmos / 2026</p>
+						<p class="font-mono text-neutral-500 text-xs uppercase">Auditmos / since 2021</p>
 						<span class="flex size-3 items-center justify-center" aria-hidden="true">
 							<span class="size-2 rounded-full bg-brand-accent"></span>
 						</span>
@@ -68,13 +123,39 @@ const serviceDetails = [
 					<div class="py-10 lg:py-0">
 						<p class="font-mono text-brand-accent text-7xl leading-none sm:text-8xl">A/</p>
 						<p class="mt-6 max-w-xs text-balance font-medium text-2xl text-white leading-snug">
-							Software. Research. Security.
+							Built as if it will be audited.
 						</p>
 					</div>
 					<p class="border-neutral-800 border-t pt-6 text-pretty text-neutral-400 text-sm leading-6">
-						Senior-led work for founders, technical leaders, research teams, and security buyers.
+						Senior, independent, accountable — one name on every deliverable.
 					</p>
 				</aside>
+			</div>
+		</section>
+
+		<section class="border-neutral-800 border-b" aria-label="Track record">
+			<div class="mx-auto grid max-w-7xl sm:grid-cols-2 lg:grid-cols-4">
+				{
+					proofItems.map((item, index) => (
+						<a
+							class:list={[
+								"group flex flex-col gap-3 border-neutral-800 px-5 py-8 hover:bg-neutral-900/50 sm:px-8",
+								index > 0 && "border-t sm:border-t-0",
+								index % 2 === 1 && "sm:border-l",
+								index > 1 && "sm:border-t lg:border-t-0",
+								index > 0 && "lg:border-l",
+							]}
+							href={item.href}
+							rel={item.external ? "noopener" : undefined}
+						>
+							<span class="font-mono text-4xl text-white tabular-nums sm:text-5xl">{item.value}</span>
+							<span class="text-pretty text-neutral-400 text-sm leading-6 group-hover:text-neutral-300">
+								{item.label}
+								{item.external && <span aria-hidden="true"> ↗</span>}
+							</span>
+						</a>
+					))
+				}
 			</div>
 		</section>
 
@@ -82,9 +163,37 @@ const serviceDetails = [
 			<div class="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-24">
 				<div class="grid gap-8 lg:grid-cols-[0.55fr_1.45fr] lg:gap-16">
 					<div>
-						<p class="font-mono text-brand-accent text-xs uppercase">Where we help</p>
+						<p class="font-mono text-brand-accent text-xs uppercase">How I work</p>
 						<h2 class="mt-4 max-w-sm text-balance font-semibold text-3xl text-white leading-tight sm:text-4xl">
-							Three capabilities. One standard of evidence.
+							Everything inspectable.
+						</h2>
+						<p class="mt-5 max-w-sm text-pretty text-neutral-400 leading-7">
+							Most contractors ask you to trust them. I’d rather you check.
+						</p>
+					</div>
+
+					<div class="border-neutral-800 border-t">
+						{
+							workingPrinciples.map((principle) => (
+								<article class="grid gap-4 border-neutral-800 border-b py-7 sm:grid-cols-[3rem_0.75fr_1.25fr] sm:px-4">
+									<span class="font-mono text-brand-accent text-xs">{principle.number}</span>
+									<h3 class="text-balance font-semibold text-white text-xl">{principle.name}</h3>
+									<p class="max-w-lg text-pretty text-neutral-400 leading-7">{principle.detail}</p>
+								</article>
+							))
+						}
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<section class="border-neutral-800 border-b">
+			<div class="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-24">
+				<div class="grid gap-8 lg:grid-cols-[0.55fr_1.45fr] lg:gap-16">
+					<div>
+						<p class="font-mono text-brand-accent text-xs uppercase">What I take on</p>
+						<h2 class="mt-4 max-w-sm text-balance font-semibold text-3xl text-white leading-tight sm:text-4xl">
+							Three ways in. One standard.
 						</h2>
 					</div>
 
@@ -96,7 +205,7 @@ const serviceDetails = [
 
 								return (
 									<a
-										class="group grid gap-4 border-neutral-800 border-b py-7 transition-colors duration-150 hover:bg-neutral-900/50 focus-visible:outline-2 focus-visible:outline-brand-accent sm:grid-cols-[3rem_0.75fr_1.25fr_auto] sm:items-center sm:px-4"
+										class="group grid gap-4 border-neutral-800 border-b py-7 hover:bg-neutral-900/50 sm:grid-cols-[3rem_0.75fr_1.25fr_auto] sm:items-center sm:px-4"
 										href={service.path}
 									>
 										<span class="font-mono text-brand-accent text-xs">{detail.number}</span>
@@ -116,7 +225,7 @@ const serviceDetails = [
 			<div class="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-24">
 				<div class="flex flex-col gap-5 border-neutral-800 border-b pb-8 sm:flex-row sm:items-end sm:justify-between">
 					<div>
-						<p class="font-mono text-brand-accent text-xs uppercase">Evidence, not claims</p>
+						<p class="font-mono text-brand-accent text-xs uppercase">Receipts</p>
 						<h2 class="mt-4 text-balance font-semibold text-3xl text-white sm:text-4xl">Selected work</h2>
 					</div>
 					<a class="font-medium text-neutral-300 text-sm hover:text-brand-accent" href="/projects">
@@ -129,7 +238,7 @@ const serviceDetails = [
 						featuredProjects.map((project, index) => (
 							<a
 								class:list={[
-									"group flex min-h-80 flex-col justify-between border-neutral-800 py-8 transition-colors duration-150 hover:bg-neutral-900/60 focus-visible:outline-2 focus-visible:outline-brand-accent sm:p-8",
+									"group flex min-h-80 flex-col justify-between border-neutral-800 py-8 hover:bg-neutral-900/60 sm:p-8",
 									index === 0 ? "md:border-r" : "border-t md:border-t-0",
 								]}
 								href={`/projects/${project.data.slug}`}
@@ -152,18 +261,87 @@ const serviceDetails = [
 			</div>
 		</section>
 
+		{
+			testimonials.length > 0 && (
+				<section class="border-neutral-800 border-b">
+					<div class="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-24">
+						<p class="font-mono text-brand-accent text-xs uppercase">In their words</p>
+						<div class="mt-8 grid gap-8 md:grid-cols-2">
+							{testimonials.map((testimonial) => (
+								<figure class="border-neutral-800 border-l-2 pl-6">
+									<blockquote class="text-pretty text-lg text-neutral-200 leading-8">
+										“{testimonial.quote}”
+									</blockquote>
+									<figcaption class="mt-4 text-neutral-500 text-sm">
+										{testimonial.name} · {testimonial.role}
+									</figcaption>
+								</figure>
+							))}
+						</div>
+					</div>
+				</section>
+			)
+		}
+
+		<section class="border-neutral-800 border-b">
+			<div class="mx-auto grid max-w-7xl gap-10 px-5 py-16 sm:px-8 sm:py-24 lg:grid-cols-[0.55fr_1.45fr] lg:gap-16">
+				<div>
+					<p class="font-mono text-brand-accent text-xs uppercase">Who you’re dealing with</p>
+					<p class="mt-6 font-mono text-7xl text-brand-accent leading-none">TK</p>
+				</div>
+				<div>
+					<h2 class="max-w-2xl text-balance font-semibold text-3xl text-white leading-tight sm:text-4xl">
+						{site.founder.name}
+					</h2>
+					<p class="mt-6 max-w-2xl text-pretty text-lg text-neutral-300 leading-8">
+						I audit systems teams can’t afford to get wrong, architect a 3,000+ GPU compute
+						network spanning nine European countries, and run two products of my own. When I
+						take your project, that’s the standard it gets built to — and there’s exactly one
+						name on the work.
+					</p>
+					<a
+						class="mt-7 inline-flex items-center gap-2 border-brand-accent border-b pb-1 font-semibold text-brand-accent hover:text-white"
+						href={site.founder.linkedInUrl}
+						rel="noopener"
+					>
+						Find me on LinkedIn <span aria-hidden="true">↗</span>
+					</a>
+				</div>
+			</div>
+		</section>
+
+		<section class="border-neutral-800 border-b bg-neutral-900/30">
+			<div class="mx-auto flex max-w-7xl flex-col gap-7 px-5 py-14 sm:px-8 sm:py-16 lg:flex-row lg:items-center lg:justify-between">
+				<div>
+					<p class="font-mono text-brand-accent text-xs uppercase">For agencies</p>
+					<h2 class="mt-4 max-w-2xl text-balance font-semibold text-2xl text-white sm:text-3xl">
+						The senior your client never worries about.
+					</h2>
+					<p class="mt-4 max-w-2xl text-pretty text-neutral-400 leading-7">
+						White-label or named — your client stays yours, in writing.
+					</p>
+				</div>
+				<a
+					class="inline-flex items-center gap-2 self-start font-semibold text-brand-accent hover:text-white lg:self-center"
+					href="/partners"
+				>
+					How partnering works <span aria-hidden="true">→</span>
+				</a>
+			</div>
+		</section>
+
 		<section>
 			<div class="mx-auto grid max-w-7xl gap-10 px-5 py-16 sm:px-8 sm:py-24 lg:grid-cols-[1fr_1.2fr] lg:items-end">
 				<div>
 					<p class="font-mono text-brand-accent text-xs uppercase">A useful first conversation</p>
 					<h2 class="mt-5 max-w-3xl text-balance font-semibold text-4xl text-white leading-tight sm:text-6xl">
-						Bring the hard part. We’ll make the next decision clearer.
+						Tell me what can’t go wrong.
 					</h2>
 				</div>
 				<div class="lg:pb-2">
 					<p class="max-w-xl text-pretty text-neutral-300 text-lg leading-8">
-						Share the system, uncertainty, or risk you are dealing with. Auditmos will respond
-						with the context needed for a focused scoping conversation.
+						Describe the system, the deadline, or the risk. I’ll reply with how I’d approach it —
+						and you can read the receipts before we ever talk.
 					</p>
 					<a
 						class="mt-7 inline-flex items-center gap-2 border-brand-accent border-b pb-1 font-semibold text-brand-accent hover:text-white"

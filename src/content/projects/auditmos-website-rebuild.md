@@ -11,8 +11,8 @@ stack:
   - "Astro"
   - "Cloudflare Workers"
   - "Tailwind CSS"
-featured: true
-order: 1
+featured: false
+order: 3
 links:
   - label: "Source"
     url: "https://github.com/auditmos/auditmos-lp"

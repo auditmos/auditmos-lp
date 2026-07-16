@@ -3,6 +3,8 @@
 **Status:** Draft · **Owner:** Tomasz Kowalczyk · **Drafted:** 2026-05-27
 **Discovery transcript:** see memory `auditmos-rebuild-discovery`
 
+> **Update 2026-07-16:** [`brand-strategy.md`](./brand-strategy.md) supersedes this PRD where they conflict — notably: hybrid founder presence (photo + first-person section) replaces "company-only, no bios"; primary audience is agencies (new `/partners` page); homepage hierarchy becomes dev-led with "audit-grade delivery" framing. See its § 8 for the full list.
+
 ## Problem Statement
 
 The current auditmos.com is a thin placeholder. The people who actually visit it are not cold leads from search — they are prospects who already heard of Auditmos through referrals, LinkedIn, conferences, or partner introductions, and they come to **verify the company is legitimate** before responding to an outreach or replying to a quote. They leave with almost nothing: no project history, no team or company info beyond a registration number, no signal about what Auditmos can do, and no easy way to read the same information in a non-browser context (LLM/agent ingestion). The current funnel cannot convert that warm-introduction traffic into a meeting, and there is no surface for SEO long-tail capture on the three core service categories. Lead generation is not the bottleneck — **trust and substance are.**

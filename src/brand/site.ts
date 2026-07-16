@@ -2,11 +2,16 @@ export { navigationItems } from "@/site/pages";
 
 export const site = {
 	name: "Auditmos",
-	defaultTitle: "Auditmos: Security, Software Development & R&D",
+	defaultTitle: "Auditmos: Software Development, Security Audits & R&D",
 	defaultDescription:
-		"Senior software development, applied R&D, and security audits for teams that need clear, defensible technical outcomes.",
+		"The independent technical practice of Tomasz Kowalczyk — senior software delivery, security audits with 24 public reports, and applied R&D for EU teams and agencies.",
 	url: "https://auditmos.com",
 	contactEmail: "contact@auditmos.com",
+	auditsRepoUrl: "https://github.com/auditmos/audits",
+	founder: {
+		name: "Tomasz Kowalczyk",
+		linkedInUrl: "https://www.linkedin.com/in/kowalczykt/",
+	},
 } as const;
 
 export const brand = {
@@ -40,6 +45,12 @@ export const organizationJsonLd = {
 	url: site.url,
 	identifier: legalEntity.registration,
 	vatID: legalEntity.vat,
+	sameAs: ["https://github.com/auditmos", site.founder.linkedInUrl],
+	founder: {
+		"@type": "Person",
+		name: site.founder.name,
+		sameAs: site.founder.linkedInUrl,
+	},
 	address: {
 		"@type": "PostalAddress",
 		streetAddress: "Narva mnt 13-27",

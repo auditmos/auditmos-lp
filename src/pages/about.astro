@@ -49,6 +49,28 @@ export const prerender = true;
 			</div>
 		</section>
 
+		<section class="border-neutral-800 border-b">
+			<div class="mx-auto grid max-w-7xl gap-10 px-5 py-16 sm:px-8 sm:py-24 lg:grid-cols-[0.6fr_1.4fr] lg:gap-20">
+				<div>
+					<p class="font-mono text-brand-accent text-xs uppercase">Who runs it</p>
+					<h2 class="mt-4 text-balance font-semibold text-3xl text-white sm:text-4xl">One name on the work.</h2>
+				</div>
+				<div class="border-neutral-800 border-t pt-7">
+					<p class="max-w-2xl text-pretty text-lg text-neutral-300 leading-8">
+						Auditmos is the practice of {site.founder.name}. The person you brief is the person
+						who does the work — across delivery, audits, and research.
+					</p>
+					<a
+						class="mt-6 inline-flex items-center gap-2 border-brand-accent border-b pb-1 font-semibold text-brand-accent hover:text-white"
+						href={site.founder.linkedInUrl}
+						rel="noopener"
+					>
+						Find me on LinkedIn <span aria-hidden="true">↗</span>
+					</a>
+				</div>
+			</div>
+		</section>
+
 		<section class="bg-neutral-900/30">
 			<div class="mx-auto grid max-w-7xl gap-10 px-5 py-16 sm:px-8 sm:py-24 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
 				<div>

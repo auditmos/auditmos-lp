@@ -21,7 +21,7 @@ import {
 describe("site identity", () => {
 	it("declares the Auditmos brand tokens", () => {
 		expect(site.name).toBe("Auditmos");
-		expect(site.defaultTitle).toBe("Auditmos: Security, Software Development & R&D");
+		expect(site.defaultTitle).toBe("Auditmos: Software Development, Security Audits & R&D");
 		expect(brand.accentHex).toBe("#04d9ff");
 		expect(brand.fontSans).toContain("system-ui");
 	});

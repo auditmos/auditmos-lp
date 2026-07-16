@@ -12,8 +12,8 @@ describe("Astro static source contract", () => {
 		expect(homeSource).toContain("export const prerender = true");
 	});
 
-	it("renders the Phase 2 home page through the shared layout contract", () => {
-		expect(homeSource).toContain("Technical work that stands up to scrutiny");
+	it("renders the home page through the shared layout contract", () => {
+		expect(homeSource).toContain("Read the audits.");
 		expect(layoutSource).toContain("legalEntity");
 		expect(layoutSource).toContain("navigationItems");
 	});

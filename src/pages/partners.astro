@@ -1,0 +1,174 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { site } from "@/brand/site";
+import { partnersPage } from "@/site/pages";
+
+export const prerender = true;
+
+const dealTerms = [
+	{
+		number: "01",
+		name: "Your client stays yours",
+		detail:
+			"No pitching, no poaching, no side deals with your client — and I'm happy to put that in writing before we start.",
+	},
+	{
+		number: "02",
+		name: "White-label or named",
+		detail:
+			"Your brand on the deliverable with me invisible, or openly introduced as the external senior. Your call, per engagement.",
+	},
+	{
+		number: "03",
+		name: "Senior only",
+		detail:
+			"The person you brief is the person who builds. There is no bench, no substitution, no juniors behind the curtain.",
+	},
+	{
+		number: "04",
+		name: "A paper trail by default",
+		detail:
+			"Architecture notes, tests, and deployment documentation ship with the work — artifacts your client can inspect.",
+	},
+	{
+		number: "05",
+		name: "Verifiable in advance",
+		detail:
+			"24 of my audit reports are public on GitHub. Read them before you ever put my work in front of a client.",
+	},
+] as const;
+
+const engagementShapes = [
+	{
+		name: "Scoped delivery",
+		detail: "A feature, integration, or system built end to end and handed over documented.",
+	},
+	{
+		name: "Rescue & stabilization",
+		detail: "A slipping or fragile project brought back to predictable before it costs you the client.",
+	},
+	{
+		name: "Pre-delivery review",
+		detail: "I audit the work before your client sees it — findings first, awkward questions never.",
+	},
+	{
+		name: "Security audits, resold",
+		detail: "Audit capacity under your engagement, reported to the same standard as the public reports.",
+	},
+] as const;
+
+interface Testimonial {
+	quote: string;
+	name: string;
+	role: string;
+}
+
+const testimonials: readonly Testimonial[] = [];
+---
+
+<Layout title={partnersPage.title} description={partnersPage.description} path={partnersPage.path}>
+	<main>
+		<section class="border-neutral-800 border-b">
+			<div class="mx-auto grid max-w-7xl gap-10 px-5 py-16 sm:px-8 sm:py-24 lg:grid-cols-[1.3fr_0.7fr] lg:items-end lg:py-28">
+				<div>
+					<p class="font-mono text-brand-accent text-xs uppercase">For agencies &amp; consultancies</p>
+					<h1 class="mt-7 max-w-5xl text-balance font-semibold text-5xl text-white leading-[1.03] sm:text-7xl">
+						Put me in front of your client. Keep your name on the work.
+					</h1>
+				</div>
+				<p class="max-w-xl text-pretty text-lg text-neutral-300 leading-8">
+					Subcontracting senior work is a reputational bet: your name is on the deliverable,
+					someone else's hands are on the keyboard. Here is how I make that bet safe.
+				</p>
+			</div>
+		</section>
+
+		<section class="border-neutral-800 border-b">
+			<div class="mx-auto grid max-w-7xl gap-12 px-5 py-16 sm:px-8 sm:py-24 lg:grid-cols-[0.6fr_1.4fr] lg:gap-20">
+				<div>
+					<p class="font-mono text-brand-accent text-xs uppercase">The deal</p>
+					<h2 class="mt-4 max-w-md text-balance font-semibold text-3xl text-white sm:text-4xl">
+						Five terms, stated up front.
+					</h2>
+				</div>
+				<div class="border-neutral-800 border-t">
+					{
+						dealTerms.map((term) => (
+							<article class="grid gap-4 border-neutral-800 border-b py-7 sm:grid-cols-[3rem_0.7fr_1.3fr] sm:px-4">
+								<span class="font-mono text-brand-accent text-xs">{term.number}</span>
+								<h3 class="text-balance font-semibold text-white text-xl">{term.name}</h3>
+								<p class="max-w-xl text-pretty text-neutral-400 leading-7">{term.detail}</p>
+							</article>
+						))
+					}
+				</div>
+			</div>
+		</section>
+
+		<section class="border-neutral-800 border-b bg-neutral-900/30">
+			<div class="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-24">
+				<div class="flex flex-col gap-5 border-neutral-800 border-b pb-8 sm:flex-row sm:items-end sm:justify-between">
+					<div>
+						<p class="font-mono text-brand-accent text-xs uppercase">Engagement shapes</p>
+						<h2 class="mt-4 text-balance font-semibold text-3xl text-white sm:text-4xl">
+							Four ways agencies use me.
+						</h2>
+					</div>
+					<a class="font-medium text-neutral-300 text-sm hover:text-brand-accent" href={site.auditsRepoUrl} rel="noopener">
+						Read the public audit reports <span aria-hidden="true">↗</span>
+					</a>
+				</div>
+				<div class="grid sm:grid-cols-2">
+					{
+						engagementShapes.map((shape, index) => (
+							<article
+								class:list={[
+									"border-neutral-800 py-8 sm:p-8",
+									index > 0 && "border-t sm:border-t-0",
+									index % 2 === 1 && "sm:border-l",
+									index > 1 && "sm:border-t",
+								]}
+							>
+								<h3 class="text-balance font-semibold text-white text-xl sm:text-2xl">{shape.name}</h3>
+								<p class="mt-4 max-w-xl text-pretty text-neutral-400 leading-7">{shape.detail}</p>
+							</article>
+						))
+					}
+				</div>
+			</div>
+		</section>
+
+		{
+			testimonials.length > 0 && (
+				<section class="border-neutral-800 border-b">
+					<div class="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-24">
+						<p class="font-mono text-brand-accent text-xs uppercase">From agency partners</p>
+						<div class="mt-8 grid gap-8 md:grid-cols-2">
+							{testimonials.map((testimonial) => (
+								<figure class="border-neutral-800 border-l-2 pl-6">
+									<blockquote class="text-pretty text-lg text-neutral-200 leading-8">
+										“{testimonial.quote}”
+									</blockquote>
+									<figcaption class="mt-4 text-neutral-500 text-sm">
+										{testimonial.name} · {testimonial.role}
+									</figcaption>
+								</figure>
+							))}
+						</div>
+					</div>
+				</section>
+			)
+		}
+
+		<section>
+			<div class="mx-auto flex max-w-7xl flex-col gap-7 px-5 py-16 sm:px-8 sm:py-20 lg:flex-row lg:items-center lg:justify-between">
+				<h2 class="max-w-3xl text-balance font-semibold text-3xl text-white sm:text-5xl">
+					Tell me about the client work you can't risk.
+				</h2>
+				<a class="inline-flex items-center gap-2 font-semibold text-brand-accent hover:text-white" href="/contact">
+					Start a conversation <span aria-hidden="true">→</span>
+				</a>
+			</div>
+		</section>
+	</main>
+</Layout>

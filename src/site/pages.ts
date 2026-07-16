@@ -40,9 +40,9 @@ const organizationId = `${siteUrl}/#organization`;
 
 export const homePage = {
 	path: "/",
-	title: "Auditmos: Security, Software Development & R&D",
+	title: "Auditmos: Software Development, Security Audits & R&D",
 	description:
-		"Senior software development, applied R&D, and security audits for teams that need clear, defensible technical outcomes.",
+		"The independent technical practice of Tomasz Kowalczyk — senior software delivery, security audits with 24 public reports, and applied R&D for EU teams and agencies.",
 } as const satisfies SitePage;
 
 export const servicePages = [
@@ -68,27 +68,6 @@ export const servicePages = [
 		},
 	},
 	{
-		path: "/r-and-d",
-		title: "R&D Services | Auditmos",
-		description:
-			"Applied research and development for technical validation, prototypes, and grant work.",
-		og: {
-			title: "R&D Services | Auditmos",
-			description:
-				"Applied research and development for technical validation, prototypes, and grant work.",
-		},
-		jsonLd: {
-			"@context": "https://schema.org",
-			"@type": "Service",
-			name: "R&D services",
-			description:
-				"Applied research and development for technical validation, prototypes, and grant work.",
-			url: `${siteUrl}/r-and-d`,
-			provider: { "@id": organizationId },
-			areaServed: "European Union",
-		},
-	},
-	{
 		path: "/security-audits",
 		title: "Security Audits | Auditmos",
 		description:
@@ -105,6 +84,27 @@ export const servicePages = [
 			description:
 				"Security audits for teams that need actionable findings and procurement-ready reporting.",
 			url: `${siteUrl}/security-audits`,
+			provider: { "@id": organizationId },
+			areaServed: "European Union",
+		},
+	},
+	{
+		path: "/r-and-d",
+		title: "R&D Services | Auditmos",
+		description:
+			"Applied research and development for technical validation, prototypes, and grant work.",
+		og: {
+			title: "R&D Services | Auditmos",
+			description:
+				"Applied research and development for technical validation, prototypes, and grant work.",
+		},
+		jsonLd: {
+			"@context": "https://schema.org",
+			"@type": "Service",
+			name: "R&D services",
+			description:
+				"Applied research and development for technical validation, prototypes, and grant work.",
+			url: `${siteUrl}/r-and-d`,
 			provider: { "@id": organizationId },
 			areaServed: "European Union",
 		},
@@ -181,6 +181,13 @@ export const contactPage = {
 	description: "Contact Auditmos about software development, R&D, or security audit work.",
 } as const satisfies SitePage;
 
+export const partnersPage = {
+	path: "/partners",
+	title: "Agency Partners | Auditmos",
+	description:
+		"How agencies and consultancies subcontract senior delivery, rescue, pre-delivery review, and security audit work to Auditmos — white-label or named.",
+} as const satisfies SitePage;
+
 export const phaseTwoPages = [
 	homePage,
 	...servicePages,
@@ -193,12 +200,14 @@ export const staticPages = [
 	projectsIndexPage,
 	openSourcePage,
 	contactPage,
+	partnersPage,
 ] as const satisfies readonly SitePage[];
 
 export const navigationItems = [
 	{ label: "Software", href: "/software-development" },
-	{ label: "R&D", href: "/r-and-d" },
 	{ label: "Security", href: "/security-audits" },
+	{ label: "R&D", href: "/r-and-d" },
 	{ label: "Work", href: "/projects" },
+	{ label: "Partners", href: "/partners" },
 	{ label: "About", href: "/about" },
 ] as const;

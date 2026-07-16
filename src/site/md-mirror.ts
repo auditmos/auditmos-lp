@@ -16,17 +16,26 @@ type StaticPagePath = (typeof staticPages)[number]["path"];
 
 const staticMarkdownBodyByPath = {
 	"/": `
-Auditmos helps teams build reliable software, validate uncertain ideas, and expose security risk—then leaves the evidence needed to act with confidence.
+Don't take my word for it. Read the audits.
+
+Auditmos is the independent technical practice of Tomasz Kowalczyk. Since 2021 it has published 24 audit reports for anyone to read — and builds software the same way it audits it: assuming someone will inspect the work later.
+
+## Proof
+
+- 24 public audit reports since 2021: https://github.com/auditmos/audits
+- Software architecture for a 3,000+ GPU compute network spanning nine European countries.
+- 2 own products live.
+- 7 open-source repositories: https://github.com/auditmos
 
 ## Services
 
-- Software development for reliable systems, internal tools, integrations, and product delivery.
-- R&D services for technical validation, prototypes, feasibility studies, and grant work.
-- Security audits for actionable findings, defensible severity, and procurement-ready reporting.
+- Software development — senior delivery built as if it will be audited, because the author knows exactly what an auditor finds.
+- Security audits — findings with impact, reproduction, and remediation, written to the same standard as the public reports.
+- R&D services — technical validation, prototypes, feasibility studies, and grant work that turn uncertain bets into evidence.
 
-## Working standard
+## For agencies
 
-The work is senior-led, direct, and written to survive handoff. Technical output is designed to support the next decision inside engineering, leadership, procurement, or external review.
+White-label or named senior capacity for agencies and consultancies. The client stays the agency's — in writing. See /partners.md.
 `,
 	"/software-development": `
 Build reliable software without turning every delivery risk into your team's problem.
@@ -93,6 +102,8 @@ Find exploitable risk before buyers, attackers, or regulators do.
 
 Auditmos security audits focus on practical findings, defensible severity, and reports that help technical teams fix issues while giving business stakeholders the evidence they need.
 
+Since 2021, 24 audit reports have been published in public at https://github.com/auditmos/audits — read them to judge the reporting standard before any engagement. Client reports stay confidential unless the client chooses otherwise; they are simply written as if they could be public.
+
 ## Best for
 
 - CISOs and CTOs preparing for procurement, compliance review, or a high-stakes launch.
@@ -122,6 +133,10 @@ Reports are structured for technical owners and procurement readers, with concis
 Auditmos is a small, independent technical company for software delivery, applied R&D, and security work where judgment, evidence, and clear ownership matter.
 
 The company works with teams that already have a real problem to solve: shipping a system, validating an uncertain technical path, or getting clear evidence about security risk before a business decision.
+
+## Who runs it
+
+Auditmos is the practice of Tomasz Kowalczyk (https://www.linkedin.com/in/kowalczykt/). The person you brief is the person who does the work, and there is one name on every deliverable.
 
 ## Substance first
 
@@ -167,6 +182,30 @@ Use this page to contact Auditmos about software development, R&D, or security a
 The contact form asks for name, email address, and message, then protects the submission with Cloudflare Turnstile. Successful submissions send a notification to Auditmos and a confirmation email to the submitter.
 
 If the form is unavailable, email contact@auditmos.com directly.
+`,
+	"/partners": `
+Put Auditmos in front of your client. Keep your name on the work.
+
+Subcontracting senior work is a reputational bet: the agency's name is on the deliverable, but someone else's hands are on the keyboard. This page describes how Auditmos makes that bet safe for agencies and consultancies.
+
+## The deal
+
+- Your client stays yours. No pitching, no poaching, no side deals — and it can be put in writing.
+- White-label or named. The agency's brand on the deliverable with Auditmos invisible, or openly introduced as the external senior. The agency's call.
+- Senior only. The person you brief is the person who builds. There is no bench behind the curtain.
+- A paper trail by default. Architecture notes, tests, and deployment documentation the end client can inspect.
+- Verifiable in advance. 24 audit reports are public at https://github.com/auditmos/audits — read them before putting Auditmos in a deck.
+
+## Engagement shapes
+
+- Scoped delivery: a feature, integration, or system built end to end and handed over documented.
+- Rescue and stabilization: a slipping or fragile project brought back to predictable.
+- Pre-delivery review: the work is audited before the end client sees it.
+- Security audits under your engagement: audit capacity agencies can resell, reported to the public-report standard.
+
+## Start
+
+Describe the client work you can't risk: /contact.md — or email contact@auditmos.com.
 `,
 	"/privacy": privacyPage.sections
 		.map((section) => [`## ${section.heading}`, "", ...section.body].join("\n\n"))

@@ -75,7 +75,7 @@ const footerServiceLinks = navigationItems.slice(0, 3);
 									<li>
 										<a
 											class:list={[
-												"rounded-sm py-2 transition-colors duration-150 hover:text-white focus-visible:outline-2 focus-visible:outline-brand-accent focus-visible:outline-offset-4",
+												"rounded-sm py-2 hover:text-white",
 												path === item.href && "text-brand-accent",
 											]}
 											href={item.href}
@@ -88,7 +88,7 @@ const footerServiceLinks = navigationItems.slice(0, 3);
 						</ul>
 					</nav>
 					<a
-						class="inline-flex items-center gap-2 rounded-sm bg-brand-accent px-4 py-2.5 font-semibold text-neutral-950 text-sm transition-colors duration-150 hover:bg-white focus-visible:outline-2 focus-visible:outline-brand-accent focus-visible:outline-offset-4"
+						class="inline-flex items-center gap-2 rounded-sm bg-brand-accent px-4 py-2.5 font-semibold text-neutral-950 text-sm hover:bg-white"
 						href="/contact"
 					>
 						Start a conversation <span aria-hidden="true">↗</span>
@@ -96,7 +96,7 @@ const footerServiceLinks = navigationItems.slice(0, 3);
 				</div>
 
 				<details class="group relative lg:hidden">
-					<summary class="flex cursor-pointer list-none items-center gap-2 rounded-sm border border-neutral-700 px-3 py-2 text-sm text-white marker:content-none focus-visible:outline-2 focus-visible:outline-brand-accent focus-visible:outline-offset-4">
+					<summary class="flex cursor-pointer list-none items-center gap-2 rounded-sm border border-neutral-700 px-3 py-2 text-sm text-white marker:content-none">
 						Menu
 						<svg class="size-4" aria-hidden="true" viewBox="0 0 16 16" fill="none">
 							<path d="M2 5h12M2 11h12" stroke="currentColor" stroke-width="1.5" />
@@ -112,7 +112,7 @@ const footerServiceLinks = navigationItems.slice(0, 3);
 								<li>
 									<a
 										class:list={[
-											"block rounded-sm px-3 py-3 text-neutral-200 hover:bg-neutral-900 hover:text-white focus-visible:outline-2 focus-visible:outline-brand-accent",
+											"block rounded-sm px-3 py-3 text-neutral-200 hover:bg-neutral-900 hover:text-white",
 											path === item.href && "text-brand-accent",
 										]}
 										href={item.href}
@@ -140,8 +140,8 @@ const footerServiceLinks = navigationItems.slice(0, 3);
 				<div>
 					<img class="h-auto w-36" src={fullLogoUrl} alt="Auditmos" />
 					<p class="mt-5 max-w-md text-pretty text-neutral-400 text-sm leading-6">
-						Senior software development, applied R&D, and security audits for teams that need
-						technical outcomes they can defend.
+						The independent technical practice of Tomasz Kowalczyk — senior software delivery,
+						security audits with public reports, and applied R&D.
 					</p>
 				</div>
 				<div>
@@ -155,6 +155,7 @@ const footerServiceLinks = navigationItems.slice(0, 3);
 					<ul class="mt-4 grid gap-3 text-neutral-300 text-sm">
 						<li><a class="hover:text-brand-accent" href="/projects">Selected work</a></li>
 						<li><a class="hover:text-brand-accent" href="/open-source">Open source</a></li>
+						<li><a class="hover:text-brand-accent" href="/partners">Agency partners</a></li>
 						<li><a class="hover:text-brand-accent" href="/about">Company</a></li>
 						<li><a class="hover:text-brand-accent" href="/privacy">Privacy</a></li>
 					</ul>
