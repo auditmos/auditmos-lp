@@ -1,19 +1,67 @@
 [
   {
-    "name": "auditmos-lp",
-    "description": "auditmos.com landing page — static-first Astro 6 on Cloudflare Workers, with MD-mirrored content for AI agents.",
-    "url": "https://github.com/auditmos/auditmos-lp",
-    "stars": 0,
-    "language": "TypeScript",
-    "updatedAt": "2026-07-10T12:15:07Z"
-  },
-  {
     "name": "ogsfrompoly-lp",
     "description": "Public landing page for ogsfrompoly.com — Polymarket skilled-trader detection: weekly strategy track record + monthly project P&L. Astro on Cloudflare Workers.",
     "url": "https://github.com/auditmos/ogsfrompoly-lp",
     "stars": 0,
     "language": "TypeScript",
-    "updatedAt": "2026-07-10T07:08:47Z"
+    "updatedAt": "2026-07-20T07:28:53Z"
+  },
+  {
+    "name": "astro-on-cf",
+    "description": "Content-first SSR template — Astro 6 on Cloudflare Workers, Tailwind v4, native API endpoints, optional Neon Postgres + Drizzle data layer.",
+    "url": "https://github.com/auditmos/astro-on-cf",
+    "stars": 0,
+    "language": "TypeScript",
+    "updatedAt": "2026-07-20T07:22:22Z"
+  },
+  {
+    "name": "signmos",
+    "description": "No-account e-signature pilot for PDF upload, signature/date fields, magic-link signing, change requests, final PDFs, and agent-ready lifecycle APIs.",
+    "url": "https://github.com/auditmos/signmos",
+    "stars": 0,
+    "language": "TypeScript",
+    "updatedAt": "2026-07-20T07:21:26Z"
+  },
+  {
+    "name": "tstack-on-cf-onchain",
+    "description": "Full-stack on-chain dApp template — TanStack Start + Hono on Cloudflare Workers, Solidity (Foundry), wagmi/viem, Neon Postgres + Drizzle, shadcn/ui.",
+    "url": "https://github.com/auditmos/tstack-on-cf-onchain",
+    "stars": 0,
+    "language": "TypeScript",
+    "updatedAt": "2026-07-20T07:20:39Z"
+  },
+  {
+    "name": "saas-on-cf",
+    "description": "Multi-app SaaS monorepo — TanStack Start frontend + Hono API on Cloudflare Workers, Better Auth, Neon Postgres + Drizzle, shadcn/ui, service bindings.",
+    "url": "https://github.com/auditmos/saas-on-cf",
+    "stars": 13,
+    "language": "TypeScript",
+    "updatedAt": "2026-07-20T07:20:01Z"
+  },
+  {
+    "name": "hono-on-cf",
+    "description": "Hono REST API monorepo template on Cloudflare Workers — Better Auth, Neon Postgres + Drizzle, scaffolding for durable objects, queues and workflows.",
+    "url": "https://github.com/auditmos/hono-on-cf",
+    "stars": 0,
+    "language": "TypeScript",
+    "updatedAt": "2026-07-20T07:19:11Z"
+  },
+  {
+    "name": "auditmos-lp",
+    "description": "auditmos.com landing page — static-first Astro 6 on Cloudflare Workers, with MD-mirrored content for AI agents.",
+    "url": "https://github.com/auditmos/auditmos-lp",
+    "stars": 0,
+    "language": "TypeScript",
+    "updatedAt": "2026-07-16T09:01:42Z"
+  },
+  {
+    "name": "skills",
+    "description": "Public repository for Agent Skills from Auditmos",
+    "url": "https://github.com/auditmos/skills",
+    "stars": 13,
+    "language": null,
+    "updatedAt": "2026-07-12T18:35:03Z"
   },
   {
     "name": "brainstormer",
@@ -22,54 +70,6 @@
     "stars": 1,
     "language": "Shell",
     "updatedAt": "2026-07-09T08:36:09Z"
-  },
-  {
-    "name": "tstack-on-cf-onchain",
-    "description": "Full-stack on-chain dApp template — TanStack Start + Hono on Cloudflare Workers, Solidity (Foundry), wagmi/viem, Neon Postgres + Drizzle, shadcn/ui.",
-    "url": "https://github.com/auditmos/tstack-on-cf-onchain",
-    "stars": 0,
-    "language": "TypeScript",
-    "updatedAt": "2026-07-08T12:03:08Z"
-  },
-  {
-    "name": "saas-on-cf",
-    "description": "Multi-app SaaS monorepo — TanStack Start frontend + Hono API on Cloudflare Workers, Better Auth, Neon Postgres + Drizzle, shadcn/ui, service bindings.",
-    "url": "https://github.com/auditmos/saas-on-cf",
-    "stars": 12,
-    "language": "TypeScript",
-    "updatedAt": "2026-07-08T11:56:15Z"
-  },
-  {
-    "name": "astro-on-cf",
-    "description": "Content-first SSR template — Astro 6 on Cloudflare Workers, Tailwind v4, native API endpoints, optional Neon Postgres + Drizzle data layer.",
-    "url": "https://github.com/auditmos/astro-on-cf",
-    "stars": 0,
-    "language": "TypeScript",
-    "updatedAt": "2026-07-08T11:40:35Z"
-  },
-  {
-    "name": "hono-on-cf",
-    "description": "Hono REST API monorepo template on Cloudflare Workers — Better Auth, Neon Postgres + Drizzle, scaffolding for durable objects, queues and workflows.",
-    "url": "https://github.com/auditmos/hono-on-cf",
-    "stars": 0,
-    "language": "TypeScript",
-    "updatedAt": "2026-07-08T11:37:25Z"
-  },
-  {
-    "name": "skills",
-    "description": "Public repository for Agent Skills from Auditmos",
-    "url": "https://github.com/auditmos/skills",
-    "stars": 12,
-    "language": null,
-    "updatedAt": "2026-07-06T07:19:09Z"
-  },
-  {
-    "name": "signmos",
-    "description": "No-account e-signature pilot for PDF upload, signature/date fields, magic-link signing, change requests, final PDFs, and agent-ready lifecycle APIs.",
-    "url": "https://github.com/auditmos/signmos",
-    "stars": 0,
-    "language": "TypeScript",
-    "updatedAt": "2026-05-25T18:16:36Z"
   },
   {
     "name": "devit",
