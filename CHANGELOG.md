@@ -1,3 +1,10 @@
+# [1.8.0](https://github.com/auditmos/auditmos-lp/compare/v1.7.1...v1.8.0) (2026-08-03)
+
+
+### Features
+
+* **oss:** curate the open-source list explicitly ([2f21fd5](https://github.com/auditmos/auditmos-lp/commit/2f21fd5d9d27fd54e2a5cbfa60ae26e1a4270eb2))
+
 ## [1.7.1](https://github.com/auditmos/auditmos-lp/compare/v1.7.0...v1.7.1) (2026-08-03)
 
 
