@@ -1,3 +1,5 @@
+import { auditReports } from "@/audits/reports";
+
 export interface SitePage {
 	path: "/" | `/${string}`;
 	title: string;
@@ -41,8 +43,7 @@ const organizationId = `${siteUrl}/#organization`;
 export const homePage = {
 	path: "/",
 	title: "Auditmos: Software Development, Security Audits & R&D",
-	description:
-		"The independent technical practice of Tomasz Kowalczyk — senior software delivery, security audits with 24 public reports, and applied R&D for EU teams and agencies.",
+	description: `The independent technical practice of Tomasz Kowalczyk — senior software delivery, security audits with ${auditReports.count} public reports, and applied R&D for EU teams and agencies.`,
 } as const satisfies SitePage;
 
 export const servicePages = [

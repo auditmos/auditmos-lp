@@ -1,10 +1,11 @@
+import { auditReports } from "@/audits/reports";
+
 export { navigationItems } from "@/site/pages";
 
 export const site = {
 	name: "Auditmos",
 	defaultTitle: "Auditmos: Software Development, Security Audits & R&D",
-	defaultDescription:
-		"The independent technical practice of Tomasz Kowalczyk — senior software delivery, security audits with 24 public reports, and applied R&D for EU teams and agencies.",
+	defaultDescription: `The independent technical practice of Tomasz Kowalczyk — senior software delivery, security audits with ${auditReports.count} public reports, and applied R&D for EU teams and agencies.`,
 	url: "https://auditmos.com",
 	contactEmail: "contact@auditmos.com",
 	auditsRepoUrl: "https://github.com/auditmos/audits",

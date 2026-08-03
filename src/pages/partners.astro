@@ -1,5 +1,6 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import { auditReports } from "@/audits/reports";
 import { site } from "@/brand/site";
 import { partnersPage } from "@/site/pages";
 
@@ -33,8 +34,7 @@ const dealTerms = [
 	{
 		number: "05",
 		name: "Verifiable in advance",
-		detail:
-			"24 of my audit reports are public on GitHub. Read them before you ever put my work in front of a client.",
+		detail: `${auditReports.count} of my audit reports are public on GitHub. Read them before you ever put my work in front of a client.`,
 	},
 ] as const;
 

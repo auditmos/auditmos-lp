@@ -1,3 +1,4 @@
+import { auditReports } from "@/audits/reports";
 import { site } from "@/brand/site";
 import { ossProjects } from "@/oss/projects";
 import type { ProjectData } from "@/projects/schema";
@@ -19,11 +20,11 @@ const staticMarkdownBodyByPath = {
 	"/": `
 Don't take my word for it. Read the audits.
 
-Auditmos is the independent technical practice of Tomasz Kowalczyk. Since 2021 it has published 24 audit reports for anyone to read — and builds software the same way it audits it: assuming someone will inspect the work later.
+Auditmos is the independent technical practice of Tomasz Kowalczyk. Since ${auditReports.earliestYear} it has published ${auditReports.count} audit reports for anyone to read — and builds software the same way it audits it: assuming someone will inspect the work later.
 
 ## Proof
 
-- 24 public audit reports since 2021: https://github.com/auditmos/audits
+- ${auditReports.count} public audit reports since ${auditReports.earliestYear}: https://github.com/auditmos/audits
 - Software architecture for a 3,000+ GPU compute network spanning nine European countries.
 - 2 own products live.
 - ${ossProjects.length} open-source repositories: https://github.com/auditmos
@@ -103,7 +104,7 @@ Find exploitable risk before buyers, attackers, or regulators do.
 
 Auditmos security audits focus on practical findings, defensible severity, and reports that help technical teams fix issues while giving business stakeholders the evidence they need.
 
-Since 2021, 24 audit reports have been published in public at https://github.com/auditmos/audits — read them to judge the reporting standard before any engagement. Client reports stay confidential unless the client chooses otherwise; they are simply written as if they could be public.
+Since ${auditReports.earliestYear}, ${auditReports.count} audit reports have been published in public at https://github.com/auditmos/audits — read them to judge the reporting standard before any engagement. Client reports stay confidential unless the client chooses otherwise; they are simply written as if they could be public.
 
 ## Best for
 
@@ -195,7 +196,7 @@ Subcontracting senior work is a reputational bet: the agency's name is on the de
 - White-label or named. The agency's brand on the deliverable with Auditmos invisible, or openly introduced as the external senior. The agency's call.
 - Senior only. The person you brief is the person who builds. There is no bench behind the curtain.
 - A paper trail by default. Architecture notes, tests, and deployment documentation the end client can inspect.
-- Verifiable in advance. 24 audit reports are public at https://github.com/auditmos/audits — read them before putting Auditmos in a deck.
+- Verifiable in advance. ${auditReports.count} audit reports are public at https://github.com/auditmos/audits — read them before putting Auditmos in a deck.
 
 ## Engagement shapes
 

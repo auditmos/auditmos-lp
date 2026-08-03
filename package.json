@@ -13,7 +13,7 @@
 		"new-project": "tsx scripts/new-project.ts",
 		"dev": "astro dev --port 3000",
 		"oss:refresh": "tsx scripts/refresh-oss-cache.ts",
-		"build": "pnpm run oss:refresh && astro build",
+		"build": "pnpm run oss:refresh && pnpm run audits:refresh && astro build",
 		"preview": "astro preview",
 		"astro": "astro",
 		"deploy": "pnpm run build && wrangler deploy",
@@ -31,7 +31,8 @@
 		"deps": "taze -r",
 		"deps:update": "taze -r -w",
 		"deps:major": "taze -r major",
-		"deps:major:update": "taze -r major -w"
+		"deps:major:update": "taze -r major -w",
+		"audits:refresh": "tsx scripts/refresh-audits-cache.ts"
 	},
 	"dependencies": {
 		"@astrojs/cloudflare": "^14.1.7",

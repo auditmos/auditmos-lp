@@ -1,5 +1,6 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import { auditReports } from "@/audits/reports";
 import { site } from "@/brand/site";
 import { ossProjects } from "@/oss/projects";
 import { getClientDisplay, getFeaturedProjects } from "@/projects";
@@ -12,8 +13,8 @@ const featuredProjects = getFeaturedProjects(await getCollection("projects"), 2)
 
 const proofItems = [
 	{
-		value: "24",
-		label: "Public audit reports since 2021",
+		value: String(auditReports.count),
+		label: `Public audit reports since ${auditReports.earliestYear}`,
 		href: site.auditsRepoUrl,
 		external: true,
 	},
@@ -70,7 +71,7 @@ const serviceDetails = [
 	{
 		number: "02",
 		name: "Security audits",
-		promise: "Findings with impact, reproduction, and fixes — written to the same standard as the 24 public reports.",
+		promise: `Findings with impact, reproduction, and fixes — written to the same standard as the ${auditReports.count} public reports.`,
 	},
 	{
 		number: "03",
@@ -100,9 +101,9 @@ const testimonials: readonly Testimonial[] = [];
 						Don’t take my word for it. Read the audits.
 					</h1>
 					<p class="mt-8 max-w-2xl text-pretty text-lg text-neutral-300 leading-8 sm:text-xl">
-						Auditmos is the independent practice of {site.founder.name}. Since 2021 I’ve published
-						24 audit reports for anyone to read — and I build software the same way I audit it:
-						assuming someone like me will look at it later.
+						Auditmos is the independent practice of {site.founder.name}. Since {auditReports.earliestYear} I’ve
+						published {auditReports.count} audit reports for anyone to read — and I build software the
+						same way I audit it: assuming someone like me will look at it later.
 					</p>
 					<div class="mt-10 flex flex-col gap-3 sm:flex-row">
 						<a

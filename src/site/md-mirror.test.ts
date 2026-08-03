@@ -9,6 +9,7 @@
  *   at the public helper boundary rather than Astro internals.
  */
 
+import { auditReports } from "@/audits/reports";
 import { getMarkdownMirrorPages, markdownResponse, renderLlmsTxt } from "./md-mirror";
 import { staticPages } from "./pages";
 
@@ -73,7 +74,7 @@ describe("renderLlmsTxt", () => {
 		const llmsTxt = renderLlmsTxt(getMarkdownMirrorPages(sampleProjects));
 
 		expect(llmsTxt).toContain(
-			"# Auditmos\n\nThe independent technical practice of Tomasz Kowalczyk — senior software delivery, security audits with 24 public reports, and applied R&D for EU teams and agencies.",
+			`# Auditmos\n\nThe independent technical practice of Tomasz Kowalczyk — senior software delivery, security audits with ${auditReports.count} public reports, and applied R&D for EU teams and agencies.`,
 		);
 		expect(llmsTxt).toContain("Contact: contact@auditmos.com");
 		expect(llmsTxt).toContain(
