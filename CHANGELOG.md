@@ -1,3 +1,10 @@
+# [1.9.0](https://github.com/auditmos/auditmos-lp/compare/v1.8.0...v1.9.0) (2026-08-03)
+
+
+### Features
+
+* **audits:** derive the public report count from the audits repo ([bf0b07a](https://github.com/auditmos/auditmos-lp/commit/bf0b07adecf44afa731255e7a8f44330a8aefbb4))
+
 # [1.8.0](https://github.com/auditmos/auditmos-lp/compare/v1.7.1...v1.8.0) (2026-08-03)
 
 
