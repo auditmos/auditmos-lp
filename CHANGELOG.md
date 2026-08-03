@@ -1,3 +1,10 @@
+## [1.7.1](https://github.com/auditmos/auditmos-lp/compare/v1.7.0...v1.7.1) (2026-08-03)
+
+
+### Bug Fixes
+
+* **home:** align hero divider with the proof-strip grid ([e7a2ce0](https://github.com/auditmos/auditmos-lp/commit/e7a2ce0b9949cb8e3b4d894aa98dbe2820568036))
+
 # [1.7.0](https://github.com/auditmos/auditmos-lp/compare/v1.6.0...v1.7.0) (2026-07-16)
 
 
