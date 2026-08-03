@@ -6,7 +6,6 @@ import { openSourcePage } from "@/site/pages";
 export const prerender = true;
 
 const projects = ossProjects;
-const visibleProjects = projects.slice(0, 8);
 
 const updatedFormatter = new Intl.DateTimeFormat("en", { year: "numeric", month: "short" });
 const formatUpdated = (iso: string): string => updatedFormatter.format(new Date(iso));
@@ -27,8 +26,9 @@ const formatUpdated = (iso: string): string => updatedFormatter.format(new Date(
 					</h1>
 				</div>
 				<p class="max-w-xl text-pretty text-lg text-neutral-300 leading-8">
-					Templates, tooling, and audit resources published through
-					<a class="text-brand-accent hover:text-white" href="https://github.com/auditmos"> github.com/auditmos</a>. This list is generated from what is live on GitHub.
+					Templates, tooling, and products published on GitHub — every repository listed
+					here in full. Descriptions, language, and star counts are read live from the
+					GitHub API each build.
 				</p>
 			</div>
 		</section>
@@ -48,14 +48,14 @@ const formatUpdated = (iso: string): string => updatedFormatter.format(new Date(
 						</div>
 					) : (
 						<ul class="grid border-neutral-800 border-t md:grid-cols-2">
-							{visibleProjects.map((project) => (
+							{projects.map((project) => (
 								<li>
 									<a
 										class="flex h-full min-h-64 flex-col justify-between border-neutral-800 border-b p-6 hover:bg-neutral-900/60 md:odd:border-r"
 										href={project.url}
 										rel="noopener"
 									>
-										<div><h2 class="text-balance font-semibold text-white text-xl">{project.name}</h2>
+										<div><h2 class="text-balance font-semibold text-white text-xl">{project.fullName}</h2>
 										{project.description && (
 											<p class="mt-3 text-pretty text-neutral-400 leading-7">{project.description}</p>
 										)}
@@ -75,13 +75,13 @@ const formatUpdated = (iso: string): string => updatedFormatter.format(new Date(
 						</ul>
 					)
 				}
-				{visibleProjects.length < projects.length && (
+				{projects.length > 0 && (
 					<div class="mt-10 flex flex-col gap-5 border-neutral-800 border-t pt-8 sm:flex-row sm:items-center sm:justify-between">
 						<p class="text-pretty text-neutral-400 text-sm">
-							Showing {visibleProjects.length} of {projects.length} public repositories.
+							{projects.length} public repositories, every one of them listed above.
 						</p>
 						<a class="font-semibold text-brand-accent hover:text-white" href="https://github.com/auditmos">
-							Explore the full organization <span aria-hidden="true">↗</span>
+							Browse github.com/auditmos <span aria-hidden="true">↗</span>
 						</a>
 					</div>
 				)}

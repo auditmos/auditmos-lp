@@ -172,7 +172,7 @@ export const openSourcePage = {
 	path: "/open-source",
 	title: "Open Source | Auditmos",
 	description:
-		"Open-source repositories from the Auditmos GitHub organization, with language and star context.",
+		"Open-source repositories published by Auditmos and Tomasz Kowalczyk, with language and star context.",
 } as const satisfies SitePage;
 
 export const contactPage = {

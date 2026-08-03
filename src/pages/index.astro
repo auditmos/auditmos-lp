@@ -1,6 +1,7 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import { site } from "@/brand/site";
+import { ossProjects } from "@/oss/projects";
 import { getClientDisplay, getFeaturedProjects } from "@/projects";
 import { homePage, servicePages } from "@/site/pages";
 import { getCollection } from "astro:content";
@@ -23,7 +24,14 @@ const proofItems = [
 		external: false,
 	},
 	{ value: "2", label: "Own products live", href: "/projects", external: false },
-	{ value: "7", label: "Open-source repositories", href: "/open-source", external: false },
+	// Derived, never hand-written: the strip must not claim a number that /open-source
+	// contradicts. Both read the same curated list — see src/oss/repositories.ts.
+	{
+		value: String(ossProjects.length),
+		label: "Open-source repositories",
+		href: "/open-source",
+		external: false,
+	},
 ] as const;
 
 const workingPrinciples = [

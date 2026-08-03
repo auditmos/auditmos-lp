@@ -1,4 +1,5 @@
 import { site } from "@/brand/site";
+import { ossProjects } from "@/oss/projects";
 import type { ProjectData } from "@/projects/schema";
 import { privacyPage, type SitePage, staticPages } from "./pages";
 
@@ -25,7 +26,7 @@ Auditmos is the independent technical practice of Tomasz Kowalczyk. Since 2021 i
 - 24 public audit reports since 2021: https://github.com/auditmos/audits
 - Software architecture for a 3,000+ GPU compute network spanning nine European countries.
 - 2 own products live.
-- 7 open-source repositories: https://github.com/auditmos
+- ${ossProjects.length} open-source repositories: https://github.com/auditmos
 
 ## Services
 
@@ -170,9 +171,9 @@ Named work appears where permission exists. Anonymised sector case studies use t
 Project detail pages include context, client display information, year, stack, links where available, and the case study body authored in Markdown.
 `,
 	"/open-source": `
-Auditmos publishes open-source work under the github.com/auditmos organization: templates, tooling, and public audit resources.
+Auditmos publishes open-source work on GitHub: templates, tooling, products, and public audit resources.
 
-The site shows a focused selection with descriptions, primary language, and star count. The full public inventory remains available on GitHub.
+The page lists ${ossProjects.length} repositories in full, each with description, primary language, and star count read from the GitHub API at build time.
 
 Watch our work on [github.com/auditmos](https://github.com/auditmos).
 `,

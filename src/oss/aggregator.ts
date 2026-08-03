@@ -1,7 +1,9 @@
+import { OSS_REPOSITORIES, type RepositoryPath } from "./repositories";
+
 type FetchLike = (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
 
 export interface OssProject {
-	name: string;
+	fullName: string;
 	description: string;
 	url: string;
 	stars: number;
@@ -18,26 +20,25 @@ export interface OssAggregatorDependencies {
 	fetch: FetchLike;
 	cache: OssProjectCache;
 	token?: string;
-	org?: string;
+	repositories?: readonly RepositoryPath[];
 	logger?: Pick<Console, "warn" | "error">;
-	includeArchived?: boolean;
-	includeForks?: boolean;
 }
 
 interface GithubRepo {
-	name: string;
+	full_name: string;
 	description: string | null;
 	html_url: string;
 	stargazers_count: number;
 	language: string | null;
 	updated_at: string;
-	archived: boolean;
-	fork: boolean;
 }
 
-const DEFAULT_ORG = "auditmos";
-const PER_PAGE = 100;
-const MAX_PAGES = 10;
+/**
+ * A listed repository that GitHub will not serve publicly — deleted, renamed, or turned
+ * private. Excluded from the result rather than failing the run: the site must not claim a
+ * repository that a visitor cannot open.
+ */
+const UNAVAILABLE = Symbol("unavailable");
 
 class OssFetchError extends Error {
 	constructor(message: string) {
@@ -52,19 +53,13 @@ function errorReason(error: unknown): string {
 
 function toOssProject(repo: GithubRepo): OssProject {
 	return {
-		name: repo.name,
+		fullName: repo.full_name,
 		description: repo.description ?? "",
 		url: repo.html_url,
 		stars: repo.stargazers_count,
 		language: repo.language,
 		updatedAt: repo.updated_at,
 	};
-}
-
-function keepRepo(repo: GithubRepo, includeArchived: boolean, includeForks: boolean): boolean {
-	if (repo.archived && !includeArchived) return false;
-	if (repo.fork && !includeForks) return false;
-	return true;
 }
 
 // ISO 8601 UTC strings sort lexicographically in chronological order.
@@ -75,7 +70,7 @@ function compareOssProject(a: OssProject, b: OssProject): number {
 	const starCompare = b.stars - a.stars;
 	if (starCompare !== 0) return starCompare;
 
-	return a.name.localeCompare(b.name);
+	return a.fullName.localeCompare(b.fullName);
 }
 
 function buildHeaders(token?: string): HeadersInit {
@@ -90,48 +85,60 @@ function buildHeaders(token?: string): HeadersInit {
 	return headers;
 }
 
-async function fetchAllRepos(deps: OssAggregatorDependencies, org: string): Promise<GithubRepo[]> {
-	const headers = buildHeaders(deps.token);
-	const repos: GithubRepo[] = [];
+async function fetchRepo(
+	deps: OssAggregatorDependencies,
+	headers: HeadersInit,
+	repository: RepositoryPath,
+): Promise<GithubRepo | typeof UNAVAILABLE> {
+	const response = await deps.fetch(`https://api.github.com/repos/${repository}`, { headers });
 
-	for (let page = 1; page <= MAX_PAGES; page++) {
-		const response = await deps.fetch(
-			`https://api.github.com/orgs/${org}/repos?per_page=${PER_PAGE}&page=${page}`,
-			{ headers },
-		);
+	// 404 also covers a private repo read without a token — not public, so not countable.
+	if (response.status === 404) return UNAVAILABLE;
 
-		// A 404 means the org exposes no listable repos — an empty result, not a failure.
-		if (response.status === 404) break;
-
-		if (!response.ok) {
-			throw new OssFetchError(`GitHub responded with ${response.status}`);
-		}
-
-		const batch = (await response.json()) as GithubRepo[];
-		repos.push(...batch);
-
-		if (batch.length < PER_PAGE) break;
+	if (!response.ok) {
+		throw new OssFetchError(`GitHub responded with ${response.status} for ${repository}`);
 	}
 
-	return repos;
+	return (await response.json()) as GithubRepo;
 }
 
+/**
+ * Resolves the curated repository list to displayable records.
+ *
+ * All-or-nothing by design: if any repository fails for a reason other than being
+ * unavailable (rate limit, 5xx, network), the whole run falls back to the last committed
+ * cache. A partial result would silently undercount and put a wrong number on the homepage,
+ * which is the exact failure this list exists to prevent.
+ */
 export async function fetchOssProjects(deps: OssAggregatorDependencies): Promise<OssProject[]> {
-	const org = deps.org ?? DEFAULT_ORG;
-	const includeArchived = deps.includeArchived ?? false;
-	const includeForks = deps.includeForks ?? false;
+	const repositories = deps.repositories ?? OSS_REPOSITORIES;
 
 	try {
-		const repos = await fetchAllRepos(deps, org);
-		const projects = repos
-			.filter((repo) => keepRepo(repo, includeArchived, includeForks))
-			.map(toOssProject)
-			.sort(compareOssProject);
+		const headers = buildHeaders(deps.token);
+		// allSettled, not all: a rejection from Promise.all would leave the remaining
+		// in-flight requests to reject unobserved.
+		const settled = await Promise.allSettled(
+			repositories.map((repository) => fetchRepo(deps, headers, repository)),
+		);
+
+		const projects: OssProject[] = [];
+		for (const [index, outcome] of settled.entries()) {
+			if (outcome.status === "rejected") throw outcome.reason;
+
+			if (outcome.value === UNAVAILABLE) {
+				deps.logger?.warn("oss_repository_unavailable", { repository: repositories[index] });
+				continue;
+			}
+
+			projects.push(toOssProject(outcome.value));
+		}
+
+		projects.sort(compareOssProject);
 
 		await writeCacheSafely(projects, deps);
 		return projects;
 	} catch (error) {
-		deps.logger?.warn("oss_aggregator_fallback", { org, reason: errorReason(error) });
+		deps.logger?.warn("oss_aggregator_fallback", { reason: errorReason(error) });
 
 		const cached = await readCacheSafely(deps);
 		return cached ?? [];
