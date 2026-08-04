@@ -1,19 +1,27 @@
 [
   {
-    "fullName": "auditmos/auditmos-lp",
-    "description": "auditmos.com landing page — static-first Astro 6 on Cloudflare Workers, with MD-mirrored content for AI agents.",
-    "url": "https://github.com/auditmos/auditmos-lp",
-    "stars": 0,
-    "language": "TypeScript",
-    "updatedAt": "2026-08-03T10:13:05Z"
-  },
-  {
     "fullName": "auditmos/landingos",
     "description": "Mobile PWA helping budget travelers on Poland → Milan-Bergamo (BGY) flights plan airport-to-Milan transit and coordinate via one temporary per-flight chat room. TanStack Start + Hono on Cloudflare Workers.",
     "url": "https://github.com/auditmos/landingos",
     "stars": 0,
     "language": "TypeScript",
-    "updatedAt": "2026-08-03T09:58:32Z"
+    "updatedAt": "2026-08-04T12:43:07Z"
+  },
+  {
+    "fullName": "auditmos/saas-on-cf",
+    "description": "Multi-app SaaS monorepo — TanStack Start frontend + Hono API on Cloudflare Workers, Better Auth, Neon Postgres + Drizzle, shadcn/ui, service bindings.",
+    "url": "https://github.com/auditmos/saas-on-cf",
+    "stars": 14,
+    "language": "TypeScript",
+    "updatedAt": "2026-08-03T11:09:36Z"
+  },
+  {
+    "fullName": "auditmos/auditmos-lp",
+    "description": "auditmos.com landing page — static-first Astro 6 on Cloudflare Workers, with MD-mirrored content for AI agents.",
+    "url": "https://github.com/auditmos/auditmos-lp",
+    "stars": 0,
+    "language": "TypeScript",
+    "updatedAt": "2026-08-03T10:42:11Z"
   },
   {
     "fullName": "auditmos/hono-on-cf",
@@ -38,14 +46,6 @@
     "stars": 0,
     "language": "TypeScript",
     "updatedAt": "2026-08-03T09:51:01Z"
-  },
-  {
-    "fullName": "auditmos/saas-on-cf",
-    "description": "Multi-app SaaS monorepo — TanStack Start frontend + Hono API on Cloudflare Workers, Better Auth, Neon Postgres + Drizzle, shadcn/ui, service bindings.",
-    "url": "https://github.com/auditmos/saas-on-cf",
-    "stars": 13,
-    "language": "TypeScript",
-    "updatedAt": "2026-08-03T09:49:29Z"
   },
   {
     "fullName": "auditmos/tstack-on-cf-onchain",
