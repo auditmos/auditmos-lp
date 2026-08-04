@@ -1,3 +1,10 @@
+# [1.10.0](https://github.com/auditmos/auditmos-lp/compare/v1.9.0...v1.10.0) (2026-08-04)
+
+
+### Features
+
+* **ui:** slash-motif visual identity and branded OG image ([733284a](https://github.com/auditmos/auditmos-lp/commit/733284aafd419191192c8f24678bb9fd5c5e8ada))
+
 # [1.9.0](https://github.com/auditmos/auditmos-lp/compare/v1.8.0...v1.9.0) (2026-08-03)
 
 
