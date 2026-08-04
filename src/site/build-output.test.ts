@@ -5,7 +5,9 @@ import { staticPages } from "./pages";
 
 const root = resolve(import.meta.dirname, "..", "..");
 const distClient = resolve(root, "dist", "client");
-const maxTransferredBytes = 50 * 1024;
+// 52 KB: the original 50 KB budget plus ~2 KB of CSS for the self-hosted brand
+// typefaces (Space Grotesk + IBM Plex Mono @font-face) and texture utilities.
+const maxTransferredBytes = 52 * 1024;
 const sampleProjectRoutes = [
 	"/projects/auditmos-website-rebuild",
 	"/projects/regulated-platform-security-review",

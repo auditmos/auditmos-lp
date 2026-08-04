@@ -1,0 +1,237 @@
+<!doctype html>
+<!--
+	Source template for public/og.png (the site-wide Open Graph image).
+
+	Regenerate after changing the brand look (flags spelled with [dashes]
+	because HTML comments cannot contain double hyphens):
+		agent-browser set viewport 1200 630 2
+		agent-browser [dash dash]allow-file-access open file://$PWD/scripts/og-image.html
+		agent-browser screenshot $PWD/public/og.png
+
+	The design mirrors the homepage hero: Space Grotesk headline, IBM Plex
+	Mono labels, blueprint dots, crosshair marks, and the hatch tape — all
+	on the blue-black neutral ramp from src/styles/globals.css.
+-->
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>Auditmos OG image</title>
+		<style>
+			@font-face {
+				font-family: "Space Grotesk Variable";
+				font-style: normal;
+				font-weight: 300 700;
+				src: url("../src/assets/fonts/space-grotesk-latin-wght-normal.woff2")
+					format("woff2-variations");
+			}
+
+			@font-face {
+				font-family: "IBM Plex Mono";
+				font-style: normal;
+				font-weight: 400;
+				src: url("../src/assets/fonts/ibm-plex-mono-latin-400-normal.woff2") format("woff2");
+			}
+
+			:root {
+				--accent: #04d9ff;
+				--n300: oklch(0.87 0.01 220);
+				--n400: oklch(0.708 0.012 220);
+				--n500: oklch(0.556 0.014 220);
+				--n800: oklch(0.269 0.014 220);
+				--n900: oklch(0.205 0.012 220);
+				--n950: oklch(0.148 0.01 220);
+				--mono: "IBM Plex Mono", monospace;
+			}
+
+			* {
+				margin: 0;
+				box-sizing: border-box;
+			}
+
+			body {
+				width: 1200px;
+				height: 630px;
+				overflow: hidden;
+				display: grid;
+				grid-template-columns: 1fr 330px;
+				background: var(--n950);
+				font-family: "Space Grotesk Variable", sans-serif;
+			}
+
+			main {
+				display: flex;
+				flex-direction: column;
+				justify-content: space-between;
+				padding: 56px 60px 76px;
+			}
+
+			/* The logo SVG viewBox carries large transparent padding — crop it. */
+			.logo {
+				position: relative;
+				height: 96px;
+			}
+
+			.logo img {
+				position: absolute;
+				top: 50%;
+				left: -78px;
+				width: 450px;
+				transform: translateY(-50%);
+			}
+
+			.eyebrow {
+				font-family: var(--mono);
+				font-size: 21px;
+				text-transform: uppercase;
+				color: var(--accent);
+			}
+
+			h1 {
+				margin-top: 24px;
+				font-size: 88px;
+				font-weight: 600;
+				line-height: 1.04;
+				color: #fff;
+			}
+
+			.meta {
+				display: flex;
+				gap: 40px;
+				font-family: var(--mono);
+				font-size: 20px;
+				text-transform: uppercase;
+				color: var(--n500);
+			}
+
+			.meta .domain {
+				color: var(--accent);
+			}
+
+			aside {
+				position: relative;
+				display: flex;
+				flex-direction: column;
+				justify-content: space-between;
+				padding: 56px 44px 76px;
+				border-left: 1px solid var(--n800);
+				background-color: color-mix(in oklab, var(--n900) 40%, transparent);
+				background-image: radial-gradient(
+					color-mix(in oklab, var(--n400) 18%, transparent) 1.5px,
+					transparent 1.5px
+				);
+				background-size: 26px 26px;
+			}
+
+			.panel-top {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				height: 46px;
+				padding-bottom: 24px;
+				border-bottom: 1px solid var(--n800);
+				font-family: var(--mono);
+				font-size: 17px;
+				text-transform: uppercase;
+				color: var(--n500);
+			}
+
+			.dot {
+				width: 12px;
+				height: 12px;
+				border-radius: 50%;
+				background: var(--accent);
+			}
+
+			.mark {
+				font-family: var(--mono);
+				font-size: 150px;
+				line-height: 1;
+				color: var(--accent);
+			}
+
+			.mark-hatch {
+				margin-top: 30px;
+				height: 12px;
+				width: 132px;
+			}
+
+			.hatch {
+				background-image: repeating-linear-gradient(
+					-45deg,
+					color-mix(in oklab, var(--accent) 45%, transparent) 0,
+					color-mix(in oklab, var(--accent) 45%, transparent) 1.5px,
+					transparent 1.5px,
+					transparent 9px
+				);
+			}
+
+			.tape {
+				position: fixed;
+				bottom: 0;
+				left: 0;
+				width: 1200px;
+				height: 14px;
+			}
+
+			.crosshair {
+				position: absolute;
+				width: 17px;
+				height: 17px;
+				color: var(--n500);
+			}
+
+			.crosshair::before,
+			.crosshair::after {
+				content: "";
+				position: absolute;
+				background: currentColor;
+			}
+
+			.crosshair::before {
+				top: 0;
+				left: 50%;
+				width: 1.5px;
+				height: 100%;
+				transform: translateX(-50%);
+			}
+
+			.crosshair::after {
+				top: 50%;
+				left: 0;
+				width: 100%;
+				height: 1.5px;
+				transform: translateY(-50%);
+			}
+		</style>
+	</head>
+	<body>
+		<main>
+			<div class="logo">
+				<img src="../src/assets/logos/auditmos-full-logo-transparent.svg" alt="" />
+			</div>
+			<div>
+				<p class="eyebrow">// Independent technical practice · Tallinn, EU</p>
+				<h1>Built as if it<br />will be audited.</h1>
+			</div>
+			<div class="meta">
+				<span class="domain">auditmos.com</span>
+				<span>Software / Security audits / R&amp;D</span>
+			</div>
+		</main>
+		<aside>
+			<!-- On the border junctions: panel-top rule (y = 56 + 46 + 1) and tape edge. -->
+			<span class="crosshair" style="top: 94.5px; left: -8.5px"></span>
+			<span class="crosshair" style="bottom: 5.5px; left: -8.5px"></span>
+			<div class="panel-top">
+				<span>Since 2021</span>
+				<span class="dot"></span>
+			</div>
+			<div>
+				<p class="mark">A/</p>
+				<div class="hatch mark-hatch"></div>
+			</div>
+			<div></div>
+		</aside>
+		<div class="hatch tape"></div>
+	</body>
+</html>

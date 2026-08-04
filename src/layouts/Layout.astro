@@ -27,6 +27,7 @@ const analyticsScript = buildCloudflareAnalyticsScript(
 	import.meta.env.CLOUDFLARE_WEB_ANALYTICS_TOKEN,
 );
 const canonicalUrl = new URL(path, `${site.url}/`).toString();
+const ogImageUrl = new URL("/og.png", `${site.url}/`).toString();
 const extraSchemas = Array.isArray(schema) ? schema : [schema];
 const jsonLdItems = [organizationJsonLd, ...extraSchemas];
 const footerServiceLinks = navigationItems.slice(0, 3);
@@ -44,6 +45,11 @@ const footerServiceLinks = navigationItems.slice(0, 3);
 		<meta property="og:description" content={description} />
 		<meta property="og:type" content="website" />
 		<meta property="og:url" content={canonicalUrl} />
+		<meta property="og:image" content={ogImageUrl} />
+		<meta property="og:image:width" content="2400" />
+		<meta property="og:image:height" content="1260" />
+		<meta property="og:image:alt" content="Auditmos — built as if it will be audited." />
+		<meta name="twitter:card" content="summary_large_image" />
 		<link rel="icon" type="image/svg+xml" href={iconUrl} />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
@@ -54,7 +60,7 @@ const footerServiceLinks = navigationItems.slice(0, 3);
 		}
 		{analyticsScript && <Fragment set:html={analyticsScript} />}
 	</head>
-	<body class="min-h-screen bg-neutral-950 font-sans text-neutral-100 antialiased">
+	<body class="min-h-dvh bg-neutral-950 font-sans text-neutral-100 antialiased">
 		<a
 			class="fixed top-3 left-3 z-50 -translate-y-20 bg-brand-accent px-4 py-2 font-semibold text-neutral-950 focus:translate-y-0"
 			href="#main-content"
@@ -75,7 +81,7 @@ const footerServiceLinks = navigationItems.slice(0, 3);
 									<li>
 										<a
 											class:list={[
-												"rounded-sm py-2 hover:text-white",
+												"py-2 hover:text-white",
 												path === item.href && "text-brand-accent",
 											]}
 											href={item.href}
@@ -88,7 +94,7 @@ const footerServiceLinks = navigationItems.slice(0, 3);
 						</ul>
 					</nav>
 					<a
-						class="inline-flex items-center gap-2 rounded-sm bg-brand-accent px-4 py-2.5 font-semibold text-neutral-950 text-sm hover:bg-white"
+						class="corner-cut inline-flex items-center gap-2 bg-brand-accent px-4 py-2.5 font-semibold text-neutral-950 text-sm hover:bg-white"
 						href="/contact"
 					>
 						Start a conversation <span aria-hidden="true">↗</span>
@@ -96,7 +102,7 @@ const footerServiceLinks = navigationItems.slice(0, 3);
 				</div>
 
 				<details class="group relative lg:hidden">
-					<summary class="flex cursor-pointer list-none items-center gap-2 rounded-sm border border-neutral-700 px-3 py-2 text-sm text-white marker:content-none">
+					<summary class="flex cursor-pointer list-none items-center gap-2 border border-neutral-700 px-3 py-2 text-sm text-white marker:content-none">
 						Menu
 						<svg class="size-4" aria-hidden="true" viewBox="0 0 16 16" fill="none">
 							<path d="M2 5h12M2 11h12" stroke="currentColor" stroke-width="1.5" />
@@ -112,7 +118,7 @@ const footerServiceLinks = navigationItems.slice(0, 3);
 								<li>
 									<a
 										class:list={[
-											"block rounded-sm px-3 py-3 text-neutral-200 hover:bg-neutral-900 hover:text-white",
+											"block px-3 py-3 text-neutral-200 hover:bg-neutral-900 hover:text-white",
 											path === item.href && "text-brand-accent",
 										]}
 										href={item.href}
@@ -123,7 +129,7 @@ const footerServiceLinks = navigationItems.slice(0, 3);
 							))
 						}
 							<li class="mt-2 border-neutral-800 border-t pt-2">
-								<a class="block bg-brand-accent px-3 py-3 font-semibold text-neutral-950" href="/contact">
+								<a class="corner-cut block bg-brand-accent px-3 py-3 font-semibold text-neutral-950" href="/contact">
 									Start a conversation
 								</a>
 							</li>
@@ -135,6 +141,7 @@ const footerServiceLinks = navigationItems.slice(0, 3);
 		<div id="main-content">
 			<slot />
 		</div>
+		<div class="bg-hatch h-2" aria-hidden="true"></div>
 		<footer class="border-neutral-800 border-t bg-neutral-900/40">
 			<div class="mx-auto grid max-w-7xl gap-10 px-5 py-12 sm:px-8 lg:grid-cols-[1.4fr_0.8fr_0.8fr] lg:py-16">
 				<div>
@@ -145,13 +152,13 @@ const footerServiceLinks = navigationItems.slice(0, 3);
 					</p>
 				</div>
 				<div>
-					<p class="font-mono text-neutral-500 text-xs uppercase">Expertise</p>
+					<p class="eyebrow text-neutral-500">Expertise</p>
 					<ul class="mt-4 grid gap-3 text-neutral-300 text-sm">
 						{footerServiceLinks.map((item) => <li><a class="hover:text-brand-accent" href={item.href}>{item.label}</a></li>)}
 					</ul>
 				</div>
 				<div>
-					<p class="font-mono text-neutral-500 text-xs uppercase">Explore</p>
+					<p class="eyebrow text-neutral-500">Explore</p>
 					<ul class="mt-4 grid gap-3 text-neutral-300 text-sm">
 						<li><a class="hover:text-brand-accent" href="/projects">Selected work</a></li>
 						<li><a class="hover:text-brand-accent" href="/open-source">Open source</a></li>

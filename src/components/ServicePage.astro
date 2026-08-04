@@ -24,20 +24,20 @@ const { page, headline, intro, bestFor, sections, deliverables } = Astro.props;
 		<section class="border-neutral-800 border-b">
 			<div class="mx-auto grid max-w-7xl lg:grid-cols-[1.3fr_0.7fr]">
 				<div class="px-5 py-16 sm:px-8 sm:py-24 lg:border-neutral-800 lg:border-r lg:py-28">
-					<p class="font-mono text-brand-accent text-xs uppercase">Expertise / {page.jsonLd.name}</p>
+					<p class="eyebrow text-brand-accent">Expertise / {page.jsonLd.name}</p>
 					<h1 class="mt-7 max-w-5xl text-balance font-semibold text-5xl text-white leading-[1.03] sm:text-7xl">
 						{headline}
 					</h1>
 					<p class="mt-8 max-w-3xl text-pretty text-lg text-neutral-300 leading-8 sm:text-xl">{intro}</p>
 					<div class="mt-10 flex flex-col gap-3 sm:flex-row">
 						<a
-							class="inline-flex items-center justify-center gap-2 rounded-sm bg-brand-accent px-5 py-3.5 font-semibold text-neutral-950 hover:bg-white"
+							class="corner-cut inline-flex items-center justify-center gap-2 bg-brand-accent px-5 py-3.5 font-semibold text-neutral-950 hover:bg-white"
 							href="/contact"
 						>
 							Discuss your project <span aria-hidden="true">↗</span>
 						</a>
 						<a
-							class="inline-flex items-center justify-center rounded-sm border border-neutral-700 px-5 py-3.5 font-semibold text-white hover:border-neutral-500 hover:bg-neutral-900"
+							class="inline-flex items-center justify-center border border-neutral-700 px-5 py-3.5 font-semibold text-white hover:border-neutral-500 hover:bg-neutral-900"
 							href="/projects"
 						>
 							View related work
@@ -45,8 +45,10 @@ const { page, headline, intro, bestFor, sections, deliverables } = Astro.props;
 					</div>
 				</div>
 
-				<aside class="bg-neutral-900/40 p-5 sm:p-8 lg:flex lg:flex-col lg:justify-end lg:py-12">
-					<p class="font-mono text-brand-accent text-xs uppercase">Strong fit when</p>
+				<aside class="relative bg-neutral-900/40 p-5 sm:p-8 lg:flex lg:flex-col lg:justify-end lg:py-12">
+					<span class="crosshair -top-[5.5px] -left-[5.5px] hidden lg:block" aria-hidden="true"></span>
+					<span class="crosshair -bottom-[5.5px] -left-[5.5px] hidden lg:block" aria-hidden="true"></span>
+					<p class="eyebrow text-brand-accent">Strong fit when</p>
 					<ul class="mt-6 border-neutral-800 border-t">
 						{
 							bestFor.map((item, index) => (
@@ -65,7 +67,7 @@ const { page, headline, intro, bestFor, sections, deliverables } = Astro.props;
 			<div class="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-24">
 				<div class="grid gap-8 lg:grid-cols-[0.5fr_1.5fr] lg:gap-16">
 					<div>
-						<p class="font-mono text-brand-accent text-xs uppercase">How we help</p>
+						<p class="eyebrow text-brand-accent">How we help</p>
 						<h2 class="mt-4 text-balance font-semibold text-3xl text-white sm:text-4xl">A focused path from question to action.</h2>
 					</div>
 					<div class="border-neutral-800 border-t">
@@ -86,7 +88,7 @@ const { page, headline, intro, bestFor, sections, deliverables } = Astro.props;
 		<section class="border-neutral-800 border-b bg-neutral-900/30">
 			<div class="mx-auto grid max-w-7xl gap-10 px-5 py-16 sm:px-8 sm:py-24 lg:grid-cols-[0.75fr_1.25fr] lg:gap-20">
 				<div>
-					<p class="font-mono text-brand-accent text-xs uppercase">What you leave with</p>
+					<p class="eyebrow text-brand-accent">What you leave with</p>
 					<h2 class="mt-4 max-w-lg text-balance font-semibold text-3xl text-white sm:text-5xl">Useful artifacts, not a black box.</h2>
 					<p class="mt-6 max-w-lg text-pretty text-neutral-400 leading-7">
 						The output is designed to keep working after the engagement—inside engineering,

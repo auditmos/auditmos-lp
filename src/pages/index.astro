@@ -94,7 +94,7 @@ const testimonials: readonly Testimonial[] = [];
 		<section class="relative overflow-hidden border-neutral-800 border-b">
 			<div class="mx-auto grid max-w-7xl lg:grid-cols-[1.5fr_0.5fr]">
 				<div class="px-5 py-16 sm:px-8 sm:py-24 lg:py-32">
-					<p class="font-mono text-brand-accent text-xs uppercase sm:text-sm">
+					<p class="eyebrow text-brand-accent">
 						Independent technical practice · Tallinn, EU
 					</p>
 					<h1 class="mt-7 max-w-5xl text-balance font-semibold text-5xl text-white leading-[1.02] sm:text-7xl lg:text-8xl">
@@ -107,14 +107,14 @@ const testimonials: readonly Testimonial[] = [];
 					</p>
 					<div class="mt-10 flex flex-col gap-3 sm:flex-row">
 						<a
-							class="inline-flex items-center justify-center gap-2 rounded-sm bg-brand-accent px-5 py-3.5 font-semibold text-neutral-950 hover:bg-white"
+							class="corner-cut inline-flex items-center justify-center gap-2 bg-brand-accent px-5 py-3.5 font-semibold text-neutral-950 hover:bg-white"
 							href={site.auditsRepoUrl}
 							rel="noopener"
 						>
 							Read the audits <span aria-hidden="true">↗</span>
 						</a>
 						<a
-							class="inline-flex items-center justify-center rounded-sm border border-neutral-700 px-5 py-3.5 font-semibold text-white hover:border-neutral-500 hover:bg-neutral-900"
+							class="inline-flex items-center justify-center border border-neutral-700 px-5 py-3.5 font-semibold text-white hover:border-neutral-500 hover:bg-neutral-900"
 							href="/projects"
 						>
 							See what I’ve shipped
@@ -122,7 +122,9 @@ const testimonials: readonly Testimonial[] = [];
 					</div>
 				</div>
 
-				<aside class="flex min-h-80 flex-col justify-between bg-neutral-900/40 p-5 sm:p-8 lg:min-h-0 lg:border-neutral-800 lg:border-l lg:py-12">
+				<aside class="bg-blueprint relative flex min-h-80 flex-col justify-between bg-neutral-900/40 p-5 sm:p-8 lg:min-h-0 lg:border-neutral-800 lg:border-l lg:py-12">
+					<span class="crosshair -top-[5.5px] -left-[5.5px] hidden lg:block" aria-hidden="true"></span>
+					<span class="crosshair -bottom-[5.5px] -left-[5.5px] hidden lg:block" aria-hidden="true"></span>
 					<div class="flex items-start justify-between border-neutral-800 border-b pb-6">
 						<p class="font-mono text-neutral-500 text-xs uppercase">Auditmos / since 2021</p>
 						<span class="flex size-3 items-center justify-center" aria-hidden="true">
@@ -134,6 +136,7 @@ const testimonials: readonly Testimonial[] = [];
 						<p class="mt-6 max-w-xs text-balance font-medium text-2xl text-white leading-snug">
 							Built as if it will be audited.
 						</p>
+						<div class="bg-hatch mt-6 h-2 w-28" aria-hidden="true"></div>
 					</div>
 					<p class="border-neutral-800 border-t pt-6 text-pretty text-neutral-400 text-sm leading-6">
 						Senior, independent, accountable — one name on every deliverable.
@@ -172,7 +175,7 @@ const testimonials: readonly Testimonial[] = [];
 			<div class="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-24">
 				<div class="grid gap-8 lg:grid-cols-[0.55fr_1.45fr] lg:gap-16">
 					<div>
-						<p class="font-mono text-brand-accent text-xs uppercase">How I work</p>
+						<p class="eyebrow text-brand-accent">How I work</p>
 						<h2 class="mt-4 max-w-sm text-balance font-semibold text-3xl text-white leading-tight sm:text-4xl">
 							Everything inspectable.
 						</h2>
@@ -200,7 +203,7 @@ const testimonials: readonly Testimonial[] = [];
 			<div class="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-24">
 				<div class="grid gap-8 lg:grid-cols-[0.55fr_1.45fr] lg:gap-16">
 					<div>
-						<p class="font-mono text-brand-accent text-xs uppercase">What I take on</p>
+						<p class="eyebrow text-brand-accent">What I take on</p>
 						<h2 class="mt-4 max-w-sm text-balance font-semibold text-3xl text-white leading-tight sm:text-4xl">
 							Three ways in. One standard.
 						</h2>
@@ -234,7 +237,7 @@ const testimonials: readonly Testimonial[] = [];
 			<div class="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-24">
 				<div class="flex flex-col gap-5 border-neutral-800 border-b pb-8 sm:flex-row sm:items-end sm:justify-between">
 					<div>
-						<p class="font-mono text-brand-accent text-xs uppercase">Receipts</p>
+						<p class="eyebrow text-brand-accent">Receipts</p>
 						<h2 class="mt-4 text-balance font-semibold text-3xl text-white sm:text-4xl">Selected work</h2>
 					</div>
 					<a class="font-medium text-neutral-300 text-sm hover:text-brand-accent" href="/projects">
@@ -274,7 +277,7 @@ const testimonials: readonly Testimonial[] = [];
 			testimonials.length > 0 && (
 				<section class="border-neutral-800 border-b">
 					<div class="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-24">
-						<p class="font-mono text-brand-accent text-xs uppercase">In their words</p>
+						<p class="eyebrow text-brand-accent">In their words</p>
 						<div class="mt-8 grid gap-8 md:grid-cols-2">
 							{testimonials.map((testimonial) => (
 								<figure class="border-neutral-800 border-l-2 pl-6">
@@ -295,7 +298,7 @@ const testimonials: readonly Testimonial[] = [];
 		<section class="border-neutral-800 border-b">
 			<div class="mx-auto grid max-w-7xl gap-10 px-5 py-16 sm:px-8 sm:py-24 lg:grid-cols-[0.55fr_1.45fr] lg:gap-16">
 				<div>
-					<p class="font-mono text-brand-accent text-xs uppercase">Who you’re dealing with</p>
+					<p class="eyebrow text-brand-accent">Who you’re dealing with</p>
 					<p class="mt-6 font-mono text-7xl text-brand-accent leading-none">TK</p>
 				</div>
 				<div>
@@ -322,7 +325,7 @@ const testimonials: readonly Testimonial[] = [];
 		<section class="border-neutral-800 border-b bg-neutral-900/30">
 			<div class="mx-auto flex max-w-7xl flex-col gap-7 px-5 py-14 sm:px-8 sm:py-16 lg:flex-row lg:items-center lg:justify-between">
 				<div>
-					<p class="font-mono text-brand-accent text-xs uppercase">For agencies</p>
+					<p class="eyebrow text-brand-accent">For agencies</p>
 					<h2 class="mt-4 max-w-2xl text-balance font-semibold text-2xl text-white sm:text-3xl">
 						The senior your client never worries about.
 					</h2>
@@ -342,7 +345,7 @@ const testimonials: readonly Testimonial[] = [];
 		<section>
 			<div class="mx-auto grid max-w-7xl gap-10 px-5 py-16 sm:px-8 sm:py-24 lg:grid-cols-[1fr_1.2fr] lg:items-end">
 				<div>
-					<p class="font-mono text-brand-accent text-xs uppercase">A useful first conversation</p>
+					<p class="eyebrow text-brand-accent">A useful first conversation</p>
 					<h2 class="mt-5 max-w-3xl text-balance font-semibold text-4xl text-white leading-tight sm:text-6xl">
 						Tell me what can’t go wrong.
 					</h2>
