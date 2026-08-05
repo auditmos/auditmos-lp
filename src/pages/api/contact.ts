@@ -1,6 +1,6 @@
 import { env } from "cloudflare:workers";
 import type { APIRoute } from "astro";
-import { handleContactRequest } from "@/contact/handler";
+import { createContactHandlerDependencies, handleContactRequest } from "@/contact/handler";
 
 export const prerender = false;
 
@@ -12,11 +12,7 @@ const logger = {
 };
 
 const contactRoute: APIRoute = ({ request }) =>
-	handleContactRequest(request, {
-		env,
-		fetch,
-		logger,
-	});
+	handleContactRequest(request, createContactHandlerDependencies(env, logger));
 
 export const DELETE = contactRoute;
 export const GET = contactRoute;

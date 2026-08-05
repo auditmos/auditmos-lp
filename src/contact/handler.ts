@@ -14,6 +14,24 @@ export interface ContactHandlerDependencies {
 	logger?: Pick<Console, "error">;
 }
 
+/**
+ * Build the handler dependencies for the Worker runtime. The fetch wrapper is
+ * load-bearing: passing the global `fetch` by reference and invoking it as
+ * `deps.fetch(...)` rebinds `this`, which workerd rejects with
+ * "TypeError: Illegal invocation" (Node's fetch does not, so only the real
+ * runtime catches it). The arrow wrapper always calls through `globalThis`.
+ */
+export function createContactHandlerDependencies(
+	env: ContactEnv,
+	logger?: Pick<Console, "error">,
+): ContactHandlerDependencies {
+	return {
+		env,
+		logger,
+		fetch: (input, init) => globalThis.fetch(input, init),
+	};
+}
+
 const contactInputSchema = z
 	.object({
 		email: z.email(),

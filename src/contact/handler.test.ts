@@ -8,7 +8,11 @@
  *   or staging inbox delivery.
  */
 
-import { type ContactHandlerDependencies, handleContactRequest } from "./handler";
+import {
+	type ContactHandlerDependencies,
+	createContactHandlerDependencies,
+	handleContactRequest,
+} from "./handler";
 
 const env = {
 	CONTACT_TO_EMAIL: "contact@auditmos.com",
@@ -162,5 +166,49 @@ describe("handleContactRequest", () => {
 			recipient: "contact@auditmos.com",
 			submitter: "jane@example.com",
 		});
+	});
+});
+
+describe("createContactHandlerDependencies", () => {
+	// workerd throws "Illegal invocation" when a platform function like fetch is
+	// invoked with a foreign `this` (e.g. as `deps.fetch(...)`). Node's fetch
+	// tolerates it, so this stub reproduces the runtime behavior the regression
+	// guards against.
+	function thisStrictFetch(this: unknown): Promise<Response> {
+		if (this !== globalThis && this !== undefined) {
+			throw new TypeError("Illegal invocation");
+		}
+
+		return Promise.resolve(jsonResponse({ ok: true }));
+	}
+
+	beforeEach(() => {
+		vi.stubGlobal("fetch", thisStrictFetch);
+	});
+
+	afterEach(() => {
+		vi.unstubAllGlobals();
+	});
+
+	it("provides a fetch that survives method-style invocation", async () => {
+		const deps = createContactHandlerDependencies(env);
+
+		await expect(deps.fetch("https://challenges.cloudflare.com/")).resolves.toBeInstanceOf(
+			Response,
+		);
+	});
+
+	it("documents the failure mode the wrapper prevents: a bare fetch reference throws", () => {
+		const bare: ContactHandlerDependencies = { env, fetch };
+
+		expect(() => bare.fetch("https://challenges.cloudflare.com/")).toThrow(/Illegal invocation/);
+	});
+
+	it("threads env and logger through unchanged", () => {
+		const logger = { error: vi.fn() };
+		const deps = createContactHandlerDependencies(env, logger);
+
+		expect(deps.env).toBe(env);
+		expect(deps.logger).toBe(logger);
 	});
 });
