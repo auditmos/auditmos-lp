@@ -1,3 +1,10 @@
+## [1.10.1](https://github.com/auditmos/auditmos-lp/compare/v1.10.0...v1.10.1) (2026-08-05)
+
+
+### Bug Fixes
+
+* **copy:** shift page voice from founder first-person to practice voice ([412777f](https://github.com/auditmos/auditmos-lp/commit/412777f8fa6462e3a7e1f66ad78236c539aa1dff))
+
 # [1.10.0](https://github.com/auditmos/auditmos-lp/compare/v1.9.0...v1.10.0) (2026-08-04)
 
 
