@@ -18,12 +18,8 @@ export const OSS_REPOSITORIES = [
 	"auditmos/signmos",
 	"tkowalczyk/wizytowka-link",
 	"auditmos/saas-on-cf",
-	"auditmos/skills",
 	"auditmos/astro-on-cf",
 	"auditmos/hono-on-cf",
 	"auditmos/tstack-on-cf-onchain",
-	"auditmos/brainstormer",
 	"auditmos/landingos",
-	"auditmos/ogsfrompoly-lp",
-	"auditmos/auditmos-lp",
 ] as const satisfies readonly RepositoryPath[];

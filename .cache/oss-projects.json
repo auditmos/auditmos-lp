@@ -5,15 +5,7 @@
     "url": "https://github.com/auditmos/landingos",
     "stars": 0,
     "language": "TypeScript",
-    "updatedAt": "2026-08-05T11:41:46Z"
-  },
-  {
-    "fullName": "auditmos/auditmos-lp",
-    "description": "auditmos.com landing page — static-first Astro 6 on Cloudflare Workers, with MD-mirrored content for AI agents.",
-    "url": "https://github.com/auditmos/auditmos-lp",
-    "stars": 0,
-    "language": "TypeScript",
-    "updatedAt": "2026-08-05T11:33:23Z"
+    "updatedAt": "2026-08-05T12:25:26Z"
   },
   {
     "fullName": "auditmos/signmos",
@@ -56,35 +48,11 @@
     "updatedAt": "2026-08-03T09:48:19Z"
   },
   {
-    "fullName": "auditmos/ogsfrompoly-lp",
-    "description": "Public landing page for ogsfrompoly.com — Polymarket skilled-trader detection: weekly strategy track record + monthly project P&L. Astro on Cloudflare Workers.",
-    "url": "https://github.com/auditmos/ogsfrompoly-lp",
-    "stars": 0,
-    "language": "TypeScript",
-    "updatedAt": "2026-07-31T08:50:51Z"
-  },
-  {
     "fullName": "tkowalczyk/wizytowka-link",
     "description": "Automatycznie tworzymy profesjonalną stronę dla Twojej firmy — z mapą, danymi kontaktowymi i optymalizacją pod wyszukiwarki.",
     "url": "https://github.com/tkowalczyk/wizytowka-link",
     "stars": 2,
     "language": "TypeScript",
     "updatedAt": "2026-07-20T09:15:32Z"
-  },
-  {
-    "fullName": "auditmos/skills",
-    "description": "Public repository for Agent Skills from Auditmos",
-    "url": "https://github.com/auditmos/skills",
-    "stars": 13,
-    "language": null,
-    "updatedAt": "2026-07-12T18:35:03Z"
-  },
-  {
-    "fullName": "auditmos/brainstormer",
-    "description": "Structured planning toolkit that takes ideas from rough concept to dev-ready deliverables — PRD, phased plan, and dependency-ordered GitHub issues.",
-    "url": "https://github.com/auditmos/brainstormer",
-    "stars": 1,
-    "language": "Shell",
-    "updatedAt": "2026-07-09T08:36:09Z"
   }
 ]
