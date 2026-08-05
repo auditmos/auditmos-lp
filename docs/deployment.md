@@ -44,19 +44,17 @@ Verify on https://staging.auditmos.com: pages render, `/sitemap.xml`,
 `/llms.txt`, OG image at `/og.png`, and a real contact-form submission
 (notification + confirmation email both arrive).
 
-## Production cutover
+## Production
 
-`auditmos.com` is currently attached to the legacy `auditmos-web` Worker
-(repo `auditmos/web`, last deployed 2026-02-23).
+Cutover from the legacy `auditmos-web` Worker (repo `auditmos/web`) happened
+on 2026-08-05 — `auditmos.com` is attached to `auditmos-lp-production`.
 
 ```bash
 pnpm deploy:production
-pnpm secrets:production   # immediately after — form 502s until secrets land
+pnpm secrets:production   # only needed when secret values change
 ```
 
-The first deploy prompts to move the `auditmos.com` custom domain off
-`auditmos-web` — **confirming that prompt is the cutover** (near-instant,
-static pages serve immediately). Post-cutover checks:
+Post-deploy checks:
 
 - Pages, `/sitemap.xml`, `/llms.txt`, `robots.txt` respond on auditmos.com.
 - Contact form end-to-end (both emails arrive).
