@@ -1,3 +1,10 @@
+## [1.12.2](https://github.com/auditmos/auditmos-lp/compare/v1.12.1...v1.12.2) (2026-08-05)
+
+
+### Bug Fixes
+
+* **seo:** fit title and description into scraper limits, add CTA to OG card ([bc2986d](https://github.com/auditmos/auditmos-lp/commit/bc2986d076e704392b4b7b06dfc28243e45d111a))
+
 ## [1.12.1](https://github.com/auditmos/auditmos-lp/compare/v1.12.0...v1.12.1) (2026-08-05)
 
 
