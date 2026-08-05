@@ -18,9 +18,9 @@ type StaticPagePath = (typeof staticPages)[number]["path"];
 
 const staticMarkdownBodyByPath = {
 	"/": `
-Don't take my word for it. Read the audits.
+Don't take our word for it. Read the audits.
 
-Auditmos is the independent technical practice of Tomasz Kowalczyk. Since ${auditReports.earliestYear} it has published ${auditReports.count} audit reports for anyone to read — and builds software the same way it audits it: assuming someone will inspect the work later.
+Auditmos is an independent technical practice. Since ${auditReports.earliestYear} it has published ${auditReports.count} audit reports for anyone to read — and builds software the same way it audits it: assuming someone will inspect the work later.
 
 ## Proof
 
