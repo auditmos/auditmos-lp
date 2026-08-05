@@ -212,3 +212,22 @@ describe("createContactHandlerDependencies", () => {
 		expect(deps.logger).toBe(logger);
 	});
 });
+
+describe("confirmation email reply address", () => {
+	it("references the configured CONTACT_TO_EMAIL instead of a hardcoded address", async () => {
+		const customEnv = { ...env, CONTACT_TO_EMAIL: "tom@auditmos.com" };
+		const fetch = vi
+			.fn<ContactHandlerDependencies["fetch"]>()
+			.mockResolvedValueOnce(jsonResponse({ success: true }))
+			.mockResolvedValue(jsonResponse({ id: "email-id" }));
+
+		await handleContactRequest(jsonRequest(validPayload), { env: customEnv, fetch });
+
+		const confirmationBody = JSON.parse(String(fetch.mock.calls[2]?.[1]?.body)) as {
+			text: string;
+		};
+
+		expect(confirmationBody.text).toContain("tom@auditmos.com");
+		expect(confirmationBody.text).not.toContain("contact@auditmos.com");
+	});
+});

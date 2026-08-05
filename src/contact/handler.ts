@@ -122,7 +122,7 @@ function notificationEmail(input: ContactInput, env: ContactEnv): ResendEmail {
 	};
 }
 
-function confirmationEmail(input: ContactInput): ResendEmail {
+function confirmationEmail(input: ContactInput, env: ContactEnv): ResendEmail {
 	return {
 		from: "Auditmos <noreply@auditmos.com>",
 		to: [input.email],
@@ -130,7 +130,7 @@ function confirmationEmail(input: ContactInput): ResendEmail {
 		text: [
 			"Thanks for contacting Auditmos.",
 			"",
-			"We received your message and will reply from contact@auditmos.com.",
+			`We received your message and will reply from ${env.CONTACT_TO_EMAIL}.`,
 			"",
 			"Your message:",
 			input.message,
@@ -169,7 +169,7 @@ export async function handleContactRequest(
 
 	const notificationSent = await sendResendEmail(notificationEmail(parsed.data, deps.env), deps);
 	const confirmationSent =
-		notificationSent && (await sendResendEmail(confirmationEmail(parsed.data), deps));
+		notificationSent && (await sendResendEmail(confirmationEmail(parsed.data, deps.env), deps));
 
 	if (!notificationSent || !confirmationSent) {
 		if (notificationSent && !confirmationSent) {
