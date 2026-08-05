@@ -1,3 +1,15 @@
+# [1.12.0](https://github.com/auditmos/auditmos-lp/compare/v1.11.1...v1.12.0) (2026-08-05)
+
+
+### Bug Fixes
+
+* **contact:** derive the confirmation reply address from CONTACT_TO_EMAIL ([1729185](https://github.com/auditmos/auditmos-lp/commit/1729185950a74770414aa8d427a2d87fd03f208c))
+
+
+### Features
+
+* **oss:** trim the curated open-source list to seven repositories ([a3ff77b](https://github.com/auditmos/auditmos-lp/commit/a3ff77b18cfa3d8c25d3178cb34109cec8c2656f))
+
 ## [1.11.1](https://github.com/auditmos/auditmos-lp/compare/v1.11.0...v1.11.1) (2026-08-05)
 
 
