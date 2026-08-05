@@ -47,7 +47,11 @@ The auditmos.com landing page — Astro on Cloudflare Workers, static-first.
 pnpm dev                       # dev server on http://localhost:3000
 pnpm build                     # production build to ./dist
 pnpm preview                   # preview the production build locally
-pnpm deploy                    # build + wrangler deploy
+pnpm deploy                    # build + wrangler deploy (dev worker)
+pnpm deploy:staging            # build with staging vars + deploy staging.auditmos.com
+pnpm deploy:production         # build with production vars + deploy auditmos.com
+pnpm secrets:staging           # push runtime secrets from .dev.vars.staging
+pnpm secrets:production        # push runtime secrets from .dev.vars.production
 pnpm cf-typegen                # regenerate Env types from wrangler.jsonc
 
 pnpm new-project "<title>"     # scaffold a new project MD with frontmatter prefilled
@@ -85,7 +89,7 @@ Technology-specific rules live in `.claude/rules/`. Activate automatically when 
 
 Access bindings through `import { env } from "cloudflare:workers"` — this is the only supported pattern in Astro v6 + `@astrojs/cloudflare` v13 (the old `Astro.locals.runtime.env` was removed). `env` is typed against `worker-configuration.d.ts`. After editing `wrangler.jsonc` bindings, run `pnpm cf-typegen`.
 
-`wrangler.jsonc` ships with three env blocks (`dev`, `staging`, `production`) — each gets its own Worker name. Deploy a specific env with `wrangler deploy --env <name>`.
+`wrangler.jsonc` ships with three env blocks (`dev`, `staging`, `production`) — each gets its own Worker name. Deploy a specific env with `pnpm deploy:<env>` (staging → `staging.auditmos.com`, production → `auditmos.com`). Full runbook incl. the one-time Turnstile/Resend setup and the cutover from the legacy `auditmos-web` Worker: [`docs/deployment.md`](./docs/deployment.md).
 
 Per-env contact vars live in `.dev.vars` / `.dev.vars.staging` / `.dev.vars.production` locally (never committed). This matches the wrangler convention — `.dev.vars.<env>` is loaded ahead of `.dev.vars` when `CLOUDFLARE_ENV=<env>` is set. Required for the contact form: `TURNSTILE_SITE_KEY` (public widget key), `RESEND_API_KEY`, `TURNSTILE_SECRET_KEY`, `CONTACT_TO_EMAIL`. Optional: `GITHUB_TOKEN` for the OSS aggregator's build-time rate limit.
 

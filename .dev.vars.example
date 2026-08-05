@@ -1,6 +1,11 @@
-# Local dev vars — copy this to `.dev.vars` and fill in.
-# Do not commit `.dev.vars`.
+# Local dev vars — copy this to `.dev.vars` and fill in. Never commit it.
+# `.dev.vars.<env>` overrides these for `pnpm deploy:<env>` / `pnpm secrets:<env>`
+# (see docs/deployment.md).
+
+# Build-time (public widget key; the Turnstile test key is used when empty):
 TURNSTILE_SITE_KEY=
-RESEND_API_KEY=
+
+# Runtime Worker secrets:
 TURNSTILE_SECRET_KEY=
+RESEND_API_KEY=
 CONTACT_TO_EMAIL=

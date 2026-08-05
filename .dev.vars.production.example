@@ -1,6 +1,10 @@
-# Production vars — copy this to `.production.vars` and fill in.
-# Do not commit `.production.vars`.
+# Production vars — copy this to `.dev.vars.production` and fill in. Never commit it.
+# Deploy: pnpm deploy:production · Secrets: pnpm secrets:production (see docs/deployment.md)
+
+# Build-time (baked into the prerendered contact page by astro build):
 TURNSTILE_SITE_KEY=
-RESEND_API_KEY=
+
+# Runtime Worker secrets (pushed with `pnpm secrets:production`):
 TURNSTILE_SECRET_KEY=
+RESEND_API_KEY=
 CONTACT_TO_EMAIL=

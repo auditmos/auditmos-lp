@@ -1,6 +1,10 @@
-# Staging vars — copy this to `.staging.vars` and fill in.
-# Do not commit `.staging.vars`.
+# Staging vars — copy this to `.dev.vars.staging` and fill in. Never commit it.
+# Deploy: pnpm deploy:staging · Secrets: pnpm secrets:staging (see docs/deployment.md)
+
+# Build-time (baked into the prerendered contact page by astro build):
 TURNSTILE_SITE_KEY=
-RESEND_API_KEY=
+
+# Runtime Worker secrets (pushed with `pnpm secrets:staging`):
 TURNSTILE_SECRET_KEY=
+RESEND_API_KEY=
 CONTACT_TO_EMAIL=

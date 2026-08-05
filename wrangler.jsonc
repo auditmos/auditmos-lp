@@ -31,6 +31,10 @@
 		},
 		"production": {
 			"name": "auditmos-lp-production",
+			// First deploy prompts to move auditmos.com off the legacy auditmos-web
+			// Worker — confirming that prompt is the production cutover. See
+			// docs/deployment.md.
+			"routes": [{ "pattern": "auditmos.com", "custom_domain": true }],
 			"vars": {
 				"CLOUDFLARE_ENV": "production"
 			}
