@@ -1,3 +1,10 @@
+## [1.12.1](https://github.com/auditmos/auditmos-lp/compare/v1.12.0...v1.12.1) (2026-08-05)
+
+
+### Bug Fixes
+
+* **seo:** tighten meta description and serve the OG image at 1200x630 ([24e10ec](https://github.com/auditmos/auditmos-lp/commit/24e10ec7f3d020caddc5ea1e78f2acad2d828940))
+
 # [1.12.0](https://github.com/auditmos/auditmos-lp/compare/v1.11.1...v1.12.0) (2026-08-05)
 
 
