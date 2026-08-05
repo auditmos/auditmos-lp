@@ -42,8 +42,8 @@ const organizationId = `${siteUrl}/#organization`;
 
 export const homePage = {
 	path: "/",
-	title: "Auditmos: Software Development, Security Audits & R&D",
-	description: `The independent technical practice of Tomasz Kowalczyk — senior software delivery, security audits with ${auditReports.count} public reports, and applied R&D.`,
+	title: "Auditmos: Software Development, Security Audits and R&D",
+	description: `The independent practice of Tomasz Kowalczyk — software delivery, security audits with ${auditReports.count} public reports, applied R&D.`,
 } as const satisfies SitePage;
 
 export const servicePages = [

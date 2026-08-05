@@ -74,7 +74,7 @@ describe("renderLlmsTxt", () => {
 		const llmsTxt = renderLlmsTxt(getMarkdownMirrorPages(sampleProjects));
 
 		expect(llmsTxt).toContain(
-			`# Auditmos\n\nThe independent technical practice of Tomasz Kowalczyk — senior software delivery, security audits with ${auditReports.count} public reports, and applied R&D.`,
+			`# Auditmos\n\nThe independent practice of Tomasz Kowalczyk — software delivery, security audits with ${auditReports.count} public reports, applied R&D.`,
 		);
 		expect(llmsTxt).toContain("Contact: contact@auditmos.com");
 		expect(llmsTxt).toContain(
