@@ -5,7 +5,15 @@
     "url": "https://github.com/auditmos/landingos",
     "stars": 0,
     "language": "TypeScript",
-    "updatedAt": "2026-08-05T09:24:36Z"
+    "updatedAt": "2026-08-05T09:48:43Z"
+  },
+  {
+    "fullName": "auditmos/auditmos-lp",
+    "description": "auditmos.com landing page — static-first Astro 6 on Cloudflare Workers, with MD-mirrored content for AI agents.",
+    "url": "https://github.com/auditmos/auditmos-lp",
+    "stars": 0,
+    "language": "TypeScript",
+    "updatedAt": "2026-08-05T09:47:12Z"
   },
   {
     "fullName": "auditmos/signmos",
@@ -14,14 +22,6 @@
     "stars": 0,
     "language": "TypeScript",
     "updatedAt": "2026-08-04T13:17:13Z"
-  },
-  {
-    "fullName": "auditmos/auditmos-lp",
-    "description": "auditmos.com landing page — static-first Astro 6 on Cloudflare Workers, with MD-mirrored content for AI agents.",
-    "url": "https://github.com/auditmos/auditmos-lp",
-    "stars": 0,
-    "language": "TypeScript",
-    "updatedAt": "2026-08-04T13:15:33Z"
   },
   {
     "fullName": "auditmos/saas-on-cf",
