@@ -1,3 +1,10 @@
+## [1.11.1](https://github.com/auditmos/auditmos-lp/compare/v1.11.0...v1.11.1) (2026-08-05)
+
+
+### Bug Fixes
+
+* **contact:** bind fetch for workerd to unbreak form submissions ([262dcd7](https://github.com/auditmos/auditmos-lp/commit/262dcd7d3a7450d0c3c00d3f8b61903ac617b130))
+
 # [1.11.0](https://github.com/auditmos/auditmos-lp/compare/v1.10.1...v1.11.0) (2026-08-05)
 
 
