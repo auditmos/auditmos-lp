@@ -5,7 +5,23 @@
     "url": "https://github.com/auditmos/landingos",
     "stars": 0,
     "language": "TypeScript",
-    "updatedAt": "2026-08-04T12:43:07Z"
+    "updatedAt": "2026-08-05T09:24:36Z"
+  },
+  {
+    "fullName": "auditmos/signmos",
+    "description": "No-account e-signature pilot for PDF upload, signature/date fields, magic-link signing, change requests, final PDFs, and agent-ready lifecycle APIs.",
+    "url": "https://github.com/auditmos/signmos",
+    "stars": 0,
+    "language": "TypeScript",
+    "updatedAt": "2026-08-04T13:17:13Z"
+  },
+  {
+    "fullName": "auditmos/auditmos-lp",
+    "description": "auditmos.com landing page — static-first Astro 6 on Cloudflare Workers, with MD-mirrored content for AI agents.",
+    "url": "https://github.com/auditmos/auditmos-lp",
+    "stars": 0,
+    "language": "TypeScript",
+    "updatedAt": "2026-08-04T13:15:33Z"
   },
   {
     "fullName": "auditmos/saas-on-cf",
@@ -16,28 +32,12 @@
     "updatedAt": "2026-08-03T11:09:36Z"
   },
   {
-    "fullName": "auditmos/auditmos-lp",
-    "description": "auditmos.com landing page — static-first Astro 6 on Cloudflare Workers, with MD-mirrored content for AI agents.",
-    "url": "https://github.com/auditmos/auditmos-lp",
-    "stars": 0,
-    "language": "TypeScript",
-    "updatedAt": "2026-08-03T10:42:11Z"
-  },
-  {
     "fullName": "auditmos/hono-on-cf",
     "description": "Hono REST API monorepo template on Cloudflare Workers — Better Auth, Neon Postgres + Drizzle, scaffolding for durable objects, queues and workflows.",
     "url": "https://github.com/auditmos/hono-on-cf",
     "stars": 0,
     "language": "TypeScript",
     "updatedAt": "2026-08-03T09:54:24Z"
-  },
-  {
-    "fullName": "auditmos/signmos",
-    "description": "No-account e-signature pilot for PDF upload, signature/date fields, magic-link signing, change requests, final PDFs, and agent-ready lifecycle APIs.",
-    "url": "https://github.com/auditmos/signmos",
-    "stars": 0,
-    "language": "TypeScript",
-    "updatedAt": "2026-08-03T09:52:07Z"
   },
   {
     "fullName": "auditmos/astro-on-cf",
