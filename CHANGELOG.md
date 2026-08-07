@@ -1,3 +1,11 @@
+# [1.17.0](https://github.com/auditmos/auditmos-lp/compare/v1.16.0...v1.17.0) (2026-08-07)
+
+
+### Features
+
+* **agents:** declare Content Signals in robots.txt and on every response ([7e4d18a](https://github.com/auditmos/auditmos-lp/commit/7e4d18ad778d83d8cf7a4fe94ef35423e75d2762))
+* **agents:** publish the negotiation contract in llms.txt and agents.json ([8ae90bd](https://github.com/auditmos/auditmos-lp/commit/8ae90bdf616c7fd68c659092c1834ab645311b7a))
+
 # [1.16.0](https://github.com/auditmos/auditmos-lp/compare/v1.15.0...v1.16.0) (2026-08-07)
 
 
