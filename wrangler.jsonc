@@ -46,6 +46,11 @@
 			"name": "MCP_RATE_LIMITER",
 			"namespace_id": "1001",
 			"simple": { "limit": 120, "period": 60 }
+		},
+		{
+			"name": "MCP_RATE_LIMITER_AUTH",
+			"namespace_id": "1002",
+			"simple": { "limit": 600, "period": 60 }
 		}
 	],
 	"vars": {
@@ -59,6 +64,11 @@
 					"name": "MCP_RATE_LIMITER",
 					"namespace_id": "1001",
 					"simple": { "limit": 120, "period": 60 }
+				},
+				{
+					"name": "MCP_RATE_LIMITER_AUTH",
+					"namespace_id": "1002",
+					"simple": { "limit": 600, "period": 60 }
 				}
 			],
 			"vars": {
@@ -72,6 +82,11 @@
 					"name": "MCP_RATE_LIMITER",
 					"namespace_id": "1001",
 					"simple": { "limit": 120, "period": 60 }
+				},
+				{
+					"name": "MCP_RATE_LIMITER_AUTH",
+					"namespace_id": "1002",
+					"simple": { "limit": 600, "period": 60 }
 				}
 			],
 			"routes": [{ "pattern": "staging.auditmos.com", "custom_domain": true }],
@@ -86,6 +101,11 @@
 					"name": "MCP_RATE_LIMITER",
 					"namespace_id": "1001",
 					"simple": { "limit": 120, "period": 60 }
+				},
+				{
+					"name": "MCP_RATE_LIMITER_AUTH",
+					"namespace_id": "1002",
+					"simple": { "limit": 600, "period": 60 }
 				}
 			],
 			"routes": [{ "pattern": "auditmos.com", "custom_domain": true }],

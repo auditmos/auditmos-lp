@@ -20,13 +20,26 @@ export const MCP_PROTOCOL_VERSION = "2025-06-18";
  */
 const SUPPORTED_PROTOCOL_VERSIONS = ["2025-06-18", "2025-03-26"] as const;
 
+export interface McpRateLimit {
+	readonly requests: number;
+	readonly windowSeconds: number;
+}
+
 /**
- * The published rate limit. Must match the `MCP_RATE_LIMITER` binding in
- * wrangler.jsonc — this constant is what the endpoint enforces against, what
- * `initialize` tells clients, and what `/agents.json` advertises, so a client
- * can never be told a limit different from the one applied.
+ * The published rate limits, one per tier. Each must match its binding in
+ * wrangler.jsonc — `MCP_RATE_LIMITER` and `MCP_RATE_LIMITER_AUTH` — and these
+ * constants are what the endpoint enforces against, what `initialize` tells
+ * clients, what `/agents.json` advertises, and what `/auth.md` documents. A
+ * client can never be told a limit different from the one applied.
+ *
+ * Nothing automated can catch a *binding* drifting from its constant: the
+ * limiter is configured in Cloudflare, not in this file. Change the two
+ * together and confirm in `dist/server/wrangler.json` after a build.
  */
-export const MCP_RATE_LIMIT = { requests: 120, windowSeconds: 60 } as const;
+export const MCP_RATE_LIMIT: McpRateLimit = { requests: 120, windowSeconds: 60 };
+
+/** What registering buys. The reason the OAuth surface exists at all. */
+export const MCP_RATE_LIMIT_AUTH: McpRateLimit = { requests: 600, windowSeconds: 60 };
 
 /** Where the server answers. The Server Card's reserved location hangs off it. */
 export const MCP_ENDPOINT_PATH = "/mcp";
@@ -195,8 +208,11 @@ export function handleMcpMessage(message: unknown, tools: readonly McpTool[]): M
 					"selected project history, and published open-source repositories. " +
 					"Every tool returns facts published on auditmos.com. " +
 					`Rate limit: ${MCP_RATE_LIMIT.requests} requests per ` +
-					`${MCP_RATE_LIMIT.windowSeconds} seconds per client. Exceeding it returns ` +
-					"HTTP 429 with a Retry-After header; wait that many seconds and retry.",
+					`${MCP_RATE_LIMIT.windowSeconds} seconds per client IP without a credential, ` +
+					`or ${MCP_RATE_LIMIT_AUTH.requests} requests per ` +
+					`${MCP_RATE_LIMIT_AUTH.windowSeconds} seconds with one. Registration is open ` +
+					"and unauthenticated — see /auth.md. Exceeding either returns HTTP 429 with a " +
+					"Retry-After header; wait that many seconds and retry.",
 			});
 		case "ping":
 			return success(id, {});

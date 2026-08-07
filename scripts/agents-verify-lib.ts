@@ -95,6 +95,12 @@ export const REQUIRED_CHECKS: readonly RequiredCheck[] = [
 		id: "discovery.oauthProtectedResource",
 		backedBy: "src/oauth/server.ts + src/pages/.well-known/oauth-protected-resource/mcp.ts",
 	},
+	{
+		// The scanner parses the H1 for the document's own name, so the heading
+		// is load-bearing, not decoration.
+		id: "discovery.authMd",
+		backedBy: "src/oauth/auth-doc.ts + src/pages/auth.md.ts",
+	},
 	{ id: "botAccessControl.robotsTxtAiRules", backedBy: "public/robots.txt" },
 	{
 		id: "botAccessControl.contentSignals",

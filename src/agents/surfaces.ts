@@ -25,7 +25,11 @@ import {
 	SERVER_CARD_MEDIA_TYPE,
 	SERVER_CARD_PATH,
 } from "@/mcp/server-card";
-import { OAUTH_AUTHORIZATION_SERVER_PATHS, OAUTH_PROTECTED_RESOURCE_PATH } from "@/oauth/server";
+import {
+	AUTH_DOC_PATH,
+	OAUTH_AUTHORIZATION_SERVER_PATHS,
+	OAUTH_PROTECTED_RESOURCE_PATH,
+} from "@/oauth/server";
 
 /**
  * The RFC 8288 relations a surface can hold, and what each one means here:
@@ -105,6 +109,14 @@ export const agentSurfaces: readonly AgentSurface[] = [
 		mediaType: "application/json",
 		title: "Auditmos protected resource metadata for the MCP endpoint",
 		relation: "service-meta",
+	},
+	{
+		// `service-doc` rather than `service-meta`: this one is meant to be read,
+		// and it is the only surface here that explains the others in prose.
+		path: AUTH_DOC_PATH,
+		mediaType: "text/markdown",
+		title: "How authentication and rate limits work at Auditmos",
+		relation: "service-doc",
 	},
 ];
 

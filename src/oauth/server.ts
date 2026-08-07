@@ -59,6 +59,9 @@ export const OAUTH_PROTECTED_RESOURCE_PATH = `/.well-known/oauth-protected-resou
 /** The only scope. It buys rate limit, not access — everything here is public. */
 export const OAUTH_SCOPE = "read:site";
 
+/** The prose twin of the metadata documents above. */
+export const AUTH_DOC_PATH = "/auth.md";
+
 export const ACCESS_TOKEN_TTL_SECONDS = 3600;
 
 const SUPPORTED_GRANT_TYPE = "client_credentials";

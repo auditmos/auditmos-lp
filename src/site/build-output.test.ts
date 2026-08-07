@@ -3,7 +3,11 @@ import { join, resolve } from "node:path";
 import { execa } from "execa";
 import { API_CATALOG_PATH, agentSurfaces } from "@/agents/surfaces";
 import { AI_CATALOG_PATH, SERVER_CARD_PATHS } from "@/mcp/server-card";
-import { OAUTH_AUTHORIZATION_SERVER_PATHS, OAUTH_PROTECTED_RESOURCE_PATH } from "@/oauth/server";
+import {
+	AUTH_DOC_PATH,
+	OAUTH_AUTHORIZATION_SERVER_PATHS,
+	OAUTH_PROTECTED_RESOURCE_PATH,
+} from "@/oauth/server";
 import { CONTENT_SIGNAL } from "./discovery-headers";
 import { staticPages } from "./pages";
 
@@ -93,7 +97,15 @@ function extractJsonObject(source: string, fromIndex: number): string {
 	throw new Error("Unterminated serialized Astro manifest object in worker entry");
 }
 
-function astroBuildPageRoutePatterns(): string[] {
+interface AstroRouteData {
+	origin: string;
+	params: string[];
+	prerender: boolean;
+	route: string;
+	type: string;
+}
+
+function astroManifestRoutes(): AstroRouteData[] {
 	const source = workerEntrySource();
 	// Astro emits `var _manifest = deserializeManifest({...})` in the SSR entry;
 	// match on the assignment so a `const`/`var` change doesn't break parsing.
@@ -105,19 +117,24 @@ function astroBuildPageRoutePatterns(): string[] {
 	}
 
 	const manifest = JSON.parse(extractJsonObject(source, start + marker.length)) as {
-		routes: {
-			routeData: {
-				origin: string;
-				params: string[];
-				prerender: boolean;
-				route: string;
-				type: string;
-			};
-		}[];
+		routes: { routeData: AstroRouteData }[];
 	};
 
-	return manifest.routes
-		.map((route) => route.routeData)
+	return manifest.routes.map((route) => route.routeData);
+}
+
+// Routes the deployed Worker renders on demand: they produce no file in the
+// build output, so "does this URL resolve" has to consult the manifest too.
+function astroOnDemandRoutePatterns(): Set<string> {
+	return new Set(
+		astroManifestRoutes()
+			.filter((route) => !route.prerender && route.origin === "project")
+			.map((route) => route.route),
+	);
+}
+
+function astroBuildPageRoutePatterns(): string[] {
+	return astroManifestRoutes()
 		.filter(
 			(route) =>
 				route.origin === "project" &&
@@ -559,6 +576,25 @@ describe("static build output", () => {
 
 		expect(metadata.resource).toBe("https://auditmos.com/mcp");
 		expect(metadata.authorization_servers).toEqual(["https://auditmos.com"]);
+	});
+
+	it("serves /auth.md as markdown, with every URL it names resolving in the build", () => {
+		const markdown = readFileSync(resolve(distClient, AUTH_DOC_PATH.replace(/^\//, "")), "utf8");
+		const paths = [...markdown.matchAll(/https:\/\/auditmos\.com(\/[^\s`)"']*)/g)]
+			.map((match) => match[1])
+			.filter((path) => path !== "/");
+
+		// The page an agent reads to learn how to authenticate is the worst place
+		// for a dead link: it would send a client that is already confused to a
+		// 404 with the site's authority behind it. `/oauth/*` and `/mcp` resolve
+		// as on-demand routes rather than files, so both are accepted.
+		const onDemand = astroOnDemandRoutePatterns();
+
+		expect(paths.length).toBeGreaterThan(5);
+		expect(paths.filter((path) => !buildArtifactExists(path) && !onDemand.has(path))).toEqual([]);
+		expect(headerRuleBlocks().get(AUTH_DOC_PATH)).toContain(
+			"Content-Type: text/markdown; charset=utf-8",
+		);
 	});
 
 	it("restates the media type of every registered surface the extension would hide", () => {

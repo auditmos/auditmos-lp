@@ -26,7 +26,12 @@ interface AgentIndex {
 		endpoint: string;
 		dnsName: string;
 		readOnly: boolean;
-		authentication: string;
+		authentication: {
+			required: boolean;
+			scheme: string;
+			registrationEndpoint: string;
+			documentation: string;
+		};
 		rateLimit: { requests: number; windowSeconds: number };
 		tools: { name: string }[];
 	}[];
@@ -54,11 +59,16 @@ describe("buildAgentIndex", () => {
 		expect(agent.dnsName).toBe(MCP_AGENT_DNS_NAME);
 	});
 
-	it("declares the agent read-only and unauthenticated, matching what it serves", () => {
+	it("declares the agent read-only, with authentication optional rather than absent", () => {
 		const [agent] = index().agents;
 
+		// It stopped being "none" the moment a credential started doing
+		// something. Stating `required: false` alongside the endpoint that
+		// issues one is the difference between "you cannot" and "you need not".
 		expect(agent.readOnly).toBe(true);
-		expect(agent.authentication).toBe("none");
+		expect(agent.authentication).toMatchObject({ required: false, scheme: "oauth2" });
+		expect(agent.authentication.registrationEndpoint).toContain("/oauth/register");
+		expect(agent.authentication.documentation).toContain("/auth.md");
 	});
 
 	it("publishes the rate limit so a client can pace itself before being refused", () => {

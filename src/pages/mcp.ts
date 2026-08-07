@@ -9,30 +9,26 @@
 import { getCollection } from "astro:content";
 import { env } from "cloudflare:workers";
 import type { APIRoute } from "astro";
+import { authorizeMcpRequest, type McpAccessDecision } from "@/mcp/access";
 import {
 	handleMcpMessage,
 	isSupportedProtocolVersion,
 	MCP_PROTOCOL_VERSION,
-	MCP_RATE_LIMIT,
 	RATE_LIMITED_ERROR_CODE,
 } from "@/mcp/server";
 import { createSiteTools } from "@/mcp/tools";
+import { createOAuthDependencies, verifyAccessToken } from "@/oauth/server";
 
 export const prerender = false;
 
-// The endpoint is unauthenticated, so the client IP is the only actor signal
-// available. Cloudflare's guidance prefers a stable user identifier over an IP
-// because IPs are shared — but the alternative here is a single global bucket,
-// where one abusive caller starves every other client. The limit is set high
-// enough that a shared NAT running normal agent sessions will not hit it.
-async function withinRateLimit(request: Request): Promise<boolean> {
-	const clientIp = request.headers.get("cf-connecting-ip");
-	// No binding in `astro dev` (the Workers runtime is not in play) and no IP on
-	// a direct local request; fail open rather than block local development.
-	if (!clientIp || !env.MCP_RATE_LIMITER) return true;
-
-	const { success } = await env.MCP_RATE_LIMITER.limit({ key: `mcp:${clientIp}` });
-	return success;
+// Which tier a caller gets is decided in `@/mcp/access`, where it can be tested
+// by injecting the limiters. This file only turns the decision into HTTP.
+function accessDecision(request: Request): Promise<McpAccessDecision> {
+	return authorizeMcpRequest(request, {
+		anonymousLimiter: env.MCP_RATE_LIMITER,
+		authenticatedLimiter: env.MCP_RATE_LIMITER_AUTH,
+		verifyAccessToken: (token) => verifyAccessToken(token, createOAuthDependencies(env)),
+	});
 }
 
 // The spec requires servers to validate Origin to blunt DNS-rebinding attacks.
@@ -51,7 +47,10 @@ function corsHeaders(origin: string | null): Record<string, string> {
 	return {
 		"Access-Control-Allow-Origin": origin,
 		"Access-Control-Allow-Methods": "POST, OPTIONS",
-		"Access-Control-Allow-Headers": "content-type, mcp-protocol-version, mcp-session-id",
+		// `authorization` so a browser-based client can reach the authenticated
+		// tier; without it the preflight fails and only the anonymous tier works.
+		"Access-Control-Allow-Headers":
+			"authorization, content-type, mcp-protocol-version, mcp-session-id",
 		Vary: "Origin",
 	};
 }
@@ -79,7 +78,31 @@ export const POST: APIRoute = async ({ request }) => {
 		return jsonResponse({ error: "Origin not allowed" }, 403, null);
 	}
 
-	if (!(await withinRateLimit(request))) {
+	const access = await accessDecision(request);
+
+	if (access.outcome === "unauthorized") {
+		// A credential that does not verify is refused, never downgraded to the
+		// anonymous tier. The challenge names the metadata document that says
+		// how to get a working one, so the client can recover unattended.
+		return new Response(
+			JSON.stringify({
+				jsonrpc: "2.0",
+				id: null,
+				error: { code: RATE_LIMITED_ERROR_CODE, message: "Invalid or expired access token." },
+			}),
+			{
+				status: 401,
+				headers: {
+					"Content-Type": "application/json",
+					"WWW-Authenticate": access.challenge,
+					"MCP-Protocol-Version": MCP_PROTOCOL_VERSION,
+					...corsHeaders(origin),
+				},
+			},
+		);
+	}
+
+	if (access.outcome === "rateLimited") {
 		// A JSON-RPC error body so an MCP client can surface the reason, plus
 		// Retry-After so it knows how long to back off without guessing.
 		return new Response(
@@ -89,16 +112,16 @@ export const POST: APIRoute = async ({ request }) => {
 				error: {
 					code: RATE_LIMITED_ERROR_CODE,
 					message:
-						`Rate limit exceeded: ${MCP_RATE_LIMIT.requests} requests per ` +
-						`${MCP_RATE_LIMIT.windowSeconds} seconds. Retry after ` +
-						`${MCP_RATE_LIMIT.windowSeconds} seconds.`,
+						`Rate limit exceeded: ${access.limit.requests} requests per ` +
+						`${access.limit.windowSeconds} seconds on the ${access.tier} tier. ` +
+						`Retry after ${access.limit.windowSeconds} seconds.`,
 				},
 			}),
 			{
 				status: 429,
 				headers: {
 					"Content-Type": "application/json",
-					"Retry-After": String(MCP_RATE_LIMIT.windowSeconds),
+					"Retry-After": String(access.limit.windowSeconds),
 					"MCP-Protocol-Version": MCP_PROTOCOL_VERSION,
 					...corsHeaders(origin),
 				},

@@ -10,12 +10,23 @@
 
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { MCP_RATE_LIMIT, MCP_RATE_LIMIT_AUTH } from "../src/mcp/server";
 import { buildAuthorizationServerMetadata } from "../src/oauth/server";
 import { stripJsonc } from "./init-project-lib";
 
+type RateLimitBinding = { name?: string; simple?: { limit?: number; period?: number } };
+
 type WranglerConfig = {
 	observability?: { enabled?: boolean; head_sampling_rate?: unknown };
-	env?: Record<string, { name?: string; routes?: { pattern?: string; custom_domain?: boolean }[] }>;
+	ratelimits?: RateLimitBinding[];
+	env?: Record<
+		string,
+		{
+			name?: string;
+			routes?: { pattern?: string; custom_domain?: boolean }[];
+			ratelimits?: RateLimitBinding[];
+		}
+	>;
 };
 
 const wranglerConfig = JSON.parse(
@@ -66,6 +77,37 @@ describe("wrangler.jsonc deployment envs", () => {
 			pattern: "staging.auditmos.com",
 			custom_domain: true,
 		});
+	});
+
+	it("binds both MCP rate limiters in every environment, at the published limits", () => {
+		// Bindings are not inherited by named environments, so each block repeats
+		// them. This catches the half of the drift that is catchable — a block
+		// missing a limiter, or a limit that no longer matches its constant.
+		// What it cannot catch is the deployed limiter diverging from the config;
+		// that is verified by hand in dist/server/wrangler.json.
+		const expected = [
+			{ name: "MCP_RATE_LIMITER", limit: MCP_RATE_LIMIT },
+			{ name: "MCP_RATE_LIMITER_AUTH", limit: MCP_RATE_LIMIT_AUTH },
+		];
+		const blocks = [
+			{ label: "top level", ratelimits: wranglerConfig.ratelimits },
+			...Object.entries(wranglerConfig.env ?? {}).map(([label, env]) => ({
+				label,
+				ratelimits: env.ratelimits,
+			})),
+		];
+
+		for (const block of blocks) {
+			for (const { name, limit } of expected) {
+				const binding = block.ratelimits?.find((rateLimit) => rateLimit.name === name);
+
+				expect({ block: block.label, name, simple: binding?.simple }).toEqual({
+					block: block.label,
+					name,
+					simple: { limit: limit.requests, period: limit.windowSeconds },
+				});
+			}
+		}
 	});
 
 	it("issues staging OAuth documents for the host staging actually answers on", () => {
