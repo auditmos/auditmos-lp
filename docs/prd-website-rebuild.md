@@ -102,9 +102,9 @@ Success looks like: a prospect arrives via a LinkedIn referral, lands on `/`, ca
 
 ## Implementation Decisions
 
-### Architecture spine (9 components)
+### Architecture spine (11 components)
 
-The system is composed as nine deep modules with narrow interfaces:
+The system is composed as eleven deep modules with narrow interfaces:
 
 1. **Content collection** — Astro Content Collections with a Zod schema for `projects`. Single typed interface: `getCollection('projects')` + `getEntry('projects', slug)`. Hides frontmatter parsing, MD rendering, slug derivation, and named-vs-anonymised client handling.
 2. **Page routes** — Astro `.astro` pages, all `prerender = true` except `/api/contact`. URL → HTML. Hides layout composition, Tailwind utility composition, per-page SEO meta + JSON-LD.
@@ -122,10 +122,14 @@ The system is composed as nine deep modules with narrow interfaces:
 
     **Why this is the second request-time route:** MCP is JSON-RPC over HTTP POST, which a prerendered asset cannot serve. It exists so the DNS-AID records (component 9) point at a real agent rather than asserting a capability the site does not have.
 
+11. **Markdown content negotiation** — a client that sends `Accept: text/markdown` to a page URL gets that page's markdown twin back from the same URL, `Content-Type: text/markdown; charset=utf-8`, without having to know the `.md` naming convention. HTML stays the default: only a literal `text/markdown` ranked at or above `text/html` flips the representation, so a browser's trailing `*/*;q=0.8` cannot. `withMarkdownNegotiation()` (`src/site/markdown-negotiation.ts`) is a pure function over the request and an asset fetcher; `src/worker.ts` is a five-line entry that wraps the Cloudflare adapter's handler in it. The response carries `Vary: Accept` — on both representations, so a shared cache cannot serve one to a client that asked for the other — and `X-Markdown-Tokens`, an estimated token count agents use to budget context. Validators bound to the `.md` asset (`ETag`, `Last-Modified`) are dropped, since they would be validated against the wrong document. Cloudflare's own Markdown for Agents does this at the edge with the same header contract, but it converts rendered HTML and needs a Pro zone; this serves the curated twin instead, for free.
+
+    **Why pages now run worker-first:** the asset server answers a prerendered page before the Worker ever sees it, so `Accept` could not be read. `assets.run_worker_first` in `wrangler.jsonc` lists the page routes to reverse that order. It is not a new render path — `App.match()` returns `undefined` for prerendered routes, so the adapter still resolves them to the same static asset; the page costs one Worker hop, not a render. Adding a page means adding it to that list, and a build-output test fails if Astro's prerendered page routes and the list disagree.
+
 ### System boundaries
 
 - **Build time:** GitHub REST API (OSS aggregator), MD content collection, brand SVG assets.
-- **Request time (Worker, two routes only):** `/api/contact` (Cloudflare Turnstile siteverify, Resend HTTP API) and `/mcp` (no external calls — answers from build-time data). All other routes are static HTML served from edge cache.
+- **Request time (Worker):** `/api/contact` (Cloudflare Turnstile siteverify, Resend HTTP API) and `/mcp` (no external calls — answers from build-time data) are the only two *rendered* routes. Page routes also pass through the Worker (`run_worker_first`, component 11) so `Accept` can be negotiated, but they are still served from the same prerendered asset.
 - **Browser (one page only):** `/contact` loads the Turnstile widget script; every other page ships zero JS by default.
 
 ### Third-party services

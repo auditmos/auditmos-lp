@@ -125,6 +125,16 @@ function astroBuildPageRoutePatterns(): string[] {
 		.sort();
 }
 
+// The wrangler config the adapter actually emits for deployment, which is the
+// only place the merged env + asset settings can be read back.
+function deployedAssetsConfig(): { html_handling?: string; run_worker_first?: string[] } {
+	const deployedConfig = JSON.parse(
+		readFileSync(resolve(root, "dist", "server", "wrangler.json"), "utf8"),
+	) as { assets?: { html_handling?: string; run_worker_first?: string[] } };
+
+	return deployedConfig.assets ?? {};
+}
+
 function walkFiles(dir: string): string[] {
 	return readdirSync(dir).flatMap((entry) => {
 		const file = resolve(dir, entry);
@@ -339,13 +349,28 @@ describe("static build output", () => {
 	});
 
 	it("serves prerendered pages at the slash-free URL the site declares canonical", () => {
-		const deployedConfig = JSON.parse(
-			readFileSync(resolve(root, "dist", "server", "wrangler.json"), "utf8"),
-		) as { assets?: { html_handling?: string } };
-
 		// Without this the asset server 307s `/about` to `/about/`, contradicting
 		// the canonical, og:url, and every internal href, which are all slash-free.
-		expect(deployedConfig.assets?.html_handling).toBe("drop-trailing-slash");
+		expect(deployedAssetsConfig().html_handling).toBe("drop-trailing-slash");
+	});
+
+	it("routes every prerendered page through the Worker so Accept can be negotiated", () => {
+		const workerFirst = new Set(deployedAssetsConfig().run_worker_first ?? []);
+
+		// The asset server would otherwise answer these before the Worker runs,
+		// and `Accept: text/markdown` would never be looked at.
+		for (const route of astroBuildPageRoutePatterns()) {
+			const pattern = route === "/projects/[slug]" ? "/projects/*" : route;
+
+			expect({ route, negotiable: workerFirst.has(pattern) }).toEqual({ route, negotiable: true });
+		}
+	});
+
+	it("bundles the markdown negotiation layer into the deployed Worker entry", () => {
+		// Proves `main: "./src/worker.ts"` was honoured. If the build ever went
+		// back to the adapter entrypoint directly, every page would silently
+		// serve HTML again while the unit tests kept passing.
+		expect(workerEntrySource()).toContain("X-Markdown-Tokens");
 	});
 
 	it("points every generated sitemap at the canonical slash-free URL", () => {

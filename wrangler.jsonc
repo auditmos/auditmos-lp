@@ -1,7 +1,8 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "auditmos-lp",
-	"main": "@astrojs/cloudflare/entrypoints/server",
+	// Wraps `@astrojs/cloudflare/entrypoints/server` — see src/worker.ts.
+	"main": "./src/worker.ts",
 	"compatibility_date": "2026-05-25",
 	"compatibility_flags": ["nodejs_compat"],
 	"assets": {
@@ -11,7 +12,26 @@
 		// "auto-trailing-slash" does the opposite for directory-format output,
 		// which contradicts the canonical URL, og:url, sitemap, and every
 		// internal href — all slash-free.
-		"html_handling": "drop-trailing-slash"
+		"html_handling": "drop-trailing-slash",
+		// Every prerendered page route, so the Worker gets to inspect `Accept`
+		// before the asset server answers — that is the only hook for
+		// `Accept: text/markdown` negotiation (src/site/markdown-negotiation.ts).
+		// The page still comes from the same static asset; the Worker adds one
+		// hop, not a render. A new page must be added here too — a build-output
+		// test asserts this list covers Astro's prerendered page routes.
+		"run_worker_first": [
+			"/",
+			"/about",
+			"/contact",
+			"/open-source",
+			"/partners",
+			"/privacy",
+			"/projects",
+			"/projects/*",
+			"/r-and-d",
+			"/security-audits",
+			"/software-development"
+		]
 	},
 	"observability": {
 		"enabled": true,
