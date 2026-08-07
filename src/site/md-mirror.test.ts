@@ -10,6 +10,7 @@
  */
 
 import { auditReports } from "@/audits/reports";
+import { MARKDOWN_MEDIA_TYPE, MARKDOWN_TOKENS_HEADER } from "./markdown-negotiation";
 import { getMarkdownMirrorPages, markdownResponse, renderLlmsTxt } from "./md-mirror";
 import { staticPages } from "./pages";
 
@@ -80,5 +81,28 @@ describe("renderLlmsTxt", () => {
 		expect(llmsTxt).toContain(
 			"- [Software Development | Auditmos](https://auditmos.com/software-development.md): Senior software development for reliable systems, internal tools, and product delivery.",
 		);
+	});
+
+	it("tells agents a page URL negotiates markdown, not just the .md twin", () => {
+		const llmsTxt = renderLlmsTxt(getMarkdownMirrorPages(sampleProjects));
+
+		expect(llmsTxt).toContain(`Accept: ${MARKDOWN_MEDIA_TYPE}`);
+		expect(llmsTxt).toContain(MARKDOWN_TOKENS_HEADER);
+	});
+
+	it("keeps free-form detail above the first H2, which llmstxt.org reserves for link lists", () => {
+		const llmsTxt = renderLlmsTxt(getMarkdownMirrorPages(sampleProjects));
+		const [preamble = "", ...sections] = llmsTxt.split("\n## ");
+
+		expect(preamble).toContain(`Accept: ${MARKDOWN_MEDIA_TYPE}`);
+		// Every line under an H2 is a list item or blank.
+		for (const section of sections) {
+			for (const line of section.split("\n").slice(1)) {
+				expect({ line, listItem: line === "" || line.startsWith("- ") }).toEqual({
+					line,
+					listItem: true,
+				});
+			}
+		}
 	});
 });

@@ -17,7 +17,15 @@ export interface AssetFetcher {
 	fetch(request: Request): Promise<Response>;
 }
 
-const markdownMediaType = "text/markdown";
+/**
+ * The media type a client asks for and the header carrying the token estimate.
+ * Exported because `/llms.txt` and `/agents.json` publish this contract to
+ * agents: the advertised names have to be the enforced ones, so both surfaces
+ * read them from here rather than restating the strings.
+ */
+export const MARKDOWN_MEDIA_TYPE = "text/markdown";
+export const MARKDOWN_TOKENS_HEADER = "X-Markdown-Tokens";
+
 const htmlMediaType = "text/html";
 
 // Headers that describe the `.md` asset's own body rather than the
@@ -65,7 +73,7 @@ function prefersMarkdown(accept: string | null): boolean {
 	// Only a literal `text/markdown` counts as asking for markdown. A browser
 	// sends `text/html,…,*/*;q=0.8`, and that trailing wildcard matches every
 	// media type — honouring it would hand markdown to every browser.
-	const markdown = qualities.get(markdownMediaType) ?? 0;
+	const markdown = qualities.get(MARKDOWN_MEDIA_TYPE) ?? 0;
 
 	return markdown > 0 && markdown >= qualityOf(qualities, htmlMediaType);
 }
@@ -132,8 +140,8 @@ async function markdownTwinResponse(
 	const headers = new Headers(asset.headers);
 
 	for (const header of bodyBoundHeaders) headers.delete(header);
-	headers.set("Content-Type", `${markdownMediaType}; charset=utf-8`);
-	headers.set("X-Markdown-Tokens", String(estimateTokens(markdown)));
+	headers.set("Content-Type", `${MARKDOWN_MEDIA_TYPE}; charset=utf-8`);
+	headers.set(MARKDOWN_TOKENS_HEADER, String(estimateTokens(markdown)));
 	varyOnAccept(headers);
 
 	return new Response(request.method === "HEAD" ? null : markdown, { status: 200, headers });

@@ -2,6 +2,7 @@ import { auditReports } from "@/audits/reports";
 import { site } from "@/brand/site";
 import { ossProjects } from "@/oss/projects";
 import type { ProjectData } from "@/projects/schema";
+import { MARKDOWN_MEDIA_TYPE, MARKDOWN_TOKENS_HEADER } from "./markdown-negotiation";
 import { privacyPage, type SitePage, staticPages } from "./pages";
 
 export interface MarkdownProjectEntry {
@@ -276,6 +277,10 @@ export function renderLlmsTxt(pages: readonly MarkdownMirrorPage[]): string {
 		site.defaultDescription,
 		"",
 		`Contact: ${site.contactEmail}`,
+		"",
+		// Prose, not its own `##` section: llmstxt.org reserves H2 blocks for
+		// link lists, so free-form detail belongs above the first one.
+		`Every page below is available as markdown two ways: the \`.md\` URL listed here, or content negotiation on the page's own URL — \`curl ${site.url}/about -H "Accept: ${MARKDOWN_MEDIA_TYPE}"\`. Both return the same document; HTML stays the default for anything that does not ask. Negotiated responses carry an estimated token count in \`${MARKDOWN_TOKENS_HEADER}\`, so you can budget context before reading.`,
 		"",
 		"## Pages",
 		"",

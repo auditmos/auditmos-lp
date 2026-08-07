@@ -12,6 +12,7 @@
  */
 
 import { legalEntity, site } from "@/brand/site";
+import { MARKDOWN_MEDIA_TYPE, MARKDOWN_TOKENS_HEADER } from "@/site/markdown-negotiation";
 import { MCP_PROTOCOL_VERSION, MCP_RATE_LIMIT } from "./server";
 import { createSiteTools, type McpProjectEntry } from "./tools";
 
@@ -66,7 +67,16 @@ export function buildAgentIndex(projects: readonly McpProjectEntry[]): unknown {
 		documents: {
 			llmsTxt: `${site.url}/llms.txt`,
 			sitemap: `${site.url}/sitemap.xml`,
-			markdownMirror: "Every page URL also answers at <path>.md as text/markdown.",
+			markdownMirror: `Every page URL also answers at <path>.md as ${MARKDOWN_MEDIA_TYPE}.`,
+			// The second route to the same document, for a client that would
+			// rather negotiate than rewrite paths. Names come from the module
+			// that enforces them, so this cannot advertise a contract the
+			// Worker does not honour.
+			markdownNegotiation:
+				`Sending Accept: ${MARKDOWN_MEDIA_TYPE} to any page URL returns that page as ` +
+				`markdown instead of HTML; HTML stays the default for requests that do not ask. ` +
+				`Negotiated responses carry an estimated token count in ${MARKDOWN_TOKENS_HEADER}, ` +
+				`plus Vary: Accept.`,
 		},
 	};
 }

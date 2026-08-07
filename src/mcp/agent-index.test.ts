@@ -1,4 +1,5 @@
 import { legalEntity } from "@/brand/site";
+import { MARKDOWN_MEDIA_TYPE, MARKDOWN_TOKENS_HEADER } from "@/site/markdown-negotiation";
 import { buildAgentIndex, MCP_AGENT_DNS_NAME, MCP_ENDPOINT_PATH } from "./agent-index";
 import { MCP_RATE_LIMIT } from "./server";
 import { createSiteTools, type McpProjectEntry } from "./tools";
@@ -80,5 +81,15 @@ describe("buildAgentIndex", () => {
 	it("points at the other machine-readable surfaces an arriving agent needs", () => {
 		expect(index().documents.llmsTxt).toBe("https://auditmos.com/llms.txt");
 		expect(index().documents.sitemap).toBe("https://auditmos.com/sitemap.xml");
+	});
+
+	it("advertises both routes to a page's markdown, naming what the Worker enforces", () => {
+		const { markdownMirror, markdownNegotiation } = index().documents;
+
+		// Renaming the header or media type in the negotiation module without
+		// republishing it here would leave agents acting on a stale contract.
+		expect(markdownMirror).toContain(MARKDOWN_MEDIA_TYPE);
+		expect(markdownNegotiation).toContain(`Accept: ${MARKDOWN_MEDIA_TYPE}`);
+		expect(markdownNegotiation).toContain(MARKDOWN_TOKENS_HEADER);
 	});
 });
