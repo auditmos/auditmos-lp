@@ -5,6 +5,7 @@ import { execa } from "execa";
 import { A2A_AGENT_CARD_PATH } from "@/agents/agent-card";
 import { AGENT_SKILLS_INDEX_PATH } from "@/agents/skills";
 import { API_CATALOG_PATH, agentSurfaces } from "@/agents/surfaces";
+import { renderWebMcpScript, WEB_MCP_TOOL_NAMES } from "@/agents/web-mcp";
 import { AI_CATALOG_PATH, SERVER_CARD_PATHS } from "@/mcp/server-card";
 import {
 	AUTH_DOC_PATH,
@@ -295,9 +296,19 @@ describe("static build output", () => {
 	});
 
 	it("keeps each prerendered static page within the 50 KB HTML plus CSS budget", () => {
+		// The homepage gets exactly the WebMCP script's own bytes on top, and not
+		// a byte more: the content budget is unchanged, the script is a declared,
+		// separately-capped addition rather than a reason to loosen the limit.
+		const webMcpBytes = new TextEncoder().encode(renderWebMcpScript()).byteLength;
+
 		for (const route of prerenderedRoutes) {
 			if (clientJavaScriptRoutes.has(route)) continue;
-			expect(pageTransferSize(htmlPathFor(route))).toBeLessThanOrEqual(maxTransferredBytes);
+			const budget = route === "/" ? maxTransferredBytes + webMcpBytes : maxTransferredBytes;
+
+			expect({ route, withinBudget: pageTransferSize(htmlPathFor(route)) <= budget }).toEqual({
+				route,
+				withinBudget: true,
+			});
 		}
 	});
 
@@ -305,9 +316,58 @@ describe("static build output", () => {
 		for (const route of prerenderedRoutes) {
 			if (clientJavaScriptRoutes.has(route)) continue;
 			const html = readFileSync(htmlPathFor(route), "utf8");
-			const scripts = [...html.matchAll(/<script\b[^>]*>/g)].map((match) => match[0]);
+			const scripts = [...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g)];
 
-			expect(scripts.every((script) => script.includes('type="application/ld+json"'))).toBe(true);
+			for (const [tag, body] of scripts) {
+				// The homepage's WebMCP registration is the one exception, and it
+				// only counts as "no JavaScript" because nothing in it runs: the
+				// whole body is inside a feature check no normal browser passes.
+				const isWebMcp = route === "/" && body.includes("navigator.modelContext");
+
+				expect({ route, allowed: tag.includes('type="application/ld+json"') || isWebMcp }).toEqual({
+					route,
+					allowed: true,
+				});
+			}
+		}
+	});
+
+	it("registers WebMCP tools on the homepage, inert in every normal browser", () => {
+		const html = readFileSync(htmlPathFor("/"), "utf8");
+		// Non-greedy across `</script>` boundaries: a plain `[\s\S]*?` starts at
+		// the page's first JSON-LD block and swallows everything up to the WebMCP
+		// one, which made the size assertion measure the wrong 18 KB.
+		const scriptBody = "(?:(?!<\\/script>)[\\s\\S])*?";
+		const [, script] =
+			new RegExp(
+				`<script\\b[^>]*>(${scriptBody}navigator\\.modelContext${scriptBody})<\\/script>`,
+			).exec(html) ?? [];
+
+		expect(script).toBeDefined();
+		// Small, self-contained, and guarded — asserted on the bytes that shipped
+		// rather than on the generator, because Astro could have transformed them.
+		expect(new TextEncoder().encode(script).byteLength).toBeLessThanOrEqual(2048);
+		expect(script.trimStart().startsWith("try{")).toBe(true);
+		expect(script.trimEnd().endsWith("}catch(e){}")).toBe(true);
+		expect(script.slice(0, script.indexOf("if("))?.trim()).toBe("try{");
+		expect(script).not.toMatch(/https?:\/\//);
+		expect(script).not.toMatch(/\bsrc=/);
+
+		for (const tool of WEB_MCP_TOOL_NAMES) {
+			expect(script).toContain(`"${tool}"`);
+		}
+	});
+
+	it("keeps the WebMCP script off every page but the homepage", () => {
+		// It buys nothing on a services page and would put bytes on responses an
+		// agentic browser never lands on first.
+		for (const route of prerenderedRoutes) {
+			if (route === "/") continue;
+
+			expect({
+				route,
+				hasWebMcp: readFileSync(htmlPathFor(route), "utf8").includes("modelContext"),
+			}).toEqual({ route, hasWebMcp: false });
 		}
 	});
 

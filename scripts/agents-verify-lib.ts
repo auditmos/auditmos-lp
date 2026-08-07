@@ -109,6 +109,12 @@ export const REQUIRED_CHECKS: readonly RequiredCheck[] = [
 		id: "discovery.agentSkills",
 		backedBy: "src/agents/skills.ts + src/pages/.well-known/agent-skills/**",
 	},
+	{
+		// Detected by loading the homepage in a real browser, so this one also
+		// proves the inline script still parses and runs where it should.
+		id: "discovery.webMcp",
+		backedBy: "src/agents/web-mcp.ts + the inline script in src/pages/index.astro",
+	},
 	{ id: "botAccessControl.robotsTxtAiRules", backedBy: "public/robots.txt" },
 	{
 		id: "botAccessControl.contentSignals",

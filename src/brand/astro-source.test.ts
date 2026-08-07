@@ -23,8 +23,17 @@ describe("Astro static source contract", () => {
 		expect(layoutSource).toContain('type="application/ld+json"');
 	});
 
-	it("does not add hydrated islands or page scripts", () => {
+	it("does not add hydrated islands", () => {
 		expect(`${layoutSource}\n${homeSource}`).not.toMatch(/client:(load|idle|visible|media|only)/);
-		expect(homeSource).not.toContain("<script");
+	});
+
+	it("adds no page script but the inert WebMCP registration", () => {
+		// The homepage carries exactly one `<script>`: the WebMCP tool
+		// registration, which is `is:inline` (never bundled or hydrated) and
+		// whose whole body sits behind a feature check no normal browser passes.
+		// Anything else here would be a real island arriving by the back door.
+		const scripts = [...homeSource.matchAll(/<script\b[^>]*>/g)].map((match) => match[0]);
+
+		expect(scripts).toEqual(["<script is:inline set:html={webMcpScript} />"]);
 	});
 });

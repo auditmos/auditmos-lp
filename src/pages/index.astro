@@ -1,5 +1,6 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import { renderWebMcpScript } from "@/agents/web-mcp";
 import { auditReports } from "@/audits/reports";
 import { site } from "@/brand/site";
 import { ossProjects } from "@/oss/projects";
@@ -10,6 +11,7 @@ import { getCollection } from "astro:content";
 export const prerender = true;
 
 const featuredProjects = getFeaturedProjects(await getCollection("projects"), 2);
+const webMcpScript = renderWebMcpScript();
 
 const proofItems = [
 	{
@@ -365,4 +367,14 @@ const testimonials: readonly Testimonial[] = [];
 			</div>
 		</section>
 	</main>
+	{/*
+		WebMCP: registers three read-only tools when the browser implements
+		`navigator.modelContext`, and does nothing at all otherwise. Homepage only
+		— it is the page an agentic browser lands on, and repeating it site-wide
+		would put bytes on every response to buy nothing.
+
+		`is:inline` keeps Astro from processing it into a bundled module: the
+		point is that this page still ships no JavaScript a normal browser runs.
+	*/}
+	<script is:inline set:html={webMcpScript} />
 </Layout>
