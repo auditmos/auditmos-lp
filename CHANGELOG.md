@@ -1,3 +1,10 @@
+# [1.13.0](https://github.com/auditmos/auditmos-lp/compare/v1.12.2...v1.13.0) (2026-08-07)
+
+
+### Features
+
+* **seo:** advertise agent-discovery Link headers and unify the sitemap ([542a920](https://github.com/auditmos/auditmos-lp/commit/542a920a34f8bd3e3edc1ab8e876b7b05a3822c4))
+
 ## [1.12.2](https://github.com/auditmos/auditmos-lp/compare/v1.12.1...v1.12.2) (2026-08-05)
 
 
