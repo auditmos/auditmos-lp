@@ -1,3 +1,10 @@
+# [1.16.0](https://github.com/auditmos/auditmos-lp/compare/v1.15.0...v1.16.0) (2026-08-07)
+
+
+### Features
+
+* **agents:** negotiate Accept: text/markdown on page URLs ([8f12369](https://github.com/auditmos/auditmos-lp/commit/8f12369fd4a41ac11d40fb4fa1e2959097d71967))
+
 # [1.15.0](https://github.com/auditmos/auditmos-lp/compare/v1.14.0...v1.15.0) (2026-08-07)
 
 
