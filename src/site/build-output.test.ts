@@ -1,6 +1,7 @@
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { execa } from "execa";
+import { CONTENT_SIGNAL } from "./discovery-headers";
 import { staticPages } from "./pages";
 
 const root = resolve(import.meta.dirname, "..", "..");
@@ -469,6 +470,15 @@ describe("static build output", () => {
 
 		expect(targets.length).toBeGreaterThan(0);
 		expect(targets.filter((target) => !buildArtifactExists(target))).toEqual([]);
+	});
+
+	it("states the content usage policy on every response, matching robots.txt", () => {
+		const signal = `Content-Signal: ${CONTENT_SIGNAL}`;
+
+		// robots.txt reaches only clients that fetch it; the header reaches every
+		// asset request, including the `.md` twins and negotiated page responses.
+		expect(headerRuleBlocks().get("/*")).toContain(signal);
+		expect(readFileSync(resolve(distClient, "robots.txt"), "utf8")).toContain(signal);
 	});
 
 	it("keeps the adapter's immutable asset cache rule alongside the discovery rules", () => {

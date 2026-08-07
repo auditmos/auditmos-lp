@@ -1,5 +1,6 @@
 /**
- * Agent-discovery response headers (RFC 8288 `Link`).
+ * Agent-facing response headers: RFC 8288 `Link` relations plus the site's
+ * `Content-Signal` content usage policy.
  *
  * A third machine-readable surface alongside the MD mirror and `/llms.txt`,
  * derived from the pages that actually landed in the build output so it can
@@ -23,6 +24,18 @@ interface DiscoveryLink {
 
 const markdownTwinTitle = "Markdown twin of this page";
 
+/**
+ * The content usage policy, stated on every response so an agent that never
+ * fetches `robots.txt` still receives it — the same header Cloudflare's
+ * Markdown for Agents emits. `public/robots.txt` declares the identical value
+ * under its `User-agent` group, and `crawler-source.test.ts` fails if the two
+ * drift, since a site stating two different policies has stated none.
+ *
+ * Rationale for the values is in the PRD (component 11); in short, reading
+ * this site with an agent is the point, training on it is not granted.
+ */
+export const CONTENT_SIGNAL = "ai-train=no, search=yes, ai-input=yes";
+
 // Only IANA-registered relation types: service-desc (RFC 8631), author (HTML),
 // privacy-policy (RFC 6903), alternate (HTML).
 const siteWideLinks: readonly DiscoveryLink[] = [
@@ -44,7 +57,7 @@ const siteWideLinks: readonly DiscoveryLink[] = [
 	{ target: "/privacy", rel: "privacy-policy" },
 ];
 
-const fileBanner = `# Agent discovery — RFC 8288 Link relation headers.
+const fileBanner = `# Agent discovery — RFC 8288 Link relations + Content-Signal policy.
 #
 # Generated at build time from the pages that landed in the build output.
 # Do not edit by hand — source: src/site/discovery-headers.ts.
@@ -71,25 +84,35 @@ function renderLink(link: DiscoveryLink): string {
 	return `<${link.target}>; ${parameters.join("; ")}`;
 }
 
-function renderRule(pattern: string, links: readonly DiscoveryLink[]): string {
-	return [pattern, ...links.map((link) => `  Link: ${renderLink(link)}`)].join("\n");
+function renderRule(pattern: string, headers: readonly string[]): string {
+	return [pattern, ...headers.map((header) => `  ${header}`)].join("\n");
+}
+
+function linkHeaders(links: readonly DiscoveryLink[]): string[] {
+	return links.map((link) => `Link: ${renderLink(link)}`);
 }
 
 export function renderDiscoveryHeaders(pageRoutes: readonly string[]): string {
+	// The policy leads the site-wide block: it governs what a client may do with
+	// everything the Link relations then point at.
+	const siteWideHeaders = [`Content-Signal: ${CONTENT_SIGNAL}`, ...linkHeaders(siteWideLinks)];
 	const alternateRules = [...pageRoutes].sort().flatMap((route) =>
 		patternsFor(route).map((pattern) =>
-			renderRule(pattern, [
-				{
-					target: markdownTwinOf(route),
-					rel: "alternate",
-					type: "text/markdown",
-					title: markdownTwinTitle,
-				},
-			]),
+			renderRule(
+				pattern,
+				linkHeaders([
+					{
+						target: markdownTwinOf(route),
+						rel: "alternate",
+						type: "text/markdown",
+						title: markdownTwinTitle,
+					},
+				]),
+			),
 		),
 	);
 
-	return `${[fileBanner, renderRule("/*", siteWideLinks), ...alternateRules].join("\n\n")}\n`;
+	return `${[fileBanner, renderRule("/*", siteWideHeaders), ...alternateRules].join("\n\n")}\n`;
 }
 
 function walkFiles(dir: string): string[] {

@@ -1,4 +1,9 @@
+# Content Signals (https://contentsignals.org/).
+# Restrictions below are express reservations of rights
+# under Article 4 of EU Directive 2019/790.
+
 User-agent: *
+Content-Signal: ai-train=no, search=yes, ai-input=yes
 Allow: /
 
 Sitemap: https://auditmos.com/sitemap.xml

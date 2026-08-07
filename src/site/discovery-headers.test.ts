@@ -1,4 +1,4 @@
-import { renderDiscoveryHeaders } from "./discovery-headers";
+import { CONTENT_SIGNAL, renderDiscoveryHeaders } from "./discovery-headers";
 
 // Parses the Cloudflare `_headers` format: an unindented line opens a rule
 // block, the indented lines below it are that block's `Name: value` pairs.
@@ -27,11 +27,20 @@ describe("renderDiscoveryHeaders", () => {
 		const blocks = headerRuleBlocks(renderDiscoveryHeaders(["/"]));
 
 		expect(blocks.get("/*")).toEqual([
+			"Content-Signal: ai-train=no, search=yes, ai-input=yes",
 			'Link: </llms.txt>; rel="service-desc"; type="text/plain"; title="Auditmos site index for AI agents"',
 			'Link: </agents.json>; rel="service-desc"; type="application/json"; title="Auditmos agent index (DNS-AID)"',
 			'Link: </about>; rel="author"',
 			'Link: </privacy>; rel="privacy-policy"',
 		]);
+	});
+
+	it("states the content policy on every path, not only where a twin exists", () => {
+		// An agent that fetches one asset and never reads robots.txt still gets
+		// the policy, so `/*` has to carry it even with no pages generated.
+		const blocks = headerRuleBlocks(renderDiscoveryHeaders([]));
+
+		expect(blocks.get("/*")).toContain(`Content-Signal: ${CONTENT_SIGNAL}`);
 	});
 
 	it("maps the homepage to /index.md under a single rule", () => {
