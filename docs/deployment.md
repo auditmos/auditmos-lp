@@ -93,21 +93,36 @@ scoped to `auditmos.com` with **Zone → DNS → Edit**, **Zone → Zone → Rea
 
 Published 2026-08-07, per
 [draft-mozleywilliams-dnsop-dnsaid-02](https://datatracker.ietf.org/doc/draft-mozleywilliams-dnsop-dnsaid/).
-The `create` calls below are kept for rebuilding the zone from scratch:
+The `create` calls below are kept for rebuilding the zone from scratch.
+
+**Sign the zone before publishing the records, not after.** These went up about
+seven minutes before DNSSEC was activated, and that ordering cost roughly an
+hour of mixed results. A resolver that still held `.com`'s "no DS, treat as
+insecure" proof (900 s negative TTL) marked any record it fetched in that window
+as unvalidated — and cached that verdict for the record's full 3600 s TTL. The
+records were correct the whole time; a share of resolvers simply reported
+`AD=false` until those entries aged out. Signing first avoids the window
+entirely.
 
 ```dns
 ; Organization index (section 3.2) — ServiceMode. TargetName must be
 ; underscore-free because the index is fetched over TLS with a public cert.
-_index._agents.auditmos.com. 3600 IN SVCB 1 auditmos.com. alpn="h2" port="443"
+_index._agents.auditmos.com.  300 IN SVCB 1 auditmos.com. alpn="h2" port="443"
 
 ; The MCP agent at its primary owner name (section 3.1) — ServiceMode.
 ; One agent protocol per record: alpn carries mcp plus the h2 transport.
-mcp.auditmos.com.            3600 IN SVCB 1 auditmos.com. alpn="mcp,h2" port="443"
+mcp.auditmos.com.             300 IN SVCB 1 auditmos.com. alpn="mcp,h2" port="443"
 
 ; DNS-SD label for the same agent (section 3.1) — AliasMode (priority 0)
 ; MUST point at the primary owner rather than repeat its parameters.
-_mcp._agents.auditmos.com.   3600 IN SVCB 0 mcp.auditmos.com.
+_mcp._agents.auditmos.com.    300 IN SVCB 0 mcp.auditmos.com.
 ```
+
+TTL is **300**, not Cloudflare's usual hour. These are discovery records that
+change rarely but whose cached state is painful when wrong: at 3600 s a bad or
+unvalidated answer sticks around for an hour with no way to purge it, since
+nothing you control can flush a third-party resolver cache. Five minutes keeps
+the blast radius of any future edit or DNSSEC key rotation small.
 
 SVCB carries host, port, and protocol but no URL path. `/agents.json` closes
 that gap: it lists each agent's exact endpoint. The draft's `well-known`
@@ -128,9 +143,9 @@ create() {
     | node -pe "const r=JSON.parse(require('fs').readFileSync(0)); r.success ? 'ok '+r.result.name : 'FAILED '+JSON.stringify(r.errors)"
 }
 
-create '{"type":"SVCB","name":"_index._agents.auditmos.com","ttl":3600,"data":{"priority":1,"target":"auditmos.com","value":"alpn=\"h2\" port=\"443\""}}'
-create '{"type":"SVCB","name":"mcp.auditmos.com","ttl":3600,"data":{"priority":1,"target":"auditmos.com","value":"alpn=\"mcp,h2\" port=\"443\""}}'
-create '{"type":"SVCB","name":"_mcp._agents.auditmos.com","ttl":3600,"data":{"priority":0,"target":"mcp.auditmos.com","value":""}}'
+create '{"type":"SVCB","name":"_index._agents.auditmos.com","ttl":300,"data":{"priority":1,"target":"auditmos.com","value":"alpn=\"h2\" port=\"443\""}}'
+create '{"type":"SVCB","name":"mcp.auditmos.com","ttl":300,"data":{"priority":1,"target":"auditmos.com","value":"alpn=\"mcp,h2\" port=\"443\""}}'
+create '{"type":"SVCB","name":"_mcp._agents.auditmos.com","ttl":300,"data":{"priority":0,"target":"mcp.auditmos.com","value":""}}'
 ```
 
 Verify the way the scanner does — DNS-over-HTTPS, type 64 (SVCB):
@@ -202,11 +217,25 @@ curl -s -X POST https://isitagentready.com/api/scan \
   | node -pe "JSON.stringify(JSON.parse(require('fs').readFileSync(0)).checks.discoverability, null, 2)"
 ```
 
-As of 2026-08-07 this returns `robotsTxt`, `sitemap`, and `linkHeaders` passing.
-`dnsAid` reports all three records found and structurally valid
-(`serviceRecordCount: 2`, `aliasRecordCount: 1`, `validationIssues: []`) but
-fails on one thing only:
+As of 2026-08-07 all four discoverability checks pass: `robotsTxt`, `sitemap`,
+`linkHeaders`, `dnsAid`. Verified with 25 consecutive scanner runs and 60
+`AD=true` DoH samples across the three records.
 
-> DNS for AI Discovery (DNS-AID) records found, but DNSSEC was not validated
+**Sample before you believe a result here.** The scanner resolves over DoH
+against an anycast resolver, so a single run reports whichever backend instance
+answered. While stale cache entries were still aging out, consecutive runs
+returned `fail, fail, pass` for a configuration that never changed. One pass
+proves nothing and one failure proves nothing; look for a run of them.
 
-That is step 3 above — the DS at eNom — and nothing else.
+To tell a genuine misconfiguration apart from cache, query the authoritative
+servers directly — this bypasses every resolver cache and shows whether the
+records exist and are signed. Note that macOS `dig` 9.10 does not know the
+`SVCB` mnemonic and will silently query type `A` instead, so ask for `TYPE64`:
+
+```bash
+dig +dnssec +norec +noall +answer @brodie.ns.cloudflare.com \
+  _index._agents.auditmos.com TYPE64
+```
+
+An answer with both a `TYPE64` record and an `RRSIG TYPE64` means the zone side
+is correct and any `AD=false` you see is a resolver cache that will age out.
