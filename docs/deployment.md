@@ -68,8 +68,8 @@ Post-deploy checks:
 
 ## Agent discovery: DNS-AID records + DNSSEC
 
-**Status (2026-08-07):** records published, zone signed, **one step left** —
-publish the DS at the registrar (see step 2). Live endpoints these advertise:
+**Status (2026-08-07): complete.** Records published, zone signed, DS published
+at the registrar, chain validating (`AD=true`). Live endpoints these advertise:
 
 - `https://auditmos.com/mcp` — the MCP agent (Streamable HTTP, read-only, no auth)
 - `https://auditmos.com/agents.json` — the DNS-AID organization index
@@ -80,7 +80,12 @@ not Cloudflare Registrar, so the DS has to be pasted there by hand.
 ### Credentials
 
 `wrangler login`'s OAuth session carries `zone (read)` only and cannot write DNS.
-These commands need `CLOUDFLARE_API_TOKEN` in `.env` (gitignored) from a token
+Do **not** name this token `CLOUDFLARE_API_TOKEN`: wrangler reads that name out of
+`.env` and prefers it over your `wrangler login` session, so a DNS-scoped token in
+that slot silently breaks every `pnpm deploy:*` with `Authentication error [code:
+10000]`. Keep deploys on OAuth and give DNS its own variable.
+
+These commands need `CLOUDFLARE_DNS_API_TOKEN` in `.env` (gitignored) from a token
 scoped to `auditmos.com` with **Zone → DNS → Edit**, **Zone → Zone → Read**, and
 **Zone → Zone Settings → Edit**.
 
@@ -112,13 +117,13 @@ the unknown key, since nothing depends on it.
 
 ```bash
 set -a; . ./.env; set +a
-ZONE_ID=$(curl -s -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+ZONE_ID=$(curl -s -H "Authorization: Bearer $CLOUDFLARE_DNS_API_TOKEN" \
   "https://api.cloudflare.com/client/v4/zones?name=auditmos.com" \
   | node -pe "JSON.parse(require('fs').readFileSync(0)).result[0].id")
 
 create() {
   curl -s -X POST "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/dns_records" \
-    -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+    -H "Authorization: Bearer $CLOUDFLARE_DNS_API_TOKEN" \
     -H "Content-Type: application/json" --data "$1" \
     | node -pe "const r=JSON.parse(require('fs').readFileSync(0)); r.success ? 'ok '+r.result.name : 'FAILED '+JSON.stringify(r.errors)"
 }
@@ -138,20 +143,22 @@ for n in _index._agents.auditmos.com mcp.auditmos.com _mcp._agents.auditmos.com;
 done
 ```
 
-### 2. DNSSEC — order matters, one step outstanding
+### 2. DNSSEC — complete, and the order it was done in
 
 **A DS record that does not match the zone makes auditmos.com unresolvable for
 every validating resolver.** Sign first, publish the DS second, never the
 reverse, and do not disable signing while a DS is still published at the parent.
+That last sentence is the standing rule, not a one-off: disabling Cloudflare
+signing while eNom still publishes the DS takes the domain down.
 
-Steps 1 and 2 are **done** — Cloudflare reports `status: pending`, meaning the
-zone is signed and serving DNSKEY while it waits for the DS to appear at the
-parent. Nothing about resolution changes until step 3.
+Done 2026-08-07. Cloudflare reports `status: active`, the DS resolves at the
+parent, and validating resolvers return `AD=true`. The steps are kept below
+because they are the procedure for a key rotation, not just the initial setup.
 
 ```bash
 # 1. DONE — enable signing. Inert until the DS is published; returns the DS.
 curl -s -X PATCH "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/dnssec" \
-  -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+  -H "Authorization: Bearer $CLOUDFLARE_DNS_API_TOKEN" \
   -H "Content-Type: application/json" --data '{"status":"active"}' \
   | node -pe "const r=JSON.parse(require('fs').readFileSync(0)).result; JSON.stringify({ds:r.ds,key_tag:r.key_tag,algorithm:r.algorithm,digest_type:r.digest_type,digest:r.digest},null,2)"
 
@@ -161,7 +168,7 @@ curl -s -H "accept: application/dns-json" \
   | node -pe "'DNSKEY answers: '+(JSON.parse(require('fs').readFileSync(0)).Answer?.length ?? 0)"
 ```
 
-3. **TODO —** paste the DS below into eNom's DNSSEC / DS record form for
+3. **DONE —** the DS below is published in eNom's DNSSEC / DS record form for
    `auditmos.com`. Re-read it from the API rather than copying it from here if
    the key is ever rotated.
 
