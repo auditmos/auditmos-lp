@@ -1,3 +1,10 @@
+# [1.15.0](https://github.com/auditmos/auditmos-lp/compare/v1.14.0...v1.15.0) (2026-08-07)
+
+
+### Features
+
+* **mcp:** rate limit the endpoint and publish the limit to clients ([0d8b30a](https://github.com/auditmos/auditmos-lp/commit/0d8b30af463ba27cdfd0f018ed6041dfee8ac72a))
+
 # [1.14.0](https://github.com/auditmos/auditmos-lp/compare/v1.13.0...v1.14.0) (2026-08-07)
 
 
