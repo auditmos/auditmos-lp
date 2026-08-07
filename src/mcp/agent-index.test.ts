@@ -1,5 +1,6 @@
 import { legalEntity } from "@/brand/site";
 import { buildAgentIndex, MCP_AGENT_DNS_NAME, MCP_ENDPOINT_PATH } from "./agent-index";
+import { MCP_RATE_LIMIT } from "./server";
 import { createSiteTools, type McpProjectEntry } from "./tools";
 
 const projects = [
@@ -25,6 +26,7 @@ interface AgentIndex {
 		dnsName: string;
 		readOnly: boolean;
 		authentication: string;
+		rateLimit: { requests: number; windowSeconds: number };
 		tools: { name: string }[];
 	}[];
 	documents: Record<string, string>;
@@ -56,6 +58,15 @@ describe("buildAgentIndex", () => {
 
 		expect(agent.readOnly).toBe(true);
 		expect(agent.authentication).toBe("none");
+	});
+
+	it("publishes the rate limit so a client can pace itself before being refused", () => {
+		const [agent] = index().agents;
+
+		expect(agent.rateLimit).toMatchObject({
+			requests: MCP_RATE_LIMIT.requests,
+			windowSeconds: MCP_RATE_LIMIT.windowSeconds,
+		});
 	});
 
 	it("lists exactly the tools the server registers, so the index cannot overclaim", () => {

@@ -20,6 +20,17 @@ export const MCP_PROTOCOL_VERSION = "2025-06-18";
  */
 const SUPPORTED_PROTOCOL_VERSIONS = ["2025-06-18", "2025-03-26"] as const;
 
+/**
+ * The published rate limit. Must match the `MCP_RATE_LIMITER` binding in
+ * wrangler.jsonc — this constant is what the endpoint enforces against, what
+ * `initialize` tells clients, and what `/agents.json` advertises, so a client
+ * can never be told a limit different from the one applied.
+ */
+export const MCP_RATE_LIMIT = { requests: 120, windowSeconds: 60 } as const;
+
+/** JSON-RPC reserves -32000..-32099 for implementation-defined server errors. */
+export const RATE_LIMITED_ERROR_CODE = -32000;
+
 export interface McpToolResult {
 	content: { type: "text"; text: string }[];
 	isError?: boolean;
@@ -162,7 +173,10 @@ export function handleMcpMessage(message: unknown, tools: readonly McpTool[]): M
 				instructions:
 					"Read-only access to the Auditmos company profile, service lines, " +
 					"selected project history, and published open-source repositories. " +
-					"Every tool returns facts published on auditmos.com.",
+					"Every tool returns facts published on auditmos.com. " +
+					`Rate limit: ${MCP_RATE_LIMIT.requests} requests per ` +
+					`${MCP_RATE_LIMIT.windowSeconds} seconds per client. Exceeding it returns ` +
+					"HTTP 429 with a Retry-After header; wait that many seconds and retry.",
 			});
 		case "ping":
 			return success(id, {});

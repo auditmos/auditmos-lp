@@ -2,6 +2,7 @@ import {
 	handleMcpMessage,
 	isSupportedProtocolVersion,
 	MCP_PROTOCOL_VERSION,
+	MCP_RATE_LIMIT,
 	type McpTool,
 } from "./server";
 
@@ -42,6 +43,16 @@ describe("handleMcpMessage", () => {
 		expect(body.result.protocolVersion).toBe(MCP_PROTOCOL_VERSION);
 		expect(body.result.capabilities).toEqual({ tools: { listChanged: false } });
 		expect(body.result.serverInfo).toMatchObject({ name: "auditmos" });
+	});
+
+	it("tells clients the rate limit in initialize, matching the enforced constant", () => {
+		const body = call("initialize").body as { result: { instructions: string } };
+
+		// An agent that is not told the limit discovers it by being refused.
+		expect(body.result.instructions).toContain(`${MCP_RATE_LIMIT.requests} requests`);
+		expect(body.result.instructions).toContain(`${MCP_RATE_LIMIT.windowSeconds} seconds`);
+		expect(body.result.instructions).toContain("429");
+		expect(body.result.instructions).toContain("Retry-After");
 	});
 
 	it("echoes a supported protocol version the client asks for, and falls back otherwise", () => {

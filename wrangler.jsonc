@@ -17,18 +17,43 @@
 		"enabled": true,
 		"head_sampling_rate": 1
 	},
+	// Rate limit for the unauthenticated MCP endpoint. Bindings are not
+	// inherited by named environments, so this is repeated in each `env` block —
+	// verify it survives into dist/server/wrangler.json after changing it.
+	// `period` accepts only 10 or 60.
+	"ratelimits": [
+		{
+			"name": "MCP_RATE_LIMITER",
+			"namespace_id": "1001",
+			"simple": { "limit": 120, "period": 60 }
+		}
+	],
 	"vars": {
 		"CLOUDFLARE_ENV": "dev"
 	},
 	"env": {
 		"dev": {
 			"name": "auditmos-lp-dev",
+			"ratelimits": [
+				{
+					"name": "MCP_RATE_LIMITER",
+					"namespace_id": "1001",
+					"simple": { "limit": 120, "period": 60 }
+				}
+			],
 			"vars": {
 				"CLOUDFLARE_ENV": "dev"
 			}
 		},
 		"staging": {
 			"name": "auditmos-lp-staging",
+			"ratelimits": [
+				{
+					"name": "MCP_RATE_LIMITER",
+					"namespace_id": "1001",
+					"simple": { "limit": 120, "period": 60 }
+				}
+			],
 			"routes": [{ "pattern": "staging.auditmos.com", "custom_domain": true }],
 			"vars": {
 				"CLOUDFLARE_ENV": "staging"
@@ -36,6 +61,13 @@
 		},
 		"production": {
 			"name": "auditmos-lp-production",
+			"ratelimits": [
+				{
+					"name": "MCP_RATE_LIMITER",
+					"namespace_id": "1001",
+					"simple": { "limit": 120, "period": 60 }
+				}
+			],
 			"routes": [{ "pattern": "auditmos.com", "custom_domain": true }],
 			"vars": {
 				"CLOUDFLARE_ENV": "production"

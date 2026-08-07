@@ -12,7 +12,7 @@
  */
 
 import { legalEntity, site } from "@/brand/site";
-import { MCP_PROTOCOL_VERSION } from "./server";
+import { MCP_PROTOCOL_VERSION, MCP_RATE_LIMIT } from "./server";
 import { createSiteTools, type McpProjectEntry } from "./tools";
 
 /** Where the MCP agent actually answers. */
@@ -46,6 +46,14 @@ export function buildAgentIndex(projects: readonly McpProjectEntry[]): unknown {
 				dnsName: MCP_AGENT_DNS_NAME,
 				authentication: "none",
 				readOnly: true,
+				// Published so a client can pace itself rather than discover the
+				// limit by being refused. Same constant the endpoint enforces.
+				rateLimit: {
+					requests: MCP_RATE_LIMIT.requests,
+					windowSeconds: MCP_RATE_LIMIT.windowSeconds,
+					scope: "per client IP",
+					onExceeded: "HTTP 429 with a Retry-After header",
+				},
 				tools: tools.map((tool) => ({
 					name: tool.name,
 					title: tool.title,
