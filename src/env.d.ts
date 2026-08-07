@@ -2,6 +2,7 @@ type Runtime = import("@astrojs/cloudflare").Runtime<Env>;
 
 interface Env {
 	CONTACT_TO_EMAIL: string;
+	OAUTH_SIGNING_KEY: string;
 	RESEND_API_KEY: string;
 	TURNSTILE_SECRET_KEY: string;
 }

@@ -13,6 +13,17 @@ export default defineConfig({
 	// `build.format` stays "directory".
 	trailingSlash: "never",
 	adapter: cloudflare(),
+	// Astro refuses any on-demand POST with a form-like content type unless the
+	// request's `Origin` matches this site. RFC 6749 requires the OAuth token
+	// request to be `application/x-www-form-urlencoded`, and it is sent by a
+	// server-side agent, which has no `Origin` to send — so the guard refused
+	// every legitimate client with a 403 before the handler ever ran.
+	//
+	// Safe to remove only because nothing here leans on it: `/api/contact` is
+	// gated on a Turnstile token a cross-site form cannot obtain, and `/mcp`
+	// runs its own explicit origin allowlist. A future route that accepts a
+	// form body must bring its own check — see src/oauth/token-endpoint-origin.test.ts.
+	security: { checkOrigin: false },
 	// Retired `@astrojs/sitemap` output. These were live, so send anything
 	// holding them (Search Console, a crawler's queue) to the real sitemap
 	// instead of a 404. The adapter compiles these into `_redirects`, so the
@@ -20,6 +31,16 @@ export default defineConfig({
 	redirects: {
 		"/sitemap-index.xml": { status: 301, destination: "/sitemap.xml" },
 		"/sitemap-0.xml": { status: 301, destination: "/sitemap.xml" },
+		// RFC 9728 §3.1 puts the protected-resource metadata for `<site>/mcp` at
+		// `/.well-known/oauth-protected-resource/mcp`, which is where the document
+		// is generated. MCP clients and the readiness scanners ask for the bare
+		// path instead, and the build output cannot hold a file and a directory
+		// of the same name — so the bare path redirects to the derived one and
+		// both audiences reach the same document.
+		"/.well-known/oauth-protected-resource": {
+			status: 302,
+			destination: "/.well-known/oauth-protected-resource/mcp",
+		},
 	},
 	// No sitemap integration: `src/pages/sitemap.xml.ts` owns the sitemap, at the
 	// path robots.txt advertises. `agentDiscoveryHeaders` appends to the `_headers`

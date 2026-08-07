@@ -83,6 +83,18 @@ export const REQUIRED_CHECKS: readonly RequiredCheck[] = [
 		id: "discovery.apiCatalog",
 		backedBy: "src/agents/surfaces.ts + src/pages/.well-known/api-catalog.ts",
 	},
+	{
+		id: "discovery.oauthDiscovery",
+		backedBy:
+			"src/oauth/server.ts + src/pages/.well-known/{openid-configuration,oauth-authorization-server}.ts",
+	},
+	{
+		// The scanner requires `resource` to match the host it scanned, which is
+		// why the OAuth documents name the deployed origin rather than the
+		// canonical production URL every other surface uses.
+		id: "discovery.oauthProtectedResource",
+		backedBy: "src/oauth/server.ts + src/pages/.well-known/oauth-protected-resource/mcp.ts",
+	},
 	{ id: "botAccessControl.robotsTxtAiRules", backedBy: "public/robots.txt" },
 	{
 		id: "botAccessControl.contentSignals",

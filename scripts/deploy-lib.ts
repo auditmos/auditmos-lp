@@ -13,11 +13,19 @@ export type DeployEnv = (typeof DEPLOY_ENVS)[number];
 /** Baked into the prerendered HTML by `astro build` (import.meta.env). */
 export const BUILD_TIME_VARS = ["TURNSTILE_SITE_KEY"] as const;
 
-/** Pushed to the Worker with `wrangler secret bulk`, read at request time. */
+/**
+ * Pushed to the Worker with `wrangler secret bulk`, read at request time.
+ *
+ * `OAUTH_SIGNING_KEY` derives every client secret and signs every access token,
+ * so it must be cryptographically random and distinct per environment — a
+ * staging credential minted from a shared key would authenticate against
+ * production.
+ */
 export const RUNTIME_SECRET_VARS = [
 	"TURNSTILE_SECRET_KEY",
 	"RESEND_API_KEY",
 	"CONTACT_TO_EMAIL",
+	"OAUTH_SIGNING_KEY",
 ] as const;
 
 export function isDeployEnv(value: string): value is DeployEnv {

@@ -3,6 +3,7 @@ import { join, resolve } from "node:path";
 import { execa } from "execa";
 import { API_CATALOG_PATH, agentSurfaces } from "@/agents/surfaces";
 import { AI_CATALOG_PATH, SERVER_CARD_PATHS } from "@/mcp/server-card";
+import { OAUTH_AUTHORIZATION_SERVER_PATHS, OAUTH_PROTECTED_RESOURCE_PATH } from "@/oauth/server";
 import { CONTENT_SIGNAL } from "./discovery-headers";
 import { staticPages } from "./pages";
 
@@ -337,10 +338,8 @@ describe("static build output", () => {
 
 		// `@astrojs/sitemap` served these on auditmos.com before the sitemap was
 		// unified, so they must not start 404ing.
-		expect(rules).toEqual([
-			["/sitemap-index.xml", "/sitemap.xml", "301"],
-			["/sitemap-0.xml", "/sitemap.xml", "301"],
-		]);
+		expect(rules).toContainEqual(["/sitemap-index.xml", "/sitemap.xml", "301"]);
+		expect(rules).toContainEqual(["/sitemap-0.xml", "/sitemap.xml", "301"]);
 	});
 
 	it("lists every static route and sample project route in the sitemap", () => {
@@ -516,6 +515,64 @@ describe("static build output", () => {
 		// no catalog: it sends an agent to a 404 with the site's authority.
 		expect(hrefs).toHaveLength(agentSurfaces.length);
 		expect(hrefs.filter((path) => !buildArtifactExists(path))).toEqual([]);
+	});
+
+	it("serves the OAuth authorization server metadata byte-identically at both paths", () => {
+		const documents = OAUTH_AUTHORIZATION_SERVER_PATHS.map((path) =>
+			readFileSync(resolve(distClient, path.replace(/^\//, "")), "utf8"),
+		);
+
+		// One server, two conventional paths. A client that probes the OpenID
+		// path and one that probes the OAuth path must not learn different
+		// things — compared as bytes, not as parsed JSON, so key order counts.
+		expect(documents).toHaveLength(2);
+		expect(documents[0]).toBe(documents[1]);
+		expect(JSON.parse(documents[0])).toMatchObject({
+			issuer: "https://auditmos.com",
+			grant_types_supported: ["client_credentials"],
+		});
+	});
+
+	it("answers the bare protected-resource path by sending clients to the derived one", () => {
+		const rules = readFileSync(resolve(distClient, "_redirects"), "utf8")
+			.split("\n")
+			.map((line) => line.trim())
+			.filter((line) => line && !line.startsWith("#"))
+			.map((line) => line.split(/\s+/));
+
+		// Two audiences, one document. A client that derives the URL by RFC 9728
+		// §3.1 asks for `…/oauth-protected-resource/mcp`; MCP clients and the
+		// readiness scanners ask for the bare path. The derived path holds the
+		// file — a file and a directory cannot share a name in the build output —
+		// so the bare path redirects to it rather than 404ing.
+		expect(rules).toContainEqual([
+			"/.well-known/oauth-protected-resource",
+			OAUTH_PROTECTED_RESOURCE_PATH,
+			"302",
+		]);
+	});
+
+	it("names /mcp as the protected resource, with this site as its issuer", () => {
+		const metadata = JSON.parse(
+			readFileSync(resolve(distClient, OAUTH_PROTECTED_RESOURCE_PATH.replace(/^\//, "")), "utf8"),
+		) as { resource: string; authorization_servers: string[] };
+
+		expect(metadata.resource).toBe("https://auditmos.com/mcp");
+		expect(metadata.authorization_servers).toEqual(["https://auditmos.com"]);
+	});
+
+	it("restates the media type of every registered surface the extension would hide", () => {
+		const blocks = headerRuleBlocks();
+
+		for (const surface of agentSurfaces) {
+			expect({ path: surface.path, rules: blocks.get(surface.path) ?? [] }).toEqual({
+				path: surface.path,
+				rules: expect.arrayContaining([
+					`Content-Type: ${surface.mediaType}; charset=utf-8`,
+					"Access-Control-Allow-Origin: *",
+				]) as unknown as string[],
+			});
+		}
 	});
 
 	it("restates the API catalog's media type, which its extensionless path hides", () => {

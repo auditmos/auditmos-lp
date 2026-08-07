@@ -140,10 +140,9 @@ describe("renderDiscoveryHeaders", () => {
 		// everything else must be derived from a page that was generated.
 		const fixed = new Set([
 			"/*",
-			SERVER_CARD_PATH,
-			SERVER_CARD_WELL_KNOWN_PATH,
-			AI_CATALOG_PATH,
 			API_CATALOG_PATH,
+			SERVER_CARD_WELL_KNOWN_PATH,
+			...agentSurfaces.map((surface) => surface.path),
 		]);
 		const patterns = [...headerRuleBlocks(renderDiscoveryHeaders([])).keys()];
 

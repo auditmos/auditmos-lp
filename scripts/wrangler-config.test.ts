@@ -10,6 +10,7 @@
 
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { buildAuthorizationServerMetadata } from "../src/oauth/server";
 import { stripJsonc } from "./init-project-lib";
 
 type WranglerConfig = {
@@ -65,6 +66,19 @@ describe("wrangler.jsonc deployment envs", () => {
 			pattern: "staging.auditmos.com",
 			custom_domain: true,
 		});
+	});
+
+	it("issues staging OAuth documents for the host staging actually answers on", () => {
+		// The OAuth module hard-codes the staging origin because a prerendered
+		// document cannot ask the runtime where it lives. This is the guard
+		// against that constant and this route drifting apart — they would fail
+		// silently, as metadata naming a host that does not serve it.
+		vi.stubEnv("CLOUDFLARE_ENV", "staging");
+		const issuer = (buildAuthorizationServerMetadata() as { issuer: string }).issuer;
+		vi.unstubAllEnvs();
+
+		const stagingRoute = wranglerConfig.env?.staging?.routes?.[0]?.pattern;
+		expect(new URL(issuer).hostname).toBe(stagingRoute);
 	});
 });
 

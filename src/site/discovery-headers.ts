@@ -15,13 +15,7 @@ import { join, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { AstroIntegration } from "astro";
 import { API_CATALOG_MEDIA_TYPE, API_CATALOG_PATH, agentSurfaces } from "../agents/surfaces";
-import {
-	AI_CATALOG_MEDIA_TYPE,
-	AI_CATALOG_PATH,
-	SERVER_CARD_MEDIA_TYPE,
-	SERVER_CARD_PATH,
-	SERVER_CARD_WELL_KNOWN_PATH,
-} from "../mcp/server-card";
+import { SERVER_CARD_WELL_KNOWN_PATH } from "../mcp/server-card";
 
 interface DiscoveryLink {
 	readonly target: string;
@@ -109,23 +103,30 @@ function linkHeaders(links: readonly DiscoveryLink[]): string[] {
  *
  * A prerendered endpoint's own `Response` headers do not survive the build:
  * the output is a static file, and Cloudflare types it by extension. That
- * leaves `/mcp/server-card` — extensionless by spec — with *no* Content-Type
- * at all, and silently downgrades the catalog to `application/json`. These
- * rules restate what the endpoints intended, at the layer that actually
- * serves them.
+ * leaves every `.well-known` document reserved without one — the Server Card,
+ * the API catalog, all three OAuth metadata documents — with *no* Content-Type
+ * at all, and silently downgrades the ones that do have an extension to
+ * whatever the extension implies. These rules restate what each endpoint
+ * intended, at the layer that actually serves it.
  *
- * CORS rides along: both documents are public read-only metadata that
- * browser-based MCP clients need to fetch cross-origin, and SEP-2127 calls
- * wide-open CORS acceptable for exactly that reason.
+ * Projected from the surface registry rather than listed by hand, so a new
+ * surface arrives here with its media type already correct. Where the extension
+ * would have produced the right type anyway, the rule still earns its place:
+ * every one of these documents needs the CORS header, which the asset server
+ * never adds on its own.
+ *
+ * CORS is wide open because these are public read-only metadata that
+ * browser-based agents fetch cross-origin, exactly the case SEP-2127 calls
+ * acceptable.
  */
 const mediaTypeRules: readonly { pattern: string; type: string }[] = [
-	{ pattern: SERVER_CARD_PATH, type: SERVER_CARD_MEDIA_TYPE },
-	{ pattern: AI_CATALOG_PATH, type: AI_CATALOG_MEDIA_TYPE },
 	// RFC 9727 reserves `/.well-known/api-catalog` without an extension, so the
-	// asset server has nothing to infer the linkset media type from.
+	// asset server has nothing to infer the linkset media type from. Not a
+	// registered surface: the catalog is the index of the registry, not in it.
 	{ pattern: API_CATALOG_PATH, type: API_CATALOG_MEDIA_TYPE },
-	// The extension already yields this type; the rule is here for the CORS
-	// header, which every one of these documents needs.
+	...agentSurfaces.map((surface) => ({ pattern: surface.path, type: surface.mediaType })),
+	// The Server Card's `.well-known` mirror. The reserved location is what the
+	// registry lists; this copy exists for clients that arrive by convention.
 	{ pattern: SERVER_CARD_WELL_KNOWN_PATH, type: "application/json" },
 ];
 
