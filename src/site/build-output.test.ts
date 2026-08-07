@@ -152,6 +152,55 @@ function markdownPathForRoute(route: string): string {
 	return resolve(distClient, `${route.slice(1)}.md`);
 }
 
+// Hooks owned by third-party scripts rather than the stylesheet — the Turnstile
+// widget finds its mount point by class name and styles itself.
+const thirdPartyClasses = new Set(["cf-turnstile"]);
+
+function decodeEntities(value: string): string {
+	return value
+		.replaceAll("&lt;", "<")
+		.replaceAll("&gt;", ">")
+		.replaceAll("&quot;", '"')
+		.replaceAll("&#39;", "'")
+		.replaceAll("&amp;", "&");
+}
+
+// A class has a rule when the stylesheet contains `.<class>` terminated by
+// something that ends the selector token — otherwise `.border` would match
+// `.border-t` and the check would pass on classes that were dropped.
+function hasRuleFor(unescapedCss: string, className: string): boolean {
+	let index = unescapedCss.indexOf(`.${className}`);
+
+	while (index !== -1) {
+		const next = unescapedCss[index + className.length + 1] ?? "";
+		if (next === "" || "{,: >~+.)".includes(next)) return true;
+		index = unescapedCss.indexOf(`.${className}`, index + 1);
+	}
+
+	return false;
+}
+
+function collectStyleUsage(): { stylesheets: Set<string>; usedClasses: Set<string> } {
+	const stylesheets = new Set<string>();
+	const usedClasses = new Set<string>();
+
+	for (const file of walkFiles(distClient).filter((path) => path.endsWith(".html"))) {
+		const html = readFileSync(file, "utf8");
+
+		for (const match of html.matchAll(/<link[^>]+rel="stylesheet"[^>]+href="([^"]+\.css)"/g)) {
+			stylesheets.add(resolve(distClient, match[1].replace(/^\//, "")));
+		}
+
+		for (const match of html.matchAll(/class="([^"]+)"/g)) {
+			for (const token of decodeEntities(match[1]).split(/\s+/)) {
+				if (token) usedClasses.add(token);
+			}
+		}
+	}
+
+	return { stylesheets, usedClasses };
+}
+
 // Parses the Cloudflare `_headers` format: an unindented line opens a rule
 // block, the indented lines below it are that block's `Name: value` pairs.
 function headerRuleBlocks(): Map<string, string[]> {
@@ -329,12 +378,38 @@ describe("static build output", () => {
 		}
 	});
 
+	it("ships a CSS rule for every class the built HTML actually uses", () => {
+		// `globals.css` narrows Tailwind to `.astro` sources so plain TypeScript
+		// tokens stop generating dead utilities. This is the safety net for that:
+		// narrowing must never drop a class the markup depends on.
+		const { stylesheets, usedClasses } = collectStyleUsage();
+
+		// Tailwind escapes selector punctuation (`.md\:flex`); dropping the escapes
+		// lets a plain substring match line up with the class as authored.
+		const unescapedCss = [...stylesheets]
+			.map((sheet) => readFileSync(sheet, "utf8"))
+			.join("\n")
+			.replaceAll("\\", "");
+
+		const missing = [...usedClasses]
+			.filter((className) => !thirdPartyClasses.has(className))
+			.filter((className) => !hasRuleFor(unescapedCss, className));
+
+		expect(usedClasses.size).toBeGreaterThan(100);
+		expect(missing).toEqual([]);
+	});
+
 	it("advertises RFC 8288 agent-discovery Link relations site-wide and on the homepage", () => {
 		const blocks = headerRuleBlocks();
 		const siteWideRules = blocks.get("/*") ?? [];
 		const homepageRules = blocks.get("/") ?? [];
 
-		expect(linkHeaderTargets(siteWideRules)).toEqual(["/llms.txt", "/about", "/privacy"]);
+		expect(linkHeaderTargets(siteWideRules)).toEqual([
+			"/llms.txt",
+			"/agents.json",
+			"/about",
+			"/privacy",
+		]);
 		expect(siteWideRules.join("\n")).toContain('rel="service-desc"');
 		expect(siteWideRules.join("\n")).toContain('rel="privacy-policy"');
 

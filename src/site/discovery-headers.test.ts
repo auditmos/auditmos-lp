@@ -28,6 +28,7 @@ describe("renderDiscoveryHeaders", () => {
 
 		expect(blocks.get("/*")).toEqual([
 			'Link: </llms.txt>; rel="service-desc"; type="text/plain"; title="Auditmos site index for AI agents"',
+			'Link: </agents.json>; rel="service-desc"; type="application/json"; title="Auditmos agent index (DNS-AID)"',
 			'Link: </about>; rel="author"',
 			'Link: </privacy>; rel="privacy-policy"',
 		]);

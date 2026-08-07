@@ -1,4 +1,16 @@
-@import "tailwindcss";
+/*
+ * `source(none)` turns off Tailwind's automatic source detection, which scans
+ * every non-ignored file in the project. It was generating real utilities from
+ * word-like tokens in plain TypeScript — `.filter(`, `static`, `table`,
+ * `visible` — shipping dead CSS to every page and eating the transfer budget
+ * that `src/site/build-output.test.ts` enforces.
+ *
+ * All markup lives in `.astro` files; no `.ts` in this repo emits class names.
+ * A build-output test asserts every class used in the built HTML still has a
+ * rule here, so narrowing this can't silently drop a style.
+ */
+@import "tailwindcss" source(none);
+@source "../**/*.astro";
 
 /*
  * Latin subsets vendored from @fontsource (both faces are SIL OFL licensed).

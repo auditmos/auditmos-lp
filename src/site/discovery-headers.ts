@@ -32,6 +32,14 @@ const siteWideLinks: readonly DiscoveryLink[] = [
 		type: "text/plain",
 		title: "Auditmos site index for AI agents",
 	},
+	{
+		// The same document `_index._agents.auditmos.com` resolves to, so an agent
+		// that arrives over HTTP finds the agent inventory without a DNS lookup.
+		target: "/agents.json",
+		rel: "service-desc",
+		type: "application/json",
+		title: "Auditmos agent index (DNS-AID)",
+	},
 	{ target: "/about", rel: "author" },
 	{ target: "/privacy", rel: "privacy-policy" },
 ];
