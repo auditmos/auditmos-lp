@@ -1,3 +1,10 @@
+# [1.14.0](https://github.com/auditmos/auditmos-lp/compare/v1.13.0...v1.14.0) (2026-08-07)
+
+
+### Features
+
+* **mcp:** serve an MCP agent and publish DNS-AID discovery records ([4acb39d](https://github.com/auditmos/auditmos-lp/commit/4acb39d67096ae282d5ed9f389324b63a0186773))
+
 # [1.13.0](https://github.com/auditmos/auditmos-lp/compare/v1.12.2...v1.13.0) (2026-08-07)
 
 
