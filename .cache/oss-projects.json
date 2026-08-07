@@ -1,5 +1,13 @@
 [
   {
+    "fullName": "auditmos/hono-on-cf",
+    "description": "Hono REST API monorepo template on Cloudflare Workers — Better Auth, Neon Postgres + Drizzle, scaffolding for durable objects, queues and workflows.",
+    "url": "https://github.com/auditmos/hono-on-cf",
+    "stars": 0,
+    "language": "TypeScript",
+    "updatedAt": "2026-08-07T18:21:05Z"
+  },
+  {
     "fullName": "auditmos/astro-on-cf",
     "description": "Content-first SSR template — Astro 6 on Cloudflare Workers, Tailwind v4, native API endpoints, optional Neon Postgres + Drizzle data layer.",
     "url": "https://github.com/auditmos/astro-on-cf",
@@ -30,14 +38,6 @@
     "stars": 14,
     "language": "TypeScript",
     "updatedAt": "2026-08-03T11:09:36Z"
-  },
-  {
-    "fullName": "auditmos/hono-on-cf",
-    "description": "Hono REST API monorepo template on Cloudflare Workers — Better Auth, Neon Postgres + Drizzle, scaffolding for durable objects, queues and workflows.",
-    "url": "https://github.com/auditmos/hono-on-cf",
-    "stars": 0,
-    "language": "TypeScript",
-    "updatedAt": "2026-08-03T09:54:24Z"
   },
   {
     "fullName": "auditmos/tstack-on-cf-onchain",

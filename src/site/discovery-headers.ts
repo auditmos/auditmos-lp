@@ -14,6 +14,7 @@ import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { AstroIntegration } from "astro";
+import { API_CATALOG_MEDIA_TYPE, API_CATALOG_PATH, agentSurfaces } from "../agents/surfaces";
 import {
 	AI_CATALOG_MEDIA_TYPE,
 	AI_CATALOG_PATH,
@@ -43,32 +44,27 @@ const markdownTwinTitle = "Markdown twin of this page";
  */
 export const CONTENT_SIGNAL = "ai-train=no, search=yes, ai-input=yes";
 
-// Only IANA-registered relation types: service-desc (RFC 8631), author (HTML),
-// privacy-policy (RFC 6903), alternate (HTML).
+// Only IANA-registered relation types: api-catalog (RFC 9727), service-desc
+// (RFC 8631), service-meta (RFC 8631), author (HTML), privacy-policy (RFC
+// 6903), alternate (HTML).
+//
+// The catalog leads: it is the one document that names all the others, so a
+// client that reads a single relation should read that one. Everything after it
+// is projected from the surface registry rather than restated here — a surface
+// added there becomes a `Link` header with no edit to this file.
 const siteWideLinks: readonly DiscoveryLink[] = [
 	{
-		target: "/llms.txt",
-		rel: "service-desc",
-		type: "text/plain",
-		title: "Auditmos site index for AI agents",
+		target: API_CATALOG_PATH,
+		rel: "api-catalog",
+		type: API_CATALOG_MEDIA_TYPE,
+		title: "Auditmos API catalog (every machine-readable surface)",
 	},
-	{
-		// The same document `_index._agents.auditmos.com` resolves to, so an agent
-		// that arrives over HTTP finds the agent inventory without a DNS lookup.
-		target: "/agents.json",
-		rel: "service-desc",
-		type: "application/json",
-		title: "Auditmos agent index (DNS-AID)",
-	},
-	{
-		// Domain-level MCP discovery (SEP-2127): the catalog names the Server
-		// Cards this host publishes, so a client reaches the MCP endpoint
-		// without an initialize round trip to find out what is there.
-		target: "/.well-known/ai-catalog.json",
-		rel: "service-desc",
-		type: "application/ai-catalog+json",
-		title: "Auditmos AI catalog (MCP server cards)",
-	},
+	...agentSurfaces.map((surface) => ({
+		target: surface.path,
+		rel: surface.relation,
+		type: surface.mediaType,
+		title: surface.title,
+	})),
 	{ target: "/about", rel: "author" },
 	{ target: "/privacy", rel: "privacy-policy" },
 ];
@@ -125,6 +121,9 @@ function linkHeaders(links: readonly DiscoveryLink[]): string[] {
 const mediaTypeRules: readonly { pattern: string; type: string }[] = [
 	{ pattern: SERVER_CARD_PATH, type: SERVER_CARD_MEDIA_TYPE },
 	{ pattern: AI_CATALOG_PATH, type: AI_CATALOG_MEDIA_TYPE },
+	// RFC 9727 reserves `/.well-known/api-catalog` without an extension, so the
+	// asset server has nothing to infer the linkset media type from.
+	{ pattern: API_CATALOG_PATH, type: API_CATALOG_MEDIA_TYPE },
 	// The extension already yields this type; the rule is here for the CORS
 	// header, which every one of these documents needs.
 	{ pattern: SERVER_CARD_WELL_KNOWN_PATH, type: "application/json" },

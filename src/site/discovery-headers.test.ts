@@ -1,3 +1,4 @@
+import { API_CATALOG_MEDIA_TYPE, API_CATALOG_PATH, agentSurfaces } from "@/agents/surfaces";
 import {
 	AI_CATALOG_MEDIA_TYPE,
 	AI_CATALOG_PATH,
@@ -30,17 +31,37 @@ function headerRuleBlocks(headers: string): Map<string, string[]> {
 }
 
 describe("renderDiscoveryHeaders", () => {
-	it("advertises the site-wide agent resources on every path", () => {
+	it("leads the site-wide block with the policy and the API catalog", () => {
 		const blocks = headerRuleBlocks(renderDiscoveryHeaders(["/"]));
 
-		expect(blocks.get("/*")).toEqual([
+		// The catalog is the one link that leads to all the others, so it comes
+		// first: a client that reads a single relation should read that one.
+		expect((blocks.get("/*") ?? []).slice(0, 2)).toEqual([
 			"Content-Signal: ai-train=no, search=yes, ai-input=yes",
-			'Link: </llms.txt>; rel="service-desc"; type="text/plain"; title="Auditmos site index for AI agents"',
-			'Link: </agents.json>; rel="service-desc"; type="application/json"; title="Auditmos agent index (DNS-AID)"',
-			'Link: </.well-known/ai-catalog.json>; rel="service-desc"; type="application/ai-catalog+json"; title="Auditmos AI catalog (MCP server cards)"',
-			'Link: </about>; rel="author"',
-			'Link: </privacy>; rel="privacy-policy"',
+			`Link: <${API_CATALOG_PATH}>; rel="api-catalog"; type="${API_CATALOG_MEDIA_TYPE}"; title="Auditmos API catalog (every machine-readable surface)"`,
 		]);
+	});
+
+	it("advertises every registered surface as a Link relation", () => {
+		const rules = headerRuleBlocks(renderDiscoveryHeaders(["/"])).get("/*") ?? [];
+
+		// Projected from the registry, not restated here: a surface added there
+		// becomes a Link header with no edit to the integration.
+		for (const surface of agentSurfaces) {
+			expect({ path: surface.path, rules }).toEqual({
+				path: surface.path,
+				rules: expect.arrayContaining([
+					`Link: <${surface.path}>; rel="${surface.relation}"; type="${surface.mediaType}"; title="${surface.title}"`,
+				]) as unknown as string[],
+			});
+		}
+	});
+
+	it("keeps the human-facing site-wide relations alongside the agent ones", () => {
+		const rules = headerRuleBlocks(renderDiscoveryHeaders(["/"])).get("/*") ?? [];
+
+		expect(rules).toContain('Link: </about>; rel="author"');
+		expect(rules).toContain('Link: </privacy>; rel="privacy-policy"');
 	});
 
 	it("restates the media types the asset server cannot infer from a filename", () => {
@@ -55,6 +76,11 @@ describe("renderDiscoveryHeaders", () => {
 		expect(blocks.get(AI_CATALOG_PATH)).toContain(
 			`Content-Type: ${AI_CATALOG_MEDIA_TYPE}; charset=utf-8`,
 		);
+		// RFC 9727 reserves an extensionless path, so the asset server has
+		// nothing to infer `application/linkset+json` from either.
+		expect(blocks.get(API_CATALOG_PATH)).toContain(
+			`Content-Type: ${API_CATALOG_MEDIA_TYPE}; charset=utf-8`,
+		);
 	});
 
 	it("allows cross-origin reads of every MCP discovery document", () => {
@@ -62,7 +88,12 @@ describe("renderDiscoveryHeaders", () => {
 		// read-only metadata, which SEP-2127 says is exactly when this is fine.
 		const blocks = headerRuleBlocks(renderDiscoveryHeaders([]));
 
-		for (const path of [SERVER_CARD_PATH, SERVER_CARD_WELL_KNOWN_PATH, AI_CATALOG_PATH]) {
+		for (const path of [
+			SERVER_CARD_PATH,
+			SERVER_CARD_WELL_KNOWN_PATH,
+			AI_CATALOG_PATH,
+			API_CATALOG_PATH,
+		]) {
 			expect({ path, rules: blocks.get(path) ?? [] }).toEqual({
 				path,
 				rules: expect.arrayContaining(["Access-Control-Allow-Origin: *"]) as unknown as string[],
@@ -107,7 +138,13 @@ describe("renderDiscoveryHeaders", () => {
 	it("emits no per-page rule when no page has a markdown twin", () => {
 		// The site-wide rule and the fixed media-type rules are unconditional;
 		// everything else must be derived from a page that was generated.
-		const fixed = new Set(["/*", SERVER_CARD_PATH, SERVER_CARD_WELL_KNOWN_PATH, AI_CATALOG_PATH]);
+		const fixed = new Set([
+			"/*",
+			SERVER_CARD_PATH,
+			SERVER_CARD_WELL_KNOWN_PATH,
+			AI_CATALOG_PATH,
+			API_CATALOG_PATH,
+		]);
 		const patterns = [...headerRuleBlocks(renderDiscoveryHeaders([])).keys()];
 
 		expect(patterns.filter((pattern) => !fixed.has(pattern))).toEqual([]);

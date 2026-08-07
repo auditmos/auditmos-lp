@@ -1,6 +1,7 @@
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { execa } from "execa";
+import { API_CATALOG_PATH, agentSurfaces } from "@/agents/surfaces";
 import { AI_CATALOG_PATH, SERVER_CARD_PATHS } from "@/mcp/server-card";
 import { CONTENT_SIGNAL } from "./discovery-headers";
 import { staticPages } from "./pages";
@@ -434,9 +435,8 @@ describe("static build output", () => {
 		const homepageRules = blocks.get("/") ?? [];
 
 		expect(linkHeaderTargets(siteWideRules)).toEqual([
-			"/llms.txt",
-			"/agents.json",
-			"/.well-known/ai-catalog.json",
+			API_CATALOG_PATH,
+			...agentSurfaces.map((surface) => surface.path),
 			"/about",
 			"/privacy",
 		]);
@@ -499,6 +499,29 @@ describe("static build output", () => {
 				generated: true,
 			});
 		}
+	});
+
+	it("serves an RFC 9727 API catalog whose every link is a file the build produced", () => {
+		const catalog = JSON.parse(
+			readFileSync(resolve(distClient, API_CATALOG_PATH.replace(/^\//, "")), "utf8"),
+		) as { linkset: Record<string, string | { href: string }[]>[] };
+
+		const hrefs = catalog.linkset
+			.flatMap((context) => Object.entries(context))
+			.filter(([relation]) => relation !== "anchor")
+			.flatMap(([, links]) => (Array.isArray(links) ? links : []))
+			.map((link) => new URL(link.href).pathname);
+
+		// A catalog that names a document the build never generated is worse than
+		// no catalog: it sends an agent to a 404 with the site's authority.
+		expect(hrefs).toHaveLength(agentSurfaces.length);
+		expect(hrefs.filter((path) => !buildArtifactExists(path))).toEqual([]);
+	});
+
+	it("restates the API catalog's media type, which its extensionless path hides", () => {
+		expect(headerRuleBlocks().get(API_CATALOG_PATH)).toContain(
+			"Content-Type: application/linkset+json; charset=utf-8",
+		);
 	});
 
 	it("states the content usage policy on every response, matching robots.txt", () => {

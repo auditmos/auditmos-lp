@@ -79,6 +79,10 @@ export const REQUIRED_CHECKS: readonly RequiredCheck[] = [
 		id: "discovery.mcpServerCard",
 		backedBy: "src/mcp/server-card.ts + src/pages/.well-known/mcp/server-card.json.ts",
 	},
+	{
+		id: "discovery.apiCatalog",
+		backedBy: "src/agents/surfaces.ts + src/pages/.well-known/api-catalog.ts",
+	},
 	{ id: "botAccessControl.robotsTxtAiRules", backedBy: "public/robots.txt" },
 	{
 		id: "botAccessControl.contentSignals",
