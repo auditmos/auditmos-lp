@@ -1,3 +1,10 @@
+# [1.18.0](https://github.com/auditmos/auditmos-lp/compare/v1.17.0...v1.18.0) (2026-08-07)
+
+
+### Features
+
+* **agents:** add pnpm agents:verify to catch agent-readiness regressions ([54007cd](https://github.com/auditmos/auditmos-lp/commit/54007cd79fca630c99908704cb61b412f792c8ca))
+
 # [1.17.0](https://github.com/auditmos/auditmos-lp/compare/v1.16.0...v1.17.0) (2026-08-07)
 
 
