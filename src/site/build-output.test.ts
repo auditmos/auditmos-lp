@@ -152,6 +152,52 @@ function markdownPathForRoute(route: string): string {
 	return resolve(distClient, `${route.slice(1)}.md`);
 }
 
+// Parses the Cloudflare `_headers` format: an unindented line opens a rule
+// block, the indented lines below it are that block's `Name: value` pairs.
+function headerRuleBlocks(): Map<string, string[]> {
+	const headersFile = resolve(distClient, "_headers");
+
+	if (!existsSync(headersFile)) {
+		throw new Error("No _headers file found in build output");
+	}
+
+	const blocks = new Map<string, string[]>();
+	let currentRules: string[] | undefined;
+
+	for (const line of readFileSync(headersFile, "utf8").split("\n")) {
+		const trimmed = line.trim();
+		if (!trimmed || trimmed.startsWith("#")) continue;
+
+		if (/^\s/.test(line)) {
+			currentRules?.push(trimmed);
+			continue;
+		}
+
+		currentRules = blocks.get(trimmed) ?? [];
+		blocks.set(trimmed, currentRules);
+	}
+
+	return blocks;
+}
+
+// Every target URI in an RFC 8288 `Link` value is wrapped in angle brackets,
+// whether the value carries one link or a comma-separated list of them.
+function linkHeaderTargets(rules: readonly string[] = []): string[] {
+	return rules
+		.filter((rule) => rule.toLowerCase().startsWith("link:"))
+		.flatMap((rule) => [...rule.matchAll(/<([^>]+)>/g)].map((match) => match[1]));
+}
+
+function buildArtifactExists(path: string): boolean {
+	const relativePath = path.replace(/^\//, "");
+
+	return [
+		resolve(distClient, relativePath),
+		resolve(distClient, relativePath, "index.html"),
+		resolve(distClient, `${relativePath}.html`),
+	].some((candidate) => existsSync(candidate) && statSync(candidate).isFile());
+}
+
 describe("static build output", () => {
 	beforeAll(async () => {
 		await execa("pnpm", ["build"], { cwd: root });
@@ -210,20 +256,56 @@ describe("static build output", () => {
 		expect(html).toContain('tabindex="-1"');
 	});
 
-	it("lists every static route and sample project route in the generated sitemap", () => {
+	it("emits exactly one sitemap, at the path robots.txt advertises", () => {
+		// A sitemap integration would add a competing `/sitemap-index.xml` built
+		// from its own enumeration of the routes.
+		expect(readdirSync(distClient).filter((file) => file.includes("sitemap"))).toEqual([
+			"sitemap.xml",
+		]);
+	});
+
+	it("301s the retired sitemap URLs to the one that replaced them", () => {
+		const rules = readFileSync(resolve(distClient, "_redirects"), "utf8")
+			.split("\n")
+			.map((line) => line.trim())
+			.filter((line) => line && !line.startsWith("#"))
+			.map((line) => line.split(/\s+/));
+
+		// `@astrojs/sitemap` served these on auditmos.com before the sitemap was
+		// unified, so they must not start 404ing.
+		expect(rules).toEqual([
+			["/sitemap-index.xml", "/sitemap.xml", "301"],
+			["/sitemap-0.xml", "/sitemap.xml", "301"],
+		]);
+	});
+
+	it("lists every static route and sample project route in the sitemap", () => {
 		const sitemapSource = generatedSitemapSource();
 
 		for (const route of prerenderedRoutes) {
-			expect(sitemapSource).toContain(`https://auditmos.com${route}`);
+			expect(sitemapSource).toContain(`<loc>https://auditmos.com${route}</loc>`);
 		}
 	});
 
-	it("serves the advertised sitemap.xml path with every static route and sample project route", () => {
-		const advertisedSitemap = readFileSync(resolve(distClient, "sitemap.xml"), "utf8");
+	it("serves prerendered pages at the slash-free URL the site declares canonical", () => {
+		const deployedConfig = JSON.parse(
+			readFileSync(resolve(root, "dist", "server", "wrangler.json"), "utf8"),
+		) as { assets?: { html_handling?: string } };
 
-		for (const route of prerenderedRoutes) {
-			expect(advertisedSitemap).toContain(`https://auditmos.com${route}`);
-		}
+		// Without this the asset server 307s `/about` to `/about/`, contradicting
+		// the canonical, og:url, and every internal href, which are all slash-free.
+		expect(deployedConfig.assets?.html_handling).toBe("drop-trailing-slash");
+	});
+
+	it("points every generated sitemap at the canonical slash-free URL", () => {
+		const advertisedUrls = [
+			...generatedSitemapSource().matchAll(/<loc>(https:\/\/auditmos\.com[^<]*)<\/loc>/g),
+		].map((match) => match[1]);
+
+		expect(advertisedUrls.length).toBeGreaterThan(0);
+		expect(
+			advertisedUrls.filter((url) => url !== "https://auditmos.com/" && url.endsWith("/")),
+		).toEqual([]);
 	});
 
 	it("keeps the MD mirror registry aligned with Astro's prerendered page route list", () => {
@@ -245,6 +327,52 @@ describe("static build output", () => {
 			expect(readFileSync(markdownPathForRoute(route), "utf8")).toMatch(/^# /);
 			expect(llmsTxt).toContain(`https://auditmos.com${markdownPath}`);
 		}
+	});
+
+	it("advertises RFC 8288 agent-discovery Link relations site-wide and on the homepage", () => {
+		const blocks = headerRuleBlocks();
+		const siteWideRules = blocks.get("/*") ?? [];
+		const homepageRules = blocks.get("/") ?? [];
+
+		expect(linkHeaderTargets(siteWideRules)).toEqual(["/llms.txt", "/about", "/privacy"]);
+		expect(siteWideRules.join("\n")).toContain('rel="service-desc"');
+		expect(siteWideRules.join("\n")).toContain('rel="privacy-policy"');
+
+		expect(linkHeaderTargets(homepageRules)).toEqual(["/index.md"]);
+		expect(homepageRules.join("\n")).toContain('rel="alternate"; type="text/markdown"');
+	});
+
+	it("advertises the markdown twin of every generated page on both of its URL forms", () => {
+		const blocks = headerRuleBlocks();
+		const routes = generatedHtmlRoutes();
+
+		expect(routes.length).toBeGreaterThan(1);
+
+		for (const route of routes) {
+			const markdownTwin = route === "/" ? "/index.md" : `${route}.md`;
+			// `/about` serves the 200 and `/about/` 307s to it — cover both.
+			const patterns = route === "/" ? [route] : [route, `${route}/`];
+
+			for (const pattern of patterns) {
+				expect({ pattern, targets: linkHeaderTargets(blocks.get(pattern)) }).toEqual({
+					pattern,
+					targets: [markdownTwin],
+				});
+			}
+		}
+	});
+
+	it("points every advertised Link target at a real build artifact", () => {
+		const targets = [...headerRuleBlocks().values()].flatMap((rules) => linkHeaderTargets(rules));
+
+		expect(targets.length).toBeGreaterThan(0);
+		expect(targets.filter((target) => !buildArtifactExists(target))).toEqual([]);
+	});
+
+	it("keeps the adapter's immutable asset cache rule alongside the discovery rules", () => {
+		expect(headerRuleBlocks().get("/_astro/*")).toContain(
+			"Cache-Control: public, max-age=31536000, immutable",
+		);
 	});
 
 	it("renders both named-client and anonymised-sector sample project detail pages", () => {

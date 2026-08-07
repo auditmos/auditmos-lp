@@ -7,9 +7,11 @@ const robotsPath = resolve(root, "public", "robots.txt");
 const robotsSource = existsSync(robotsPath) ? readFileSync(robotsPath, "utf8") : "";
 
 describe("crawler configuration", () => {
-	it("configures Astro sitemap generation for the canonical site", () => {
-		expect(astroConfigSource).toContain("@astrojs/sitemap");
-		expect(astroConfigSource).toContain("sitemap()");
+	it("owns the sitemap in a single endpoint, at the path robots.txt advertises", () => {
+		// `@astrojs/sitemap` emits a competing `/sitemap-index.xml` from a second
+		// enumeration of the routes, so the endpoint is the only generator.
+		expect(existsSync(resolve(root, "src", "pages", "sitemap.xml.ts"))).toBe(true);
+		expect(astroConfigSource).not.toContain("sitemap(");
 		expect(astroConfigSource).toContain('site: "https://auditmos.com"');
 	});
 

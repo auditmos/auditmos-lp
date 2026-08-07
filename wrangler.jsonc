@@ -6,7 +6,12 @@
 	"compatibility_flags": ["nodejs_compat"],
 	"assets": {
 		"directory": "./dist",
-		"binding": "ASSETS"
+		"binding": "ASSETS",
+		// Serve `/about` (200) and 307 `/about/` to it. The default
+		// "auto-trailing-slash" does the opposite for directory-format output,
+		// which contradicts the canonical URL, og:url, sitemap, and every
+		// internal href — all slash-free.
+		"html_handling": "drop-trailing-slash"
 	},
 	"observability": {
 		"enabled": true,

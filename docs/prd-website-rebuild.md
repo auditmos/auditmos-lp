@@ -108,15 +108,15 @@ The system is composed as nine deep modules with narrow interfaces:
 
 1. **Content collection** — Astro Content Collections with a Zod schema for `projects`. Single typed interface: `getCollection('projects')` + `getEntry('projects', slug)`. Hides frontmatter parsing, MD rendering, slug derivation, and named-vs-anonymised client handling.
 2. **Page routes** — Astro `.astro` pages, all `prerender = true` except `/api/contact`. URL → HTML. Hides layout composition, Tailwind utility composition, per-page SEO meta + JSON-LD.
-3. **MD-mirror endpoint** — Single source-of-truth helper that lists every renderable page; `.md.ts` endpoints serve each one as `text/markdown`. `/llms.txt` is the index. Adding a new page automatically adds it to both surfaces; no manual sync.
+3. **MD-mirror endpoint** — Single source-of-truth helper that lists every renderable page; `.md.ts` endpoints serve each one as `text/markdown`. `/llms.txt` is the index, and the generated `Link` headers (component 9) are the third surface. Adding a new page automatically adds it to all three; no manual sync.
 4. **OSS aggregator** — Build-time fetch from `github.com/auditmos` org via GitHub REST API. Returns `OssProject[]` (name, description, stars, language, URL). Degrades gracefully on rate-limit or 5xx by returning the last-known list (cached at build) or an empty list, never failing the build.
 5. **Contact endpoint** — `POST /api/contact` on a Cloudflare Worker. Composes (5a) Turnstile verifier and (5b) Resend mailer with Zod validation at the boundary. Returns JSON. No partial sends.
    - **5a. Turnstile verifier** — `verifyTurnstile(token, ip): Result<true, Error>`. Calls Cloudflare siteverify. Pure function (fetch injected for testability).
    - **5b. Resend mailer** — `sendContactEmails(payload): Result<true, Error>`. Sends both notification (to `contact@auditmos.com`) and confirmation (to submitter). Either both succeed or the endpoint returns 502.
-6. **Layout + SEO** — `<Layout title description og? schema?>` wraps every page. Hides `<head>` tags, OG defaults, robots, sitemap inclusion.
+6. **Layout + SEO** — `<Layout title description og? schema?>` wraps every page. Hides `<head>` tags, OG defaults, robots and canonical meta.
 7. **Brand tokens** — Tailwind v4 `@theme` block in `src/styles/globals.css`. Accent `#04d9ff`. Logo SVGs vendored from `github.com/auditmos/branding` into `src/assets/logos/`.
 8. **CI/CD pipeline** — GitHub Actions on PR: `pnpm types && pnpm lint && pnpm knip && pnpm test`. On push to `main`: same + `wrangler deploy`. Secrets sourced from GitHub Actions secrets and projected into Wrangler env at deploy time.
-9. **Sitemap + robots** — `@astrojs/sitemap` integration + static `public/robots.txt` (allow all, declare sitemap, declare `/llms.txt`).
+9. **Sitemap + robots + discovery headers** — a single `/sitemap.xml` endpoint (`src/pages/sitemap.xml.ts`) built from the same page enumerator as the MD mirror, at the path `robots.txt` advertises. No `@astrojs/sitemap`: it emitted a second, competing `/sitemap-index.xml` from its own route enumeration, listing the identical URLs under a path nothing referenced. Those two retired paths (`/sitemap-index.xml`, `/sitemap-0.xml`) were live, so they 301 to `/sitemap.xml` via Astro's `redirects` config, which the adapter compiles into `_redirects` — answered by the asset server, no Worker invocation. Plus static `public/robots.txt` (allow all, declare sitemap, declare `/llms.txt`) + a generated `_headers` file publishing RFC 8288 `Link` relations on every prerendered response, so an agent discovers the machine-readable surfaces from the response headers alone, without fetching `robots.txt` first. Site-wide: `/llms.txt` (`service-desc`), `/about` (`author`), `/privacy` (`privacy-policy`). Per page: its `.md` twin (`alternate`, `text/markdown`), emitted for both `/path` and `/path/` so the slash form carries the links off its redirect. Only IANA-registered relation types are used. The `agentDiscoveryHeaders()` integration (`src/site/discovery-headers.ts`) enumerates the HTML pages that landed in the build output and appends to the `_headers` file `@astrojs/cloudflare` has already written its immutable `/_astro/*` cache rule into — so the third agent surface stays in sync with the MD mirror by construction, with no manual list to maintain.
 
 ### System boundaries
 
@@ -135,7 +135,7 @@ The system is composed as nine deep modules with narrow interfaces:
 1. **Visitor → page:** edge cache → prerendered HTML → 0 JS (Turnstile only on `/contact`).
 2. **Visitor → contact:** `POST /api/contact` → Worker → Zod parse → Turnstile verify → Resend send (notification + confirmation, atomic) → JSON response → success/failure UI.
 3. **Author → new project:** edit MD in `src/content/projects/` → `git push main` → GitHub Actions → `wrangler deploy` → live.
-4. **AI agent → site:** `GET /llms.txt` → index of every URL with `.md` counterparts → `GET /<path>.md` → `text/markdown`.
+4. **AI agent → site:** `GET /` → RFC 8288 `Link` response headers point at `/llms.txt` and the page's `.md` twin → `GET /llms.txt` → index of every URL with `.md` counterparts → `GET /<path>.md` → `text/markdown`.
 
 ### Confidentiality model for projects
 

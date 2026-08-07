@@ -80,7 +80,9 @@ Technology-specific rules live in `.claude/rules/`. Activate automatically when 
 ### Project-specific conventions
 
 - **Static-first:** every page sets `export const prerender = true` except `src/pages/api/contact.ts`. Don't introduce new request-time routes without a reason documented in the PRD.
+- **Slash-free canonical URLs:** `/about`, never `/about/`. Two settings enforce it and must move together — `trailingSlash: "never"` (astro.config.mjs, drives dev-server routing) and `assets.html_handling: "drop-trailing-slash"` (wrangler.jsonc, makes the asset server serve the bare form instead of redirecting to the slash form). Changing one alone reintroduces a redirect hop on every internal link; a build-output test asserts both.
 - **MD-mirror:** a single page-enumerator helper is the source of truth for `*.md.ts` endpoints and `/llms.txt`. Adding a new route extends both surfaces — a CI test asserts coverage.
+- **Agent-discovery headers:** the `agentDiscoveryHeaders()` integration (`src/site/discovery-headers.ts`) generates the `_headers` file after the build, advertising `/llms.txt` and each page's `.md` twin as RFC 8288 `Link` relations. It appends to what `@astrojs/cloudflare` already wrote, so it must stay *after* the adapter in `integrations`. Don't hand-write `public/_headers` for these — add the link there instead.
 - **Projects schema:** the `client` field is a discriminated union — either `{ name, url? }` (public/named) or `{ sector }` (anonymised NDA work). Exactly one variant required.
 - **Contact endpoint atomicity:** `/api/contact` returns 200 only when *both* emails (notification + confirmation) dispatched successfully. Partial sends → 502 with structured log.
 - **OSS aggregator:** must never fail the build. On GitHub API failure, fall back to cached file, then to empty list.
