@@ -1,3 +1,10 @@
+# [1.19.0](https://github.com/auditmos/auditmos-lp/compare/v1.18.0...v1.19.0) (2026-08-07)
+
+
+### Features
+
+* **agents:** publish an MCP Server Card and AI Catalog (SEP-2127) ([538df94](https://github.com/auditmos/auditmos-lp/commit/538df9484075d7e660690f1a016f9e90c380a626))
+
 # [1.18.0](https://github.com/auditmos/auditmos-lp/compare/v1.17.0...v1.18.0) (2026-08-07)
 
 
