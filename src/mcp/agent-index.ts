@@ -13,11 +13,9 @@
 
 import { legalEntity, site } from "@/brand/site";
 import { MARKDOWN_MEDIA_TYPE, MARKDOWN_TOKENS_HEADER } from "@/site/markdown-negotiation";
-import { MCP_PROTOCOL_VERSION, MCP_RATE_LIMIT } from "./server";
+import { MCP_ENDPOINT_PATH, MCP_PROTOCOL_VERSION, MCP_RATE_LIMIT } from "./server";
+import { AI_CATALOG_PATH, SERVER_CARD_PATH } from "./server-card";
 import { createSiteTools, type McpProjectEntry } from "./tools";
-
-/** Where the MCP agent actually answers. */
-export const MCP_ENDPOINT_PATH = "/mcp";
 
 /** The agent's primary owner name in DNS, per DNS-AID section 3.1. */
 export const MCP_AGENT_DNS_NAME = "mcp.auditmos.com";
@@ -45,6 +43,9 @@ export function buildAgentIndex(projects: readonly McpProjectEntry[]): unknown {
 				transport: "streamable-http",
 				endpoint: `${site.url}${MCP_ENDPOINT_PATH}`,
 				dnsName: MCP_AGENT_DNS_NAME,
+				// SEP-2127 Server Card: the pre-connection metadata a client needs
+				// to reach this endpoint without an initialize round trip first.
+				serverCard: `${site.url}${SERVER_CARD_PATH}`,
 				authentication: "none",
 				readOnly: true,
 				// Published so a client can pace itself rather than discover the
@@ -67,6 +68,9 @@ export function buildAgentIndex(projects: readonly McpProjectEntry[]): unknown {
 		documents: {
 			llmsTxt: `${site.url}/llms.txt`,
 			sitemap: `${site.url}/sitemap.xml`,
+			// Domain-level MCP discovery (SEP-2127): lists the Server Cards this
+			// host publishes, so a crawler needs no prior knowledge of them.
+			aiCatalog: `${site.url}${AI_CATALOG_PATH}`,
 			markdownMirror: `Every page URL also answers at <path>.md as ${MARKDOWN_MEDIA_TYPE}.`,
 			// The second route to the same document, for a client that would
 			// rather negotiate than rewrite paths. Names come from the module

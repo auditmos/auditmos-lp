@@ -14,6 +14,13 @@ import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { AstroIntegration } from "astro";
+import {
+	AI_CATALOG_MEDIA_TYPE,
+	AI_CATALOG_PATH,
+	SERVER_CARD_MEDIA_TYPE,
+	SERVER_CARD_PATH,
+	SERVER_CARD_WELL_KNOWN_PATH,
+} from "../mcp/server-card";
 
 interface DiscoveryLink {
 	readonly target: string;
@@ -52,6 +59,15 @@ const siteWideLinks: readonly DiscoveryLink[] = [
 		rel: "service-desc",
 		type: "application/json",
 		title: "Auditmos agent index (DNS-AID)",
+	},
+	{
+		// Domain-level MCP discovery (SEP-2127): the catalog names the Server
+		// Cards this host publishes, so a client reaches the MCP endpoint
+		// without an initialize round trip to find out what is there.
+		target: "/.well-known/ai-catalog.json",
+		rel: "service-desc",
+		type: "application/ai-catalog+json",
+		title: "Auditmos AI catalog (MCP server cards)",
 	},
 	{ target: "/about", rel: "author" },
 	{ target: "/privacy", rel: "privacy-policy" },
@@ -92,6 +108,28 @@ function linkHeaders(links: readonly DiscoveryLink[]): string[] {
 	return links.map((link) => `Link: ${renderLink(link)}`);
 }
 
+/**
+ * Content types the asset server cannot infer from the filename.
+ *
+ * A prerendered endpoint's own `Response` headers do not survive the build:
+ * the output is a static file, and Cloudflare types it by extension. That
+ * leaves `/mcp/server-card` — extensionless by spec — with *no* Content-Type
+ * at all, and silently downgrades the catalog to `application/json`. These
+ * rules restate what the endpoints intended, at the layer that actually
+ * serves them.
+ *
+ * CORS rides along: both documents are public read-only metadata that
+ * browser-based MCP clients need to fetch cross-origin, and SEP-2127 calls
+ * wide-open CORS acceptable for exactly that reason.
+ */
+const mediaTypeRules: readonly { pattern: string; type: string }[] = [
+	{ pattern: SERVER_CARD_PATH, type: SERVER_CARD_MEDIA_TYPE },
+	{ pattern: AI_CATALOG_PATH, type: AI_CATALOG_MEDIA_TYPE },
+	// The extension already yields this type; the rule is here for the CORS
+	// header, which every one of these documents needs.
+	{ pattern: SERVER_CARD_WELL_KNOWN_PATH, type: "application/json" },
+];
+
 export function renderDiscoveryHeaders(pageRoutes: readonly string[]): string {
 	// The policy leads the site-wide block: it governs what a client may do with
 	// everything the Link relations then point at.
@@ -112,7 +150,19 @@ export function renderDiscoveryHeaders(pageRoutes: readonly string[]): string {
 		),
 	);
 
-	return `${[fileBanner, renderRule("/*", siteWideHeaders), ...alternateRules].join("\n\n")}\n`;
+	const mediaTypeRuleBlocks = mediaTypeRules.map((rule) =>
+		renderRule(rule.pattern, [
+			`Content-Type: ${rule.type}; charset=utf-8`,
+			"Access-Control-Allow-Origin: *",
+		]),
+	);
+
+	return `${[
+		fileBanner,
+		renderRule("/*", siteWideHeaders),
+		...mediaTypeRuleBlocks,
+		...alternateRules,
+	].join("\n\n")}\n`;
 }
 
 function walkFiles(dir: string): string[] {

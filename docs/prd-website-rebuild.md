@@ -102,9 +102,9 @@ Success looks like: a prospect arrives via a LinkedIn referral, lands on `/`, ca
 
 ## Implementation Decisions
 
-### Architecture spine (11 components)
+### Architecture spine (12 components)
 
-The system is composed as eleven deep modules with narrow interfaces:
+The system is composed as twelve deep modules with narrow interfaces:
 
 1. **Content collection** — Astro Content Collections with a Zod schema for `projects`. Single typed interface: `getCollection('projects')` + `getEntry('projects', slug)`. Hides frontmatter parsing, MD rendering, slug derivation, and named-vs-anonymised client handling.
 2. **Page routes** — Astro `.astro` pages, all `prerender = true` except `/api/contact`. URL → HTML. Hides layout composition, Tailwind utility composition, per-page SEO meta + JSON-LD.
@@ -127,6 +127,12 @@ The system is composed as eleven deep modules with narrow interfaces:
     **Content usage policy:** the site declares `Content-Signal: ai-train=no, search=yes, ai-input=yes` on two surfaces — the `User-agent` group in `robots.txt`, and a `/*` rule in the generated `_headers` so every response carries it, including the `.md` twins and negotiated pages that an agent reaches without ever fetching `robots.txt`. `CONTENT_SIGNAL` in `src/site/discovery-headers.ts` is the single source and a test pins `robots.txt` to it, because a site stating two different policies has stated none. Reference: [contentsignals.org](https://contentsignals.org/), [draft-romm-aipref-contentsignals](https://datatracker.ietf.org/doc/draft-romm-aipref-contentsignals/). Reading the site with an agent is the point — that is what `/mcp`, `/llms.txt`, `/agents.json`, and this negotiation exist for — so `ai-input` is granted rather than withheld. Training is not granted: the restriction is an express reservation of rights under Article 4 of EU Directive 2019/790, which costs nothing in reach because search and AI input both stay open. All three signals are stated explicitly; an omitted signal reads as *neither granted nor restricted*, which is weaker than a deliberate `no`. The signal is a declaration of preference, not a technical control — it does not stop a crawler that ignores it.
 
     **Why pages now run worker-first:** the asset server answers a prerendered page before the Worker ever sees it, so `Accept` could not be read. `assets.run_worker_first` in `wrangler.jsonc` lists the page routes to reverse that order. It is not a new render path — `App.match()` returns `undefined` for prerendered routes, so the adapter still resolves them to the same static asset; the page costs one Worker hop, not a render. Adding a page means adding it to that list, and a build-output test fails if Astro's prerendered page routes and the list disagree.
+
+12. **MCP Server Card** — static pre-connection metadata for the MCP agent (SEP-2127), so a client can decide whether and how to connect without paying for an `initialize` round trip. `src/mcp/server-card.ts` builds both the card and the AI Catalog that points at it; identity is read from `MCP_SERVER_INFO`, the same constant `initialize` answers with, because the draft requires a card not to contradict the live server.
+
+    Two details of the draft are easy to get wrong and shape what is emitted. **The card declares no primitives** — no tools, resources, or prompts. A server's primitives vary by user, session, and configuration, so a static document cannot state them honestly and a client must never make a security decision from one; tools stay discoverable at runtime via `tools/list` and are listed for humans in `/agents.json`. **The card does not belong under `.well-known`** — the reserved location is `<streamable-http-url>/server-card`, i.e. `/mcp/server-card`; the draft considered `/.well-known/mcp/server-card` and rejected it, because `.well-known` is for site-wide metadata and a single server's card is application-level. `.well-known` stays correct for the *catalog*, at `/.well-known/ai-catalog.json`. The card is nonetheless *also* served at `/.well-known/mcp/server-card.json`, because that is where the readiness scanners look; it is the identical document, and a build test asserts the two copies never diverge.
+
+    **Why the media types live in `_headers`:** a prerendered endpoint's own `Response` headers do not survive the build — the output is a static file and Cloudflare types it by extension. That left `/mcp/server-card`, extensionless by spec, with *no* `Content-Type` at all and silently downgraded the catalog to `application/json`. The `agentDiscoveryHeaders()` integration restates both types, and the CORS header all three documents need, at the layer that actually serves them.
 
 ### System boundaries
 

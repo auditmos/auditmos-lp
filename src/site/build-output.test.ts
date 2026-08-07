@@ -1,6 +1,7 @@
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { execa } from "execa";
+import { AI_CATALOG_PATH, SERVER_CARD_PATHS } from "@/mcp/server-card";
 import { CONTENT_SIGNAL } from "./discovery-headers";
 import { staticPages } from "./pages";
 
@@ -435,6 +436,7 @@ describe("static build output", () => {
 		expect(linkHeaderTargets(siteWideRules)).toEqual([
 			"/llms.txt",
 			"/agents.json",
+			"/.well-known/ai-catalog.json",
 			"/about",
 			"/privacy",
 		]);
@@ -470,6 +472,33 @@ describe("static build output", () => {
 
 		expect(targets.length).toBeGreaterThan(0);
 		expect(targets.filter((target) => !buildArtifactExists(target))).toEqual([]);
+	});
+
+	it("serves the MCP Server Card at both its reserved and well-known locations", () => {
+		const cards = SERVER_CARD_PATHS.map((path) =>
+			JSON.parse(readFileSync(resolve(distClient, path.replace(/^\//, "")), "utf8")),
+		);
+
+		// One document, two URLs — a client following the catalog and a scanner
+		// following convention must not get different answers.
+		expect(cards).toHaveLength(2);
+		expect(cards[0]).toEqual(cards[1]);
+		expect(cards[0]).toMatchObject({ name: expect.stringContaining("/") as unknown as string });
+	});
+
+	it("points the AI catalog at a Server Card the build actually generated", () => {
+		const catalog = JSON.parse(
+			readFileSync(resolve(distClient, AI_CATALOG_PATH.replace(/^\//, "")), "utf8"),
+		) as { entries: { url: string }[] };
+
+		for (const entry of catalog.entries) {
+			const path = new URL(entry.url).pathname.replace(/^\//, "");
+
+			expect({ url: entry.url, generated: existsSync(resolve(distClient, path)) }).toEqual({
+				url: entry.url,
+				generated: true,
+			});
+		}
 	});
 
 	it("states the content usage policy on every response, matching robots.txt", () => {

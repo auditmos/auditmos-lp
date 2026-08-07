@@ -1,7 +1,7 @@
 import { legalEntity } from "@/brand/site";
 import { MARKDOWN_MEDIA_TYPE, MARKDOWN_TOKENS_HEADER } from "@/site/markdown-negotiation";
-import { buildAgentIndex, MCP_AGENT_DNS_NAME, MCP_ENDPOINT_PATH } from "./agent-index";
-import { MCP_RATE_LIMIT } from "./server";
+import { buildAgentIndex, MCP_AGENT_DNS_NAME } from "./agent-index";
+import { MCP_ENDPOINT_PATH, MCP_RATE_LIMIT } from "./server";
 import { createSiteTools, type McpProjectEntry } from "./tools";
 
 const projects = [

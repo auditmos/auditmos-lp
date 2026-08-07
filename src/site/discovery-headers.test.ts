@@ -1,3 +1,10 @@
+import {
+	AI_CATALOG_MEDIA_TYPE,
+	AI_CATALOG_PATH,
+	SERVER_CARD_MEDIA_TYPE,
+	SERVER_CARD_PATH,
+	SERVER_CARD_WELL_KNOWN_PATH,
+} from "@/mcp/server-card";
 import { CONTENT_SIGNAL, renderDiscoveryHeaders } from "./discovery-headers";
 
 // Parses the Cloudflare `_headers` format: an unindented line opens a rule
@@ -30,9 +37,37 @@ describe("renderDiscoveryHeaders", () => {
 			"Content-Signal: ai-train=no, search=yes, ai-input=yes",
 			'Link: </llms.txt>; rel="service-desc"; type="text/plain"; title="Auditmos site index for AI agents"',
 			'Link: </agents.json>; rel="service-desc"; type="application/json"; title="Auditmos agent index (DNS-AID)"',
+			'Link: </.well-known/ai-catalog.json>; rel="service-desc"; type="application/ai-catalog+json"; title="Auditmos AI catalog (MCP server cards)"',
 			'Link: </about>; rel="author"',
 			'Link: </privacy>; rel="privacy-policy"',
 		]);
+	});
+
+	it("restates the media types the asset server cannot infer from a filename", () => {
+		// A prerendered endpoint's own Response headers do not survive the
+		// build. Without these rules `/mcp/server-card` — extensionless by
+		// spec — ships with no Content-Type at all.
+		const blocks = headerRuleBlocks(renderDiscoveryHeaders([]));
+
+		expect(blocks.get(SERVER_CARD_PATH)).toContain(
+			`Content-Type: ${SERVER_CARD_MEDIA_TYPE}; charset=utf-8`,
+		);
+		expect(blocks.get(AI_CATALOG_PATH)).toContain(
+			`Content-Type: ${AI_CATALOG_MEDIA_TYPE}; charset=utf-8`,
+		);
+	});
+
+	it("allows cross-origin reads of every MCP discovery document", () => {
+		// Browser-based MCP clients fetch these cross-origin; they are public,
+		// read-only metadata, which SEP-2127 says is exactly when this is fine.
+		const blocks = headerRuleBlocks(renderDiscoveryHeaders([]));
+
+		for (const path of [SERVER_CARD_PATH, SERVER_CARD_WELL_KNOWN_PATH, AI_CATALOG_PATH]) {
+			expect({ path, rules: blocks.get(path) ?? [] }).toEqual({
+				path,
+				rules: expect.arrayContaining(["Access-Control-Allow-Origin: *"]) as unknown as string[],
+			});
+		}
 	});
 
 	it("states the content policy on every path, not only where a twin exists", () => {
@@ -69,7 +104,13 @@ describe("renderDiscoveryHeaders", () => {
 		expect(renderDiscoveryHeaders([...routes].reverse())).toBe(renderDiscoveryHeaders(routes));
 	});
 
-	it("emits only the site-wide rule when no page has a markdown twin", () => {
-		expect([...headerRuleBlocks(renderDiscoveryHeaders([])).keys()]).toEqual(["/*"]);
+	it("emits no per-page rule when no page has a markdown twin", () => {
+		// The site-wide rule and the fixed media-type rules are unconditional;
+		// everything else must be derived from a page that was generated.
+		const fixed = new Set(["/*", SERVER_CARD_PATH, SERVER_CARD_WELL_KNOWN_PATH, AI_CATALOG_PATH]);
+		const patterns = [...headerRuleBlocks(renderDiscoveryHeaders([])).keys()];
+
+		expect(patterns.filter((pattern) => !fixed.has(pattern))).toEqual([]);
+		expect(patterns).toContain("/*");
 	});
 });

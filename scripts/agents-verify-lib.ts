@@ -75,6 +75,10 @@ export const REQUIRED_CHECKS: readonly RequiredCheck[] = [
 		id: "contentAccessibility.markdownNegotiation",
 		backedBy: "src/site/markdown-negotiation.ts + assets.run_worker_first",
 	},
+	{
+		id: "discovery.mcpServerCard",
+		backedBy: "src/mcp/server-card.ts + src/pages/.well-known/mcp/server-card.json.ts",
+	},
 	{ id: "botAccessControl.robotsTxtAiRules", backedBy: "public/robots.txt" },
 	{
 		id: "botAccessControl.contentSignals",

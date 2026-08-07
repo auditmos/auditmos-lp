@@ -28,6 +28,26 @@ const SUPPORTED_PROTOCOL_VERSIONS = ["2025-06-18", "2025-03-26"] as const;
  */
 export const MCP_RATE_LIMIT = { requests: 120, windowSeconds: 60 } as const;
 
+/** Where the server answers. The Server Card's reserved location hangs off it. */
+export const MCP_ENDPOINT_PATH = "/mcp";
+
+/**
+ * The server's identity, reported by `initialize` and restated by the Server
+ * Card. SEP-2127 requires a card not to contradict the runtime handshake, so
+ * both read this rather than each spelling the values out.
+ *
+ * `version` mirrors the protocol version because that is what `serverInfo`
+ * has always reported here; it is deliberately not a semver of the site.
+ */
+export const MCP_SERVER_INFO = {
+	name: "auditmos",
+	title: "Auditmos",
+	version: MCP_PROTOCOL_VERSION,
+	// The Server Card schema caps `description` at 100 characters.
+	description:
+		"Read-only access to the Auditmos company profile, services, projects, and OSS work.",
+} as const;
+
 /** JSON-RPC reserves -32000..-32099 for implementation-defined server errors. */
 export const RATE_LIMITED_ERROR_CODE = -32000;
 
@@ -166,9 +186,9 @@ export function handleMcpMessage(message: unknown, tools: readonly McpTool[]): M
 				protocolVersion: negotiateProtocolVersion(message.params),
 				capabilities: { tools: { listChanged: false } },
 				serverInfo: {
-					name: "auditmos",
-					title: "Auditmos",
-					version: MCP_PROTOCOL_VERSION,
+					name: MCP_SERVER_INFO.name,
+					title: MCP_SERVER_INFO.title,
+					version: MCP_SERVER_INFO.version,
 				},
 				instructions:
 					"Read-only access to the Auditmos company profile, service lines, " +
