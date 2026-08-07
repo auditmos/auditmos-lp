@@ -105,6 +105,10 @@ export const REQUIRED_CHECKS: readonly RequiredCheck[] = [
 		id: "discovery.a2aAgentCard",
 		backedBy: "src/agents/agent-card.ts + src/pages/.well-known/agent-card.json.ts",
 	},
+	{
+		id: "discovery.agentSkills",
+		backedBy: "src/agents/skills.ts + src/pages/.well-known/agent-skills/**",
+	},
 	{ id: "botAccessControl.robotsTxtAiRules", backedBy: "public/robots.txt" },
 	{
 		id: "botAccessControl.contentSignals",

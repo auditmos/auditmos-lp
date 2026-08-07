@@ -1,7 +1,9 @@
+import { createHash } from "node:crypto";
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { execa } from "execa";
 import { A2A_AGENT_CARD_PATH } from "@/agents/agent-card";
+import { AGENT_SKILLS_INDEX_PATH } from "@/agents/skills";
 import { API_CATALOG_PATH, agentSurfaces } from "@/agents/surfaces";
 import { AI_CATALOG_PATH, SERVER_CARD_PATHS } from "@/mcp/server-card";
 import {
@@ -577,6 +579,32 @@ describe("static build output", () => {
 
 		expect(metadata.resource).toBe("https://auditmos.com/mcp");
 		expect(metadata.authorization_servers).toEqual(["https://auditmos.com"]);
+	});
+
+	it("attests every SKILL.md with a digest recomputed from the bytes it shipped", () => {
+		const index = JSON.parse(
+			readFileSync(resolve(distClient, AGENT_SKILLS_INDEX_PATH.replace(/^\//, "")), "utf8"),
+		) as { $schema: string; skills: { name: string; url: string; digest: string }[] };
+
+		expect(index.$schema).toContain("discovery/0.2.0");
+		expect(index.skills.length).toBeGreaterThan(0);
+
+		for (const skill of index.skills) {
+			const file = resolve(distClient, skill.url.replace(/^\//, ""));
+
+			// The whole discipline in one assertion: hash what was actually
+			// written, not what the generator believes it wrote. Editing a skill
+			// without the digest following now fails here instead of shipping an
+			// index that attests to bytes nobody serves.
+			expect({ name: skill.name, served: existsSync(file) }).toEqual({
+				name: skill.name,
+				served: true,
+			});
+			expect({ name: skill.name, digest: skill.digest }).toEqual({
+				name: skill.name,
+				digest: `sha256:${createHash("sha256").update(readFileSync(file)).digest("hex")}`,
+			});
+		}
 	});
 
 	it("serves an A2A card whose skills the MCP server actually implements", () => {

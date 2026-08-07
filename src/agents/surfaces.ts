@@ -19,6 +19,7 @@
  */
 
 import { A2A_AGENT_CARD_PATH } from "@/agents/agent-card";
+import { AGENT_SKILLS_INDEX_PATH } from "@/agents/skills";
 import { site } from "@/brand/site";
 import {
 	AI_CATALOG_MEDIA_TYPE,
@@ -115,6 +116,12 @@ export const agentSurfaces: readonly AgentSurface[] = [
 		path: A2A_AGENT_CARD_PATH,
 		mediaType: "application/json",
 		title: "Auditmos A2A agent card",
+		relation: "service-desc",
+	},
+	{
+		path: AGENT_SKILLS_INDEX_PATH,
+		mediaType: "application/json",
+		title: "Auditmos agent skills index",
 		relation: "service-desc",
 	},
 	{
