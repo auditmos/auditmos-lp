@@ -11,7 +11,7 @@ stack:
   - "Telegram bot"
   - "Scheduling"
 featured: false
-order: 5
+order: 6
 links:
   - label: "powiadomienia.info"
     url: "https://powiadomienia.info"

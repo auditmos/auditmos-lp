@@ -12,7 +12,7 @@ stack:
   - "Cloudflare Workers"
   - "AI assistant"
 featured: false
-order: 4
+order: 5
 links:
   - label: "wizytowka.link"
     url: "https://wizytowka.link"

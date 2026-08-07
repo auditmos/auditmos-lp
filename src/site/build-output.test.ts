@@ -152,9 +152,11 @@ function markdownPathForRoute(route: string): string {
 	return resolve(distClient, `${route.slice(1)}.md`);
 }
 
-// Hooks owned by third-party scripts rather than the stylesheet — the Turnstile
-// widget finds its mount point by class name and styles itself.
-const thirdPartyClasses = new Set(["cf-turnstile"]);
+// Class names owned by something other than the stylesheet, so Tailwind is not
+// expected to emit a rule for them: the Turnstile widget finds its mount point
+// by class name and styles itself, and Astro's Shiki highlighter emits these on
+// fenced code blocks with the colours inlined in a `style` attribute.
+const thirdPartyClasses = new Set(["cf-turnstile", "astro-code", "github-dark", "line"]);
 
 function decodeEntities(value: string): string {
 	return value
