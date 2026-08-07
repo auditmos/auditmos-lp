@@ -22,6 +22,7 @@
 		"secrets:staging": "tsx scripts/push-secrets.ts staging",
 		"secrets:production": "tsx scripts/push-secrets.ts production",
 		"cf-typegen": "wrangler types",
+		"agents:verify": "tsx scripts/agents-verify.ts",
 		"test": "vitest run",
 		"test:watch": "vitest",
 		"test:coverage": "vitest run --coverage",

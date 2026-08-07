@@ -54,6 +54,9 @@ pnpm secrets:staging           # push runtime secrets from .dev.vars.staging
 pnpm secrets:production        # push runtime secrets from .dev.vars.production
 pnpm cf-typegen                # regenerate Env types from wrangler.jsonc
 
+pnpm agents:verify             # scan production for agent-readiness regressions
+pnpm agents:verify <url>       # ...or any other deployed host
+
 pnpm new-project "<title>"     # scaffold a new project MD with frontmatter prefilled
 
 pnpm test                      # vitest run
@@ -80,6 +83,7 @@ Technology-specific rules live in `.claude/rules/`. Activate automatically when 
 ### Project-specific conventions
 
 - **Static-first:** every page sets `export const prerender = true` except `src/pages/api/contact.ts` and `src/pages/mcp.ts`. Don't introduce new request-time routes without a reason documented in the PRD. Page routes pass *through* the Worker (see markdown negotiation below) but are still served from their prerendered asset — that is a routing hop, not a render, and it must stay that way.
+- **Agent-readiness regressions:** `pnpm agents:verify [url]` scans a deployed host and diffs the result against `REQUIRED_CHECKS` in `scripts/agents-verify-lib.ts` — the checks backed by something this site actually ships. Most scanner checks fail by design (OAuth discovery, A2A, WebMCP are not implemented), so a raw pass count means nothing; only the declared set is enforced. Run it after deploying. When you implement a new agent surface, add its check to `REQUIRED_CHECKS` — the script reports newly-passing checks as `NEW PASS` precisely so the list does not drift behind reality.
 - **Markdown negotiation:** `Accept: text/markdown` on a page URL returns that page's markdown twin (`src/site/markdown-negotiation.ts`, wrapped around the adapter handler by `src/worker.ts`, which is `main` in wrangler.jsonc). It only works because `assets.run_worker_first` lists the page routes — otherwise the asset server answers first and the Worker never sees the request. **Adding a page means adding its path to `run_worker_first`**; a build-output test fails when that list and Astro's prerendered page routes disagree. Both representations send `Vary: Accept`, so don't strip it — a shared cache would start handing markdown to browsers. `pnpm dev` never runs the Worker entry or the asset router, so negotiation always returns HTML there — verify with `pnpm preview`, which does.
 - **Slash-free canonical URLs:** `/about`, never `/about/`. Two settings enforce it and must move together — `trailingSlash: "never"` (astro.config.mjs, drives dev-server routing) and `assets.html_handling: "drop-trailing-slash"` (wrangler.jsonc, makes the asset server serve the bare form instead of redirecting to the slash form). Changing one alone reintroduces a redirect hop on every internal link; a build-output test asserts both.
 - **MD-mirror:** a single page-enumerator helper is the source of truth for `*.md.ts` endpoints and `/llms.txt`. Adding a new route extends both surfaces — a CI test asserts coverage.
