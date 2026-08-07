@@ -18,6 +18,7 @@
  * integration, so nothing here may touch Astro or Workers runtime APIs.
  */
 
+import { A2A_AGENT_CARD_PATH } from "@/agents/agent-card";
 import { site } from "@/brand/site";
 import {
 	AI_CATALOG_MEDIA_TYPE,
@@ -109,6 +110,12 @@ export const agentSurfaces: readonly AgentSurface[] = [
 		mediaType: "application/json",
 		title: "Auditmos protected resource metadata for the MCP endpoint",
 		relation: "service-meta",
+	},
+	{
+		path: A2A_AGENT_CARD_PATH,
+		mediaType: "application/json",
+		title: "Auditmos A2A agent card",
+		relation: "service-desc",
 	},
 	{
 		// `service-doc` rather than `service-meta`: this one is meant to be read,

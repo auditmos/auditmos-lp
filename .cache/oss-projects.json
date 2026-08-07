@@ -5,7 +5,23 @@
     "url": "https://github.com/auditmos/hono-on-cf",
     "stars": 0,
     "language": "TypeScript",
-    "updatedAt": "2026-08-07T18:21:05Z"
+    "updatedAt": "2026-08-07T19:02:37Z"
+  },
+  {
+    "fullName": "auditmos/saas-on-cf",
+    "description": "Multi-app SaaS monorepo — TanStack Start frontend + Hono API on Cloudflare Workers, Better Auth, Neon Postgres + Drizzle, shadcn/ui, service bindings.",
+    "url": "https://github.com/auditmos/saas-on-cf",
+    "stars": 14,
+    "language": "TypeScript",
+    "updatedAt": "2026-08-07T18:59:04Z"
+  },
+  {
+    "fullName": "auditmos/tstack-on-cf-onchain",
+    "description": "Full-stack on-chain dApp template — TanStack Start + Hono on Cloudflare Workers, Solidity (Foundry), wagmi/viem, Neon Postgres + Drizzle, shadcn/ui.",
+    "url": "https://github.com/auditmos/tstack-on-cf-onchain",
+    "stars": 0,
+    "language": "TypeScript",
+    "updatedAt": "2026-08-07T18:58:06Z"
   },
   {
     "fullName": "auditmos/astro-on-cf",
@@ -13,7 +29,7 @@
     "url": "https://github.com/auditmos/astro-on-cf",
     "stars": 0,
     "language": "TypeScript",
-    "updatedAt": "2026-08-07T07:42:34Z"
+    "updatedAt": "2026-08-07T18:47:54Z"
   },
   {
     "fullName": "auditmos/landingos",
@@ -30,22 +46,6 @@
     "stars": 0,
     "language": "TypeScript",
     "updatedAt": "2026-08-04T13:17:13Z"
-  },
-  {
-    "fullName": "auditmos/saas-on-cf",
-    "description": "Multi-app SaaS monorepo — TanStack Start frontend + Hono API on Cloudflare Workers, Better Auth, Neon Postgres + Drizzle, shadcn/ui, service bindings.",
-    "url": "https://github.com/auditmos/saas-on-cf",
-    "stars": 14,
-    "language": "TypeScript",
-    "updatedAt": "2026-08-03T11:09:36Z"
-  },
-  {
-    "fullName": "auditmos/tstack-on-cf-onchain",
-    "description": "Full-stack on-chain dApp template — TanStack Start + Hono on Cloudflare Workers, Solidity (Foundry), wagmi/viem, Neon Postgres + Drizzle, shadcn/ui.",
-    "url": "https://github.com/auditmos/tstack-on-cf-onchain",
-    "stars": 0,
-    "language": "TypeScript",
-    "updatedAt": "2026-08-03T09:48:19Z"
   },
   {
     "fullName": "tkowalczyk/wizytowka-link",

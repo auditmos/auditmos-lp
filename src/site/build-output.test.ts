@@ -1,6 +1,7 @@
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { execa } from "execa";
+import { A2A_AGENT_CARD_PATH } from "@/agents/agent-card";
 import { API_CATALOG_PATH, agentSurfaces } from "@/agents/surfaces";
 import { AI_CATALOG_PATH, SERVER_CARD_PATHS } from "@/mcp/server-card";
 import {
@@ -576,6 +577,24 @@ describe("static build output", () => {
 
 		expect(metadata.resource).toBe("https://auditmos.com/mcp");
 		expect(metadata.authorization_servers).toEqual(["https://auditmos.com"]);
+	});
+
+	it("serves an A2A card whose skills the MCP server actually implements", () => {
+		const card = JSON.parse(
+			readFileSync(resolve(distClient, A2A_AGENT_CARD_PATH.replace(/^\//, "")), "utf8"),
+		) as { name: string; version: string; skills: { id: string }[] };
+		const agentIndex = JSON.parse(readFileSync(resolve(distClient, "agents.json"), "utf8")) as {
+			agents: { tools: { name: string }[] }[];
+		};
+		const served = new Set(agentIndex.agents[0]?.tools.map((tool) => tool.name) ?? []);
+
+		// Compared against the built `/agents.json`, not against the registry the
+		// card was generated from: this is the check that the two documents the
+		// site actually ships agree about what the server can do.
+		expect(card.skills.length).toBeGreaterThan(0);
+		expect(card.skills.filter((skill) => !served.has(skill.id))).toEqual([]);
+		expect(card.name).toBe("Auditmos");
+		expect(card.version).not.toBe("");
 	});
 
 	it("serves /auth.md as markdown, with every URL it names resolving in the build", () => {

@@ -133,7 +133,10 @@ describe("verifyScan", () => {
 describe("REQUIRED_CHECKS", () => {
 	it("declares every id as <group>.<name> so it can be matched in the report", () => {
 		for (const check of REQUIRED_CHECKS) {
-			expect({ id: check.id, shape: /^[a-zA-Z]+\.[a-zA-Z]+$/.test(check.id) }).toEqual({
+			// Digits are allowed inside a segment — the scanner names one check
+			// `a2aAgentCard` — but a segment still has to start with a letter, and
+			// there are still exactly two of them.
+			expect({ id: check.id, shape: /^[a-zA-Z]\w*\.[a-zA-Z]\w*$/.test(check.id) }).toEqual({
 				id: check.id,
 				shape: true,
 			});
