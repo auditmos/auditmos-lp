@@ -1,3 +1,10 @@
+# [1.20.0](https://github.com/auditmos/auditmos-lp/compare/v1.19.0...v1.20.0) (2026-08-07)
+
+
+### Features
+
+* **agents:** publish an RFC 9727 API catalog from a surface registry ([2169d89](https://github.com/auditmos/auditmos-lp/commit/2169d897ac7fd86229988b6b310e02361c917587)), closes [#12](https://github.com/auditmos/auditmos-lp/issues/12)
+
 # [1.19.0](https://github.com/auditmos/auditmos-lp/compare/v1.18.0...v1.19.0) (2026-08-07)
 
 
