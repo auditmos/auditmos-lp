@@ -216,6 +216,14 @@ describe("static build output", () => {
 		}
 	});
 
+	it("bundles the canonical trailing-slash redirect into the deployed Worker entry", () => {
+		// `html_handling` above only governs requests the asset server answers,
+		// and `run_worker_first` claims every page route before it — including the
+		// `/work/*` wildcard. This redirect is the only thing stopping
+		// `/work/<slug>/` from being a second reachable URL for the same page.
+		expect(workerEntrySource()).toContain("max-age=3600");
+	});
+
 	it("bundles the markdown negotiation layer into the deployed Worker entry", () => {
 		// Proves `main: "./src/worker.ts"` was honoured. If the build ever went
 		// back to the adapter entrypoint directly, every page would silently

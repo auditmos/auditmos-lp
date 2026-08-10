@@ -73,6 +73,8 @@ describe("withMarkdownNegotiation", () => {
 			expect(assets.requested).toEqual(["/index.md"]);
 		});
 
+		// Belt and braces: in the deployed Worker `canonicalRedirect` 301s the
+		// slash form before this layer sees it, so production never reaches here.
 		it("resolves the trailing-slash form of a page to the same twin", async () => {
 			const assets = siteAssets();
 			await negotiate("https://auditmos.com/about/", markdownRequest, assets);
