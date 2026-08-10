@@ -49,10 +49,14 @@ import { staticPages } from "./pages";
 // 52 KB: the original 50 KB budget plus ~2 KB of CSS for the self-hosted brand
 // typefaces (Space Grotesk + IBM Plex Mono @font-face) and texture utilities.
 const maxTransferredBytes = 52 * 1024;
-const sampleProjectRoutes = [
-	"/work/auditmos-website-rebuild",
-	"/work/regulated-platform-security-review",
-] as const;
+// A case study is long-form by design: the body is the SEO asset, so it gets its
+// own ceiling rather than being trimmed to a marketing page's shape. This one is
+// ~30 KB of HTML against a service page's 12-15 KB, and 64 KB still catches a
+// runaway page. Both numbers are uncompressed — over the wire the same page is
+// ~11 KB of HTML plus ~6 KB of CSS after gzip.
+const maxProjectTransferredBytes = 64 * 1024;
+const sampleProjectRoutes = ["/work/client-owned-gpu-fleet-crm"] as const;
+const projectRoutes = new Set<string>(sampleProjectRoutes);
 const prerenderedRoutes = [
 	...staticPages.map((page) => page.path),
 	...sampleProjectRoutes,
@@ -70,7 +74,7 @@ describe("static build output", () => {
 		}
 	});
 
-	it("keeps each prerendered static page within the 50 KB HTML plus CSS budget", () => {
+	it("keeps each prerendered page within its HTML plus CSS budget", () => {
 		// The homepage gets exactly the WebMCP script's own bytes on top, and not
 		// a byte more: the content budget is unchanged, the script is a declared,
 		// separately-capped addition rather than a reason to loosen the limit.
@@ -78,7 +82,11 @@ describe("static build output", () => {
 
 		for (const route of prerenderedRoutes) {
 			if (clientJavaScriptRoutes.has(route)) continue;
-			const budget = route === "/" ? maxTransferredBytes + webMcpBytes : maxTransferredBytes;
+			const budget = projectRoutes.has(route)
+				? maxProjectTransferredBytes
+				: route === "/"
+					? maxTransferredBytes + webMcpBytes
+					: maxTransferredBytes;
 
 			expect({ route, withinBudget: pageTransferSize(route) <= budget }).toEqual({
 				route,
@@ -487,13 +495,15 @@ describe("static build output", () => {
 		);
 	});
 
-	it("renders both named-client and anonymised-sector sample project detail pages", () => {
-		const namedClientHtml = htmlFor("/work/auditmos-website-rebuild");
-		const anonymisedHtml = htmlFor("/work/regulated-platform-security-review");
+	// Only anonymised work ships right now, so the named-client branch of the
+	// detail page (`client.name` with its optional link) has no build-level
+	// coverage — `getClientDisplay` unit tests cover the logic itself. Add the
+	// named case back here as soon as a named project is published again.
+	it("renders the sample project detail page with its client context and CTA", () => {
+		const anonymisedHtml = htmlFor("/work/client-owned-gpu-fleet-crm");
 
-		expect(namedClientHtml).toContain("Auditmos OÜ");
-		expect(namedClientHtml).toContain("Discuss it with Auditmos");
-		expect(anonymisedHtml).toContain("Banking");
+		expect(anonymisedHtml).toContain("Distributed GPU compute");
+		expect(anonymisedHtml).toContain("Auditmos OÜ");
 		expect(anonymisedHtml).toContain("Discuss it with Auditmos");
 	});
 });

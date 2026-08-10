@@ -128,7 +128,7 @@ export function createSiteTools(projects: readonly McpProjectEntry[]): McpTool[]
 			inputSchema: {
 				type: "object",
 				properties: {
-					slug: { type: "string", description: "Project slug, e.g. wizytowka-link." },
+					slug: { type: "string", description: "Project slug, e.g. client-owned-gpu-fleet-crm." },
 				},
 				required: ["slug"],
 			},

@@ -11,6 +11,9 @@ import { getCollection } from "astro:content";
 export const prerender = true;
 
 const featuredProjects = getFeaturedProjects(await getCollection("projects"), 2);
+// A single featured project fills the row instead of leaving half the grid — and
+// the divider between two cards has nothing to divide.
+const pairedFeature = featuredProjects.length > 1;
 const webMcpScript = renderWebMcpScript();
 
 const proofItems = [
@@ -247,13 +250,13 @@ const testimonials: readonly Testimonial[] = [];
 					</a>
 				</div>
 
-				<div class="grid md:grid-cols-2">
+				<div class:list={["grid", pairedFeature && "md:grid-cols-2"]}>
 					{
 						featuredProjects.map((project, index) => (
 							<a
 								class:list={[
 									"group flex min-h-80 flex-col justify-between border-neutral-800 py-8 hover:bg-neutral-900/60 sm:p-8",
-									index === 0 ? "md:border-r" : "border-t md:border-t-0",
+									index === 0 ? pairedFeature && "md:border-r" : "border-t md:border-t-0",
 								]}
 								href={`/work/${project.data.slug}`}
 							>
