@@ -1,11 +1,19 @@
 [
   {
+    "fullName": "auditmos/saas-on-cf",
+    "description": "Multi-app SaaS monorepo — TanStack Start frontend + Hono API on Cloudflare Workers, Better Auth, Neon Postgres + Drizzle, shadcn/ui, service bindings.",
+    "url": "https://github.com/auditmos/saas-on-cf",
+    "stars": 14,
+    "language": "TypeScript",
+    "updatedAt": "2026-08-08T07:45:26Z"
+  },
+  {
     "fullName": "auditmos/hono-on-cf",
     "description": "Hono REST API monorepo template on Cloudflare Workers — Better Auth, Neon Postgres + Drizzle, scaffolding for durable objects, queues and workflows.",
     "url": "https://github.com/auditmos/hono-on-cf",
     "stars": 0,
     "language": "TypeScript",
-    "updatedAt": "2026-08-08T05:19:14Z"
+    "updatedAt": "2026-08-08T06:13:47Z"
   },
   {
     "fullName": "auditmos/tstack-on-cf-onchain",
@@ -13,7 +21,7 @@
     "url": "https://github.com/auditmos/tstack-on-cf-onchain",
     "stars": 0,
     "language": "TypeScript",
-    "updatedAt": "2026-08-08T05:18:10Z"
+    "updatedAt": "2026-08-08T05:47:24Z"
   },
   {
     "fullName": "auditmos/astro-on-cf",
@@ -21,15 +29,7 @@
     "url": "https://github.com/auditmos/astro-on-cf",
     "stars": 0,
     "language": "TypeScript",
-    "updatedAt": "2026-08-08T05:17:18Z"
-  },
-  {
-    "fullName": "auditmos/saas-on-cf",
-    "description": "Multi-app SaaS monorepo — TanStack Start frontend + Hono API on Cloudflare Workers, Better Auth, Neon Postgres + Drizzle, shadcn/ui, service bindings.",
-    "url": "https://github.com/auditmos/saas-on-cf",
-    "stars": 14,
-    "language": "TypeScript",
-    "updatedAt": "2026-08-08T05:13:48Z"
+    "updatedAt": "2026-08-08T05:24:27Z"
   },
   {
     "fullName": "auditmos/landingos",
