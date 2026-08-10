@@ -14,8 +14,6 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  # Future-proof: opt into Node 24 for JS actions before GH forces it (2026-06-02 default, 2026-09-16 hard cutoff)
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
   STALE_THRESHOLD_DAYS: "90"
 
 jobs:
@@ -25,7 +23,7 @@ jobs:
     timeout-minutes: 20
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Inspect compatibility_date
         id: dates
@@ -77,11 +75,11 @@ jobs:
 
       - name: Setup pnpm
         if: steps.dates.outputs.stale == 'true'
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
 
       - name: Setup Node.js
         if: steps.dates.outputs.stale == 'true'
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: lts/*
           cache: pnpm
@@ -116,7 +114,7 @@ jobs:
 
       - name: Open PR
         if: steps.dates.outputs.stale == 'true'
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: chore/compat-date-bump
