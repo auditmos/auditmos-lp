@@ -1,3 +1,23 @@
+# [1.21.0](https://github.com/auditmos/auditmos-lp/compare/v1.20.0...v1.21.0) (2026-08-10)
+
+
+### Bug Fixes
+
+* **site:** 301 the trailing-slash URLs the asset server never sees ([3ef733c](https://github.com/auditmos/auditmos-lp/commit/3ef733c6c53c368756da79b516d5ee4c79b15bea))
+
+
+### Features
+
+* **agents:** publish an A2A agent card derived from the MCP tools ([efd56e4](https://github.com/auditmos/auditmos-lp/commit/efd56e499cd6818f9329a2ca25d3445c851ad8c9)), closes [#15](https://github.com/auditmos/auditmos-lp/issues/15)
+* **agents:** publish three agent skills with build-verified digests ([209c931](https://github.com/auditmos/auditmos-lp/commit/209c931459dff87d2f842bb917990ec50a0b863d)), closes [#16](https://github.com/auditmos/auditmos-lp/issues/16)
+* **agents:** register three WebMCP tools from the homepage ([301f8e6](https://github.com/auditmos/auditmos-lp/commit/301f8e6c86afefb7532153915796242372fa1263)), closes [#17](https://github.com/auditmos/auditmos-lp/issues/17)
+* **content:** keep only the GPU fleet case study on /work ([8879c17](https://github.com/auditmos/auditmos-lp/commit/8879c1719642bfc0632ed9ca18a369a96613452b))
+* **mcp:** make the token worth acquiring, then document it ([0ef5f04](https://github.com/auditmos/auditmos-lp/commit/0ef5f04927a658a98264dad495eba300c0bd65ce)), closes [#14](https://github.com/auditmos/auditmos-lp/issues/14)
+* **oauth:** issue real client credentials and publish the metadata ([8ddc772](https://github.com/auditmos/auditmos-lp/commit/8ddc77241f26e6694c90cf43f8772a49917d8afb)), closes [#13](https://github.com/auditmos/auditmos-lp/issues/13)
+* **scripts:** import authored launch articles into /work ([d19e599](https://github.com/auditmos/auditmos-lp/commit/d19e599e1e163ecac0133a9e050d3f883679d6d7))
+* **site:** link the founder's X profile alongside LinkedIn ([fa9ba56](https://github.com/auditmos/auditmos-lp/commit/fa9ba56fa1890d590c605b7b36ddacb9d0bdabbc))
+* **site:** move projects to /work and render their Markdown properly ([d071bcb](https://github.com/auditmos/auditmos-lp/commit/d071bcb797f4d3be1705c4917ad1fb809dd477df)), closes [#0d1117](https://github.com/auditmos/auditmos-lp/issues/0d1117) [#24292e](https://github.com/auditmos/auditmos-lp/issues/24292e)
+
 # [1.20.0](https://github.com/auditmos/auditmos-lp/compare/v1.19.0...v1.20.0) (2026-08-07)
 
 
