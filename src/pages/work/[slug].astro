@@ -2,6 +2,9 @@
 import { getCollection, render } from "astro:content";
 import Layout from "@/layouts/Layout.astro";
 import { getClientDisplay } from "@/projects";
+// Styles the `<Content />` body below. Page-scoped rather than global so the
+// routes that render no Markdown don't carry it — see the file's own comment.
+import "@/styles/prose.css";
 
 export const prerender = true;
 
@@ -22,13 +25,13 @@ const clientDisplay = getClientDisplay(project.data);
 <Layout
 	title={`${project.data.title} | Auditmos`}
 	description={project.data.summary}
-	path={`/projects/${project.data.slug}`}
+	path={`/work/${project.data.slug}`}
 >
 	<main>
 		<section class="border-neutral-800 border-b">
 			<div class="mx-auto grid max-w-7xl lg:grid-cols-[1.35fr_0.65fr]">
 				<div class="px-5 py-16 sm:px-8 sm:py-24 lg:border-neutral-800 lg:border-r lg:py-28">
-					<a class="font-mono text-neutral-500 text-xs hover:text-brand-accent" href="/projects">← Selected work</a>
+					<a class="font-mono text-neutral-500 text-xs hover:text-brand-accent" href="/work">← Selected work</a>
 					<h1 class="mt-8 max-w-5xl text-balance font-semibold text-5xl text-white leading-[1.03] sm:text-7xl">
 						{project.data.title}
 					</h1>
@@ -68,7 +71,7 @@ const clientDisplay = getClientDisplay(project.data);
 
 		<section>
 			<div class="mx-auto grid max-w-7xl gap-12 px-5 py-16 sm:px-8 sm:py-24 lg:grid-cols-[1fr_18rem]">
-				<article class="max-w-3xl space-y-6 text-pretty text-neutral-300 text-lg leading-8 [&_h2]:pt-5 [&_h2]:text-balance [&_h2]:font-semibold [&_h2]:text-3xl [&_h2]:text-white [&_p]:leading-8">
+				<article class="prose max-w-3xl">
 					<Content />
 				</article>
 				<aside class="lg:sticky lg:top-28 lg:self-start">

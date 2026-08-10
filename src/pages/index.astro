@@ -23,10 +23,10 @@ const proofItems = [
 	{
 		value: "3,000+",
 		label: "GPU compute network architected, nine EU countries",
-		href: "/projects",
+		href: "/work",
 		external: false,
 	},
-	{ value: "2", label: "Own products live", href: "/projects", external: false },
+	{ value: "2", label: "Own products live", href: "/work", external: false },
 	// Derived, never hand-written: the strip must not claim a number that /open-source
 	// contradicts. Both read the same curated list — see src/oss/repositories.ts.
 	{
@@ -117,7 +117,7 @@ const testimonials: readonly Testimonial[] = [];
 						</a>
 						<a
 							class="inline-flex items-center justify-center border border-neutral-700 px-5 py-3.5 font-semibold text-white hover:border-neutral-500 hover:bg-neutral-900"
-							href="/projects"
+							href="/work"
 						>
 							See what we’ve shipped
 						</a>
@@ -242,7 +242,7 @@ const testimonials: readonly Testimonial[] = [];
 						<p class="eyebrow text-brand-accent">Receipts</p>
 						<h2 class="mt-4 text-balance font-semibold text-3xl text-white sm:text-4xl">Selected work</h2>
 					</div>
-					<a class="font-medium text-neutral-300 text-sm hover:text-brand-accent" href="/projects">
+					<a class="font-medium text-neutral-300 text-sm hover:text-brand-accent" href="/work">
 						View all projects <span aria-hidden="true">→</span>
 					</a>
 				</div>
@@ -255,7 +255,7 @@ const testimonials: readonly Testimonial[] = [];
 									"group flex min-h-80 flex-col justify-between border-neutral-800 py-8 hover:bg-neutral-900/60 sm:p-8",
 									index === 0 ? "md:border-r" : "border-t md:border-t-0",
 								]}
-								href={`/projects/${project.data.slug}`}
+								href={`/work/${project.data.slug}`}
 							>
 								<div class="flex items-center justify-between gap-4 font-mono text-neutral-500 text-xs">
 									<span>{getClientDisplay(project.data)}</span>

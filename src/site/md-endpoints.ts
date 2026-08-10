@@ -19,9 +19,9 @@ export async function markdownPageResponse(path: SitePage["path"]): Promise<Resp
 
 export async function markdownProjectStaticPaths() {
 	return (await markdownPages())
-		.filter((page) => page.path.startsWith("/projects/"))
+		.filter((page) => page.path.startsWith("/work/"))
 		.map((page) => ({
-			params: { slug: page.path.replace("/projects/", "") },
+			params: { slug: page.path.replace("/work/", "") },
 			props: { markdown: page.markdown },
 		}));
 }

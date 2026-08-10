@@ -28,7 +28,7 @@ const distClient = resolve(root, "dist", "client");
  * not expected to emit a rule for them: the Turnstile widget finds its mount
  * point by class name and styles itself, and Astro's Shiki highlighter emits
  * these on fenced code blocks with the colours inlined in a `style` attribute. */
-const thirdPartyClasses = new Set(["cf-turnstile", "astro-code", "github-dark", "line"]);
+const thirdPartyClasses = new Set(["cf-turnstile", "astro-code", "github-dark-default", "line"]);
 
 /** Runs the production build the assertions then read. */
 export async function buildSite(): Promise<void> {
@@ -349,11 +349,17 @@ export interface CssCoverage {
 }
 
 /**
- * Cross-checks every class the built HTML uses against the stylesheets it
- * loads. `globals.css` narrows Tailwind's sources, and this is the safety net
- * for that: narrowing must never drop a class the markup depends on.
+ * Cross-checks every class the built HTML uses against the CSS it ships.
+ * `globals.css` narrows Tailwind's sources, and this is the safety net for
+ * that: narrowing must never drop a class the markup depends on.
+ *
+ * Inline `<style>` blocks count as shipped CSS, not just `<link>`ed
+ * stylesheets. Astro inlines any stylesheet under the asset limit, which is
+ * how a page-scoped sheet like `prose.css` arrives — reading only the links
+ * would report every class it defines as missing.
  */
 export function cssCoverage(): CssCoverage {
+	const cssSources: string[] = [];
 	const stylesheets = new Set<string>();
 	const usedClasses = new Set<string>();
 
@@ -362,6 +368,10 @@ export function cssCoverage(): CssCoverage {
 
 		for (const match of html.matchAll(/<link[^>]+rel="stylesheet"[^>]+href="([^"]+\.css)"/g)) {
 			stylesheets.add(resolve(distClient, match[1].replace(/^\//, "")));
+		}
+
+		for (const match of html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)) {
+			cssSources.push(match[1]);
 		}
 
 		for (const match of html.matchAll(/class="([^"]+)"/g)) {
@@ -375,6 +385,7 @@ export function cssCoverage(): CssCoverage {
 	// lets a plain substring match line up with the class as authored.
 	const unescapedCss = [...stylesheets]
 		.map((sheet) => readFileSync(sheet, "utf8"))
+		.concat(cssSources)
 		.join("\n")
 		.replaceAll("\\", "");
 

@@ -26,11 +26,11 @@
 			"/open-source",
 			"/partners",
 			"/privacy",
-			"/projects",
-			"/projects/*",
 			"/r-and-d",
 			"/security-audits",
-			"/software-development"
+			"/software-development",
+			"/work",
+			"/work/*"
 		]
 	},
 	"observability": {

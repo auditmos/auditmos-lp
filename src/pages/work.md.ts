@@ -3,4 +3,4 @@ import { markdownPageResponse } from "@/site/md-endpoints";
 
 export const prerender = true;
 
-export const GET: APIRoute = async () => markdownPageResponse("/projects");
+export const GET: APIRoute = async () => markdownPageResponse("/work");

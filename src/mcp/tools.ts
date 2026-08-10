@@ -44,8 +44,8 @@ function summarise(project: ProjectData) {
 		year: project.year,
 		stack: project.stack,
 		featured: project.featured,
-		url: `${site.url}/projects/${project.slug}`,
-		markdownUrl: `${site.url}/projects/${project.slug}.md`,
+		url: `${site.url}/work/${project.slug}`,
+		markdownUrl: `${site.url}/work/${project.slug}.md`,
 	};
 }
 

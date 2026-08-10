@@ -42,6 +42,17 @@ export default defineConfig({
 			destination: "/.well-known/oauth-protected-resource/mcp",
 		},
 	},
+	// The `/projects` → `/work` rename is redirected from `public/_redirects`
+	// instead: a dynamic destination declared here is resolved to the file
+	// backing it (`/work/:slug/index.html`), which is not the canonical URL and
+	// 404s for the `.md` twins. See that file.
+	markdown: {
+		// Shiki inlines the theme's background on every fenced block, so the theme
+		// is the only place that colour can be chosen. `github-dark` is a warm
+		// #24292e that reads as a foreign panel against the site's blue-black;
+		// `github-dark-default` is #0d1117, within a hair of `--color-neutral-950`.
+		shikiConfig: { theme: "github-dark-default" },
+	},
 	// No sitemap integration: `src/pages/sitemap.xml.ts` owns the sitemap, at the
 	// path robots.txt advertises. `agentDiscoveryHeaders` appends to the `_headers`
 	// file the Cloudflare adapter writes, so it must stay after the adapter.

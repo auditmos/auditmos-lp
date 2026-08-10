@@ -75,7 +75,7 @@ Every claim on the site must sit adjacent to its proof. Available proof classes 
 | Proof | Claim it backs | Status |
 |---|---|---|
 | 24 public audit reports, 2021–2025 (github.com/auditmos/audits, incl. Kujira, Stargate Finance, Cookie3, StarHeroes) | The entire receipts mechanism | Live — linked from hero, security-audits, /partners |
-| Antra engagement — Chief Software Architect; 500 servers, 3,000+ GPUs, 200 locations, 9 EU countries (public site figures) | Scale + "safe hands" | Numbers in hero strip without the name (owner decision); named case study at `/projects/antra-compute-network` |
+| Antra engagement — Chief Software Architect; 500 servers, 3,000+ GPUs, 200 locations, 9 EU countries (public site figures) | Scale + "safe hands" | Numbers in hero strip without the name (owner decision); named case study at `/work/antra-compute-network` |
 | 2 own products live — wizytowka.link (95k+ localities), powiadomienia.info (early access) | Ships end to end | Case studies live |
 | 7 open-source repos (saas-on-cf ★12 et al.) | Technical depth, inspectability | /open-source aggregator |
 | Named quotes from agency owners / clients | "Safe pair of hands," /partners | **Still pending** — testimonial sections are wired but render only when quotes exist (owner: "leave a space") |

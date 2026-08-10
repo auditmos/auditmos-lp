@@ -20,6 +20,14 @@ links:
 
 Auditmos needed a concise public surface that made the company easier to verify after referrals, partner introductions, and procurement checks.
 
-The rebuild keeps content in the repository, prerenders static pages, and deploys through Cloudflare Workers so updates stay close to the engineering workflow.
+## Approach
+
+The rebuild keeps updates close to the engineering workflow:
+
+- Content lives in the repository.
+- Pages are prerendered as static assets.
+- Deployment runs through Cloudflare Workers.
+
+## Content pipeline
 
 The project pipeline itself is part of the system: every case study is authored as Markdown, validated during the build, and rendered into both listing and detail pages.

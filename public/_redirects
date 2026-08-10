@@ -1,0 +1,16 @@
+# The project pages moved from /projects to /work. Those paths were indexed,
+# listed in the sitemap, and handed to agents as `.md` URLs through /llms.txt
+# and the MCP tool output, so they must not start 404ing.
+#
+# Hand-written rather than declared in astro.config's `redirects`, which is
+# where the sitemap and OAuth redirects live. The Cloudflare adapter resolves a
+# dynamic destination to the file backing it, so `/work/[slug]` was emitted as
+# `/work/:slug/index.html` — not the canonical URL, and a hard 404 for the `.md`
+# twins. One splat rule redirects the whole subtree, twins and future slugs
+# included, with no per-slug enumeration.
+#
+# The adapter appends its generated rules to this file rather than replacing it,
+# so these stay at the top, and Cloudflare applies the first matching rule.
+/projects /work 301
+/projects.md /work.md 301
+/projects/* /work/:splat 301

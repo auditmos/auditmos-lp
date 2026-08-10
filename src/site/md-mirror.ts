@@ -165,7 +165,7 @@ Address: Narva mnt 13-27, 10151 Tallinn, Estonia
 
 Contact: contact@auditmos.com
 `,
-	"/projects": `
+	"/work": `
 Selected Auditmos software, R&D, and security audit projects, including named and anonymised work.
 
 Named work appears where permission exists. Anonymised sector case studies use the same pipeline when confidentiality matters.
@@ -226,7 +226,7 @@ function pageMarkdown(page: SitePage, body: string): string {
 
 function projectRoute(project: MarkdownProjectEntry): SitePage {
 	return {
-		path: `/projects/${project.data.slug}`,
+		path: `/work/${project.data.slug}`,
 		title: project.data.title,
 		description: project.data.summary,
 	};

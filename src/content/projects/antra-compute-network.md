@@ -18,8 +18,21 @@ links:
     url: "https://antra.one"
 ---
 
-Antra turns surplus energy into compute: a decentralized network of physical servers placed where energy is cheapest, sold as GPU capacity and AI solutions. The publicly stated scale is 200 server locations, 500 servers, and 3,000+ graphics cards across nine European countries — operated as one network.
+Antra turns surplus energy into compute: a decentralized network of physical servers placed where energy is cheapest, sold as GPU capacity and AI solutions.
+
+## The network
+
+The publicly stated scale, operated as one network:
+
+- 200 server locations
+- 500 servers
+- 3,000+ graphics cards
+- Nine European countries
+
+## The role
 
 Auditmos' founder serves as Chief Software Architect, responsible for the software side of that infrastructure: the platform through which a physically distributed fleet is managed centrally and exposed to customers as a coherent product.
+
+## Status
 
 The engagement is ongoing. The numbers above come from Antra's public site and change as the network grows.

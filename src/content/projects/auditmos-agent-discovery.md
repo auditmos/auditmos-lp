@@ -23,11 +23,30 @@ links:
 
 Machine readers now arrive at company websites the way people once arrived from search. auditmos.com already answered them halfway: every page has a Markdown twin and `/llms.txt` indexes the lot. The missing half was a way for a program to *ask questions* rather than read pages, and a way to find that entry point without being told where it is.
 
-The work has three parts. `POST /mcp` is a Model Context Protocol server over Streamable HTTP, exposing the company profile, service lines, project history, and open-source repositories as read-only tools. `/agents.json` is the organization index. Under `_agents.auditmos.com` sit SVCB records published per the DNS for AI Discovery draft, in a zone signed with DNSSEC so a validating resolver can authenticate what it reads.
+## What was built
 
-The decision worth recording is what came first. The obvious move was to publish the DNS records — they are three API calls, and a scanner will mark the site compliant once they resolve. Auditmos did not do that, because at the time there was no agent behind them. A record at `_a2a._agents.auditmos.com` asserts an agent that answers; pointing one at a 404 is a claim the infrastructure cannot back. So the server was built first, deployed, and verified against the specification, and only then did the records go up. The order cost a day and is the entire point: a discovery record is a promise, and DNSSEC signs it.
+The work has three parts:
 
-Auditing the site against the specifications turned up four defects in the existing property. Tailwind's automatic source detection was scanning TypeScript and minting real CSS utilities from ordinary code tokens — `.filter(`, `static`, `table` — shipping dead bytes on every page. The site declared `/about` canonical in its metadata while the edge redirected away from it, so every internal link cost a round trip. Two sitemaps were being generated with identical contents, one of which nothing referenced. And the discovery headers had no test proving their targets existed. All four are fixed, and each is now covered by a build test that fails rather than drifts.
+- **`POST /mcp`** — a Model Context Protocol server over Streamable HTTP, exposing the company profile, service lines, project history, and open-source repositories as read-only tools.
+- **`/agents.json`** — the organization index.
+- **`_agents.auditmos.com`** — SVCB records published per the DNS for AI Discovery draft, in a zone signed with DNSSEC so a validating resolver can authenticate what it reads.
+
+## Why the server came before the records
+
+The obvious move was to publish the DNS records — they are three API calls, and a scanner will mark the site compliant once they resolve. Auditmos did not do that, because at the time there was no agent behind them. A record at `_a2a._agents.auditmos.com` asserts an agent that answers; pointing one at a 404 is a claim the infrastructure cannot back. So the server was built first, deployed, and verified against the specification, and only then did the records go up. The order cost a day and is the entire point: a discovery record is a promise, and DNSSEC signs it.
+
+## Four defects the audit turned up
+
+Auditing the site against the specifications turned up four defects in the existing property:
+
+- Tailwind's automatic source detection was scanning TypeScript and minting real CSS utilities from ordinary code tokens — `.filter(`, `static`, `table` — shipping dead bytes on every page.
+- The site declared `/about` canonical in its metadata while the edge redirected away from it, so every internal link cost a round trip.
+- Two sitemaps were being generated with identical contents, one of which nothing referenced.
+- The discovery headers had no test proving their targets existed.
+
+All four are fixed, and each is now covered by a build test that fails rather than drifts.
+
+## Check it without asking
 
 Everything here is checkable without asking:
 

@@ -99,9 +99,7 @@ describe("createSiteTools", () => {
 		};
 
 		expect(project.body).toBe(anonymisedProject.body);
-		expect(project.markdownUrl).toBe(
-			`https://auditmos.com/projects/${anonymisedProject.data.slug}.md`,
-		);
+		expect(project.markdownUrl).toBe(`https://auditmos.com/work/${anonymisedProject.data.slug}.md`);
 	});
 
 	it("returns a tool error naming the known slugs when the slug is unknown or missing", () => {

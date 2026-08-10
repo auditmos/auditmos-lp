@@ -119,18 +119,18 @@ describe("renderDiscoveryHeaders", () => {
 	});
 
 	it("advertises each page's markdown twin on both the bare and trailing-slash form", () => {
-		const blocks = headerRuleBlocks(renderDiscoveryHeaders(["/about", "/projects/rebuild"]));
+		const blocks = headerRuleBlocks(renderDiscoveryHeaders(["/about", "/work/rebuild"]));
 		const alternate = (target: string) =>
 			`Link: <${target}>; rel="alternate"; type="text/markdown"; title="Markdown twin of this page"`;
 
 		expect(blocks.get("/about")).toEqual([alternate("/about.md")]);
 		expect(blocks.get("/about/")).toEqual([alternate("/about.md")]);
-		expect(blocks.get("/projects/rebuild")).toEqual([alternate("/projects/rebuild.md")]);
-		expect(blocks.get("/projects/rebuild/")).toEqual([alternate("/projects/rebuild.md")]);
+		expect(blocks.get("/work/rebuild")).toEqual([alternate("/work/rebuild.md")]);
+		expect(blocks.get("/work/rebuild/")).toEqual([alternate("/work/rebuild.md")]);
 	});
 
 	it("emits rules in a stable order regardless of the order pages are discovered", () => {
-		const routes = ["/", "/about", "/projects/rebuild"];
+		const routes = ["/", "/about", "/work/rebuild"];
 
 		expect(renderDiscoveryHeaders([...routes].reverse())).toBe(renderDiscoveryHeaders(routes));
 	});

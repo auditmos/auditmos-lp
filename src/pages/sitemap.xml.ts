@@ -15,7 +15,7 @@ function escapeXml(value: string): string {
 
 export async function GET(): Promise<Response> {
 	const projectPaths = (await getCollection("projects")).map(
-		(project) => `/projects/${project.data.slug}` as const,
+		(project) => `/work/${project.data.slug}` as const,
 	);
 	const urls = [...staticPages.map((page) => page.path), ...projectPaths]
 		.map((path) => new URL(path, `${site.url}/`).toString())

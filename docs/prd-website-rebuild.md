@@ -170,8 +170,8 @@ The schema validates that exactly one shape is present. The rendering layer read
 | `/software-development` | Prerendered | Service detail page, SEO target |
 | `/r-and-d` | Prerendered | Service detail page, SEO target |
 | `/security-audits` | Prerendered | Service detail page, SEO target |
-| `/projects` | Prerendered | Index of all projects (filterable by service/sector) |
-| `/projects/[slug]` | Prerendered | Project detail page, generated from MD |
+| `/work` | Prerendered | Index of all projects (filterable by service/sector) |
+| `/work/[slug]` | Prerendered | Project detail page, generated from MD |
 | `/about` | Prerendered | Company-only — mission, values, entity |
 | `/open-source` | Prerendered | Auto-aggregated repos from `github.com/auditmos` |
 | `/contact` | Prerendered | Form + Turnstile widget |
@@ -218,13 +218,13 @@ Zod-on-build. Done when:
 
 - A project MD missing `title`, `slug`, `summary`, or both `client.name` and `client.sector` → `astro build` fails with a clear field-level error pointing to the offending file.
 - A project MD with both `client.name` and `client.sector` simultaneously → build fails.
-- A valid project MD with `client.name` → renders with the name on `/projects/<slug>`.
-- A valid project MD with `client.sector` → renders with the sector descriptor on `/projects/<slug>`.
+- A valid project MD with `client.name` → renders with the name on `/work/<slug>`.
+- A valid project MD with `client.sector` → renders with the sector descriptor on `/work/<slug>`.
 - The frontmatter schema is the single source of truth for project listings, detail pages, structured data, and the home page "featured" carousel.
 
 ### Other quality gates (lighter)
 
-- **Lighthouse** on `/` and `/projects/[slug]` (representative pages): Performance ≥ 95, Accessibility ≥ 95, SEO = 100, Best Practices ≥ 95. Run manually before launch.
+- **Lighthouse** on `/` and `/work/[slug]` (representative pages): Performance ≥ 95, Accessibility ≥ 95, SEO = 100, Best Practices ≥ 95. Run manually before launch.
 - **Page weight:** every prerendered page ≤ 50 KB transferred (HTML + CSS + image lazy-load thresholds), excluding `/contact` which adds the Turnstile widget (~20 KB).
 - **First Contentful Paint** on cold cache (3G throttle): < 1.5 s. Measured via Chrome DevTools.
 - **CI gates:** `pnpm types`, `pnpm lint`, `pnpm knip`, `pnpm test` all pass on every PR.

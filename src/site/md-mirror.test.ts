@@ -34,15 +34,15 @@ describe("getMarkdownMirrorPages", () => {
 		const pages = getMarkdownMirrorPages(sampleProjects);
 
 		expect(pages.map((page) => page.path).sort()).toEqual(
-			[...staticPages.map((page) => page.path), "/projects/auditmos-website-rebuild"].sort(),
+			[...staticPages.map((page) => page.path), "/work/auditmos-website-rebuild"].sort(),
 		);
 		expect(pages.find((page) => page.path === "/")?.markdownPath).toBe("/index.md");
 		expect(pages.find((page) => page.path === "/software-development")?.markdownPath).toBe(
 			"/software-development.md",
 		);
-		expect(
-			pages.find((page) => page.path === "/projects/auditmos-website-rebuild")?.markdownPath,
-		).toBe("/projects/auditmos-website-rebuild.md");
+		expect(pages.find((page) => page.path === "/work/auditmos-website-rebuild")?.markdownPath).toBe(
+			"/work/auditmos-website-rebuild.md",
+		);
 	});
 
 	it("renders canonical markdown for static pages and raw project bodies with titles prepended", () => {
@@ -54,7 +54,7 @@ describe("getMarkdownMirrorPages", () => {
 		expect(pages.find((page) => page.path === "/privacy")?.markdown).toContain(
 			"## What the contact form collects",
 		);
-		expect(pages.find((page) => page.path === "/projects/auditmos-website-rebuild")?.markdown).toBe(
+		expect(pages.find((page) => page.path === "/work/auditmos-website-rebuild")?.markdown).toBe(
 			"# Auditmos Website Rebuild\n\nAuditmos needed a concise public surface.\n",
 		);
 	});

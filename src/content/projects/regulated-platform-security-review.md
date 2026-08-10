@@ -16,6 +16,14 @@ order: 2
 
 A regulated platform team needed a security review that translated engineering findings into evidence usable by leadership and vendor-review stakeholders.
 
-Auditmos reviewed the application's risk model, high-impact code paths, and deployment assumptions, then grouped findings by severity and remediation path.
+## What was reviewed
+
+- The application's risk model.
+- High-impact code paths.
+- Deployment assumptions.
+
+Findings were then grouped by severity and remediation path.
+
+## Outcome
 
 The final report helped the team separate urgent security fixes from operational hardening work without exposing client identity or confidential implementation details.

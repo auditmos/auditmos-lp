@@ -118,9 +118,12 @@ export const aboutPage = {
 	description: "Auditmos OÜ is an Estonia-based software, R&D, and security audit company.",
 } as const satisfies SitePage;
 
+// The URL is `/work` — the word buyers and the navigation both use — while the
+// underlying content collection stays `projects`. Renaming the collection would
+// churn the MCP tool names and the agent skills built from them for no gain.
 export const projectsIndexPage = {
-	path: "/projects",
-	title: "Projects | Auditmos",
+	path: "/work",
+	title: "Selected Work | Auditmos",
 	description:
 		"Selected Auditmos software, R&D, and security audit projects, including named and anonymised work.",
 } as const satisfies SitePage;
@@ -208,7 +211,7 @@ export const navigationItems = [
 	{ label: "Software", href: "/software-development" },
 	{ label: "Security", href: "/security-audits" },
 	{ label: "R&D", href: "/r-and-d" },
-	{ label: "Work", href: "/projects" },
+	{ label: "Work", href: "/work" },
 	{ label: "Partners", href: "/partners" },
 	{ label: "About", href: "/about" },
 ] as const;

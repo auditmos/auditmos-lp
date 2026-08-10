@@ -50,8 +50,8 @@ import { staticPages } from "./pages";
 // typefaces (Space Grotesk + IBM Plex Mono @font-face) and texture utilities.
 const maxTransferredBytes = 52 * 1024;
 const sampleProjectRoutes = [
-	"/projects/auditmos-website-rebuild",
-	"/projects/regulated-platform-security-review",
+	"/work/auditmos-website-rebuild",
+	"/work/regulated-platform-security-review",
 ] as const;
 const prerenderedRoutes = [
 	...staticPages.map((page) => page.path),
@@ -179,6 +179,17 @@ describe("static build output", () => {
 		expect(redirectRules()).toContainEqual(["/sitemap-0.xml", "/sitemap.xml", "301"]);
 	});
 
+	it("301s the retired /projects URLs to the /work paths that replaced them", () => {
+		// These were indexed, sitemapped, and handed to agents as `.md` URLs in
+		// `/llms.txt` and the MCP tool output before the rename.
+		expect(redirectRules()).toContainEqual(["/projects", "/work", "301"]);
+		expect(redirectRules()).toContainEqual(["/projects.md", "/work.md", "301"]);
+		// The splat covers the detail pages and their `.md` twins alike, which
+		// is why these three rules are hand-written in `public/_redirects`
+		// rather than declared in astro.config — see the comment there.
+		expect(redirectRules()).toContainEqual(["/projects/*", "/work/:splat", "301"]);
+	});
+
 	it("lists every static route and sample project route in the sitemap", () => {
 		const sitemapSource = generatedSitemapSource();
 
@@ -199,7 +210,7 @@ describe("static build output", () => {
 		// The asset server would otherwise answer these before the Worker runs,
 		// and `Accept: text/markdown` would never be looked at.
 		for (const route of astroBuildPageRoutePatterns()) {
-			const pattern = route === "/projects/[slug]" ? "/projects/*" : route;
+			const pattern = route === "/work/[slug]" ? "/work/*" : route;
 
 			expect({ route, negotiable: workerFirst.has(pattern) }).toEqual({ route, negotiable: true });
 		}
@@ -227,7 +238,7 @@ describe("static build output", () => {
 		const configuredStaticRoutes = new Set<string>(staticPages.map((page) => page.path));
 
 		for (const route of astroBuildPageRoutePatterns()) {
-			if (route === "/projects/[slug]") continue;
+			if (route === "/work/[slug]") continue;
 			expect(configuredStaticRoutes.has(route)).toBe(true);
 		}
 	});
@@ -469,8 +480,8 @@ describe("static build output", () => {
 	});
 
 	it("renders both named-client and anonymised-sector sample project detail pages", () => {
-		const namedClientHtml = htmlFor("/projects/auditmos-website-rebuild");
-		const anonymisedHtml = htmlFor("/projects/regulated-platform-security-review");
+		const namedClientHtml = htmlFor("/work/auditmos-website-rebuild");
+		const anonymisedHtml = htmlFor("/work/regulated-platform-security-review");
 
 		expect(namedClientHtml).toContain("Auditmos OÜ");
 		expect(namedClientHtml).toContain("Discuss it with Auditmos");
