@@ -11,6 +11,7 @@
 		"prepare": "simple-git-hooks && wrangler types",
 		"init-project": "tsx scripts/init-project.ts",
 		"new-project": "tsx scripts/new-project.ts",
+		"import-article": "tsx scripts/import-article.ts",
 		"dev": "astro dev --port 3000",
 		"oss:refresh": "tsx scripts/refresh-oss-cache.ts",
 		"build": "pnpm run oss:refresh && pnpm run audits:refresh && astro build",
@@ -60,7 +61,8 @@
 		"tsx": "^4.23.1",
 		"typescript": "^6.0.3",
 		"vitest": "^4.1.10",
-		"wrangler": "^4.118.0"
+		"wrangler": "^4.118.0",
+		"yaml": "^2.9.0"
 	},
 	"overrides": {
 		"vite": "^8.2.0"

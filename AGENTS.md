@@ -58,6 +58,8 @@ pnpm agents:verify             # scan production for agent-readiness regressions
 pnpm agents:verify <url>       # ...or any other deployed host
 
 pnpm new-project "<title>"     # scaffold a new project MD with frontmatter prefilled
+pnpm import-article [path]     # publish an authored article.md to /work (asks for year, client, industry)
+pnpm import-article --help     # ...its flags, for a non-interactive run
 
 pnpm test                      # vitest run
 pnpm test:watch                # vitest watch
@@ -92,6 +94,7 @@ Technology-specific rules live in `.claude/rules/`. Activate automatically when 
 - **Redirects:** static ones are declared in `astro.config.mjs`. `public/_redirects` is the exception and is hand-written on purpose — the Cloudflare adapter *appends* its generated rules to that file rather than replacing it, so hand-written rules stay first and win, and a wildcard (`/projects/* → /work/:splat`) can only live there: a dynamic destination declared in the config gets resolved to the file backing it (`/work/:slug/index.html`), which is not the canonical URL and 404s for the `.md` twins. Unlike `_headers`, this file is safe to edit.
 - **Rendered Markdown:** `src/styles/prose.css` styles `<Content />` output and is imported by the page that renders it, not by `globals.css` — the homepage renders no Markdown and has the least headroom under the transfer budget. Import it from any future Markdown-rendering page. Fenced blocks take their background from the Shiki theme (`markdown.shikiConfig` in astro.config.mjs), because Shiki inlines that colour and no rule here can outrank it.
 - **Projects schema:** the `client` field is a discriminated union — either `{ name, url? }` (public/named) or `{ sector }` (anonymised NDA work). Exactly one variant required.
+- **Article import:** `pnpm import-article` maps an externally authored launch article (the `content-launch` skill's `article.md`) onto that schema. Title, slug, summary and tags come from the article's own frontmatter — the prompts only cover year, client and industry, and every prompt has a flag so the import can run non-interactively. The leading H1 is stripped because `/work/<slug>` renders the title and summary itself.
 - **Contact endpoint atomicity:** `/api/contact` returns 200 only when *both* emails (notification + confirmation) dispatched successfully. Partial sends → 502 with structured log.
 - **OSS aggregator:** must never fail the build. On GitHub API failure, fall back to cached file, then to empty list.
 

@@ -1,6 +1,6 @@
 import path from "node:path";
 
-function escapeYamlString(value: string): string {
+export function escapeYamlString(value: string): string {
 	return value.replaceAll("\\", "\\\\").replaceAll('"', '\\"');
 }
 
