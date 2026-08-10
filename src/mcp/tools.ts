@@ -72,6 +72,7 @@ export function createSiteTools(projects: readonly McpProjectEntry[]): McpTool[]
 					contactEmail: site.contactEmail,
 					founder: site.founder.name,
 					founderLinkedIn: site.founder.linkedInUrl,
+					founderX: site.founder.xUrl,
 					publicAuditReports: auditReports.count,
 					publishingAuditReportsSince: auditReports.earliestYear,
 					auditReportsRepository: site.auditsRepoUrl,

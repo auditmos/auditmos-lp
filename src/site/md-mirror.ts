@@ -139,7 +139,7 @@ The company works with teams that already have a real problem to solve: shipping
 
 ## Who runs it
 
-Auditmos is the practice of Tomasz Kowalczyk (https://www.linkedin.com/in/kowalczykt/). The person you brief is the person who does the work, and there is one name on every deliverable.
+Auditmos is the practice of ${site.founder.name} — LinkedIn: ${site.founder.linkedInUrl}, X: ${site.founder.xUrl}. The person you brief is the person who does the work, and there is one name on every deliverable.
 
 ## Substance first
 

@@ -316,13 +316,22 @@ const testimonials: readonly Testimonial[] = [];
 						countries, and builder of two products. Every project gets built to that standard —
 						with exactly one name on the work.
 					</p>
-					<a
-						class="mt-7 inline-flex items-center gap-2 border-brand-accent border-b pb-1 font-semibold text-brand-accent hover:text-white"
-						href={site.founder.linkedInUrl}
-						rel="noopener"
-					>
-						Connect on LinkedIn <span aria-hidden="true">↗</span>
-					</a>
+					<div class="mt-7 flex flex-wrap items-center gap-x-8 gap-y-3">
+						<a
+							class="inline-flex items-center gap-2 border-brand-accent border-b pb-1 font-semibold text-brand-accent hover:text-white"
+							href={site.founder.linkedInUrl}
+							rel="noopener"
+						>
+							Connect on LinkedIn <span aria-hidden="true">↗</span>
+						</a>
+						<a
+							class="inline-flex items-center gap-2 border-brand-accent border-b pb-1 font-semibold text-brand-accent hover:text-white"
+							href={site.founder.xUrl}
+							rel="noopener"
+						>
+							Follow on X <span aria-hidden="true">↗</span>
+						</a>
+					</div>
 				</div>
 			</div>
 		</section>

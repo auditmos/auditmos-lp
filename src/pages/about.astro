@@ -60,13 +60,22 @@ export const prerender = true;
 						Auditmos is the practice of {site.founder.name}. The person you brief is the person
 						who does the work — across delivery, audits, and research.
 					</p>
-					<a
-						class="mt-6 inline-flex items-center gap-2 border-brand-accent border-b pb-1 font-semibold text-brand-accent hover:text-white"
-						href={site.founder.linkedInUrl}
-						rel="noopener"
-					>
-						Connect on LinkedIn <span aria-hidden="true">↗</span>
-					</a>
+					<div class="mt-6 flex flex-wrap items-center gap-x-8 gap-y-3">
+						<a
+							class="inline-flex items-center gap-2 border-brand-accent border-b pb-1 font-semibold text-brand-accent hover:text-white"
+							href={site.founder.linkedInUrl}
+							rel="noopener"
+						>
+							Connect on LinkedIn <span aria-hidden="true">↗</span>
+						</a>
+						<a
+							class="inline-flex items-center gap-2 border-brand-accent border-b pb-1 font-semibold text-brand-accent hover:text-white"
+							href={site.founder.xUrl}
+							rel="noopener"
+						>
+							Follow on X <span aria-hidden="true">↗</span>
+						</a>
+					</div>
 				</div>
 			</div>
 		</section>

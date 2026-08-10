@@ -12,6 +12,7 @@ export const site = {
 	founder: {
 		name: "Tomasz Kowalczyk",
 		linkedInUrl: "https://www.linkedin.com/in/kowalczykt/",
+		xUrl: "https://x.com/tomkowalczyk",
 	},
 } as const;
 
@@ -46,11 +47,13 @@ export const organizationJsonLd = {
 	url: site.url,
 	identifier: legalEntity.registration,
 	vatID: legalEntity.vat,
-	sameAs: ["https://github.com/auditmos", site.founder.linkedInUrl],
+	// Every profile the site links to belongs here too: `sameAs` is what ties the
+	// scattered profiles to one entity for search engines and answer engines.
+	sameAs: ["https://github.com/auditmos", site.founder.linkedInUrl, site.founder.xUrl],
 	founder: {
 		"@type": "Person",
 		name: site.founder.name,
-		sameAs: site.founder.linkedInUrl,
+		sameAs: [site.founder.linkedInUrl, site.founder.xUrl],
 	},
 	address: {
 		"@type": "PostalAddress",
