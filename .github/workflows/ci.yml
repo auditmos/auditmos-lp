@@ -33,6 +33,15 @@ jobs:
           node-version: lts/*
           cache: pnpm
 
+      # `wrangler types` runs from the `prepare` script during install and types
+      # `Env` from wrangler.jsonc plus `.dev.vars`. Without this, runtime-only
+      # secrets (OAUTH_SIGNING_KEY) are missing from `Env` and the routes that
+      # require them fail to typecheck here while passing locally. Placeholder
+      # values only — the example file is the canonical key list, enforced by
+      # scripts/env-example.test.ts.
+      - name: Seed .dev.vars so Env types include runtime secrets
+        run: cp .dev.vars.example .dev.vars
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 

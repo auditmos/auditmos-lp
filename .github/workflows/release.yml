@@ -38,6 +38,12 @@ jobs:
           node-version: lts/*
           cache: pnpm
 
+      # See the same step in ci.yml: `wrangler types` runs from `prepare` during
+      # install and types `Env` from wrangler.jsonc plus `.dev.vars`, so without
+      # this the routes needing OAUTH_SIGNING_KEY fail the type check below.
+      - name: Seed .dev.vars so Env types include runtime secrets
+        run: cp .dev.vars.example .dev.vars
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
