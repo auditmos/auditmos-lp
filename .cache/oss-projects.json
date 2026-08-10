@@ -1,5 +1,21 @@
 [
   {
+    "fullName": "auditmos/signmos",
+    "description": "No-account e-signature pilot for PDF upload, signature/date fields, magic-link signing, change requests, final PDFs, and agent-ready lifecycle APIs.",
+    "url": "https://github.com/auditmos/signmos",
+    "stars": 0,
+    "language": "TypeScript",
+    "updatedAt": "2026-08-10T13:44:57Z"
+  },
+  {
+    "fullName": "auditmos/landingos",
+    "description": "Mobile PWA helping budget travelers on Poland → Milan-Bergamo (BGY) flights plan airport-to-Milan transit and coordinate via one temporary per-flight chat room. TanStack Start + Hono on Cloudflare Workers.",
+    "url": "https://github.com/auditmos/landingos",
+    "stars": 0,
+    "language": "TypeScript",
+    "updatedAt": "2026-08-10T08:47:39Z"
+  },
+  {
     "fullName": "auditmos/saas-on-cf",
     "description": "Multi-app SaaS monorepo — TanStack Start frontend + Hono API on Cloudflare Workers, Better Auth, Neon Postgres + Drizzle, shadcn/ui, service bindings.",
     "url": "https://github.com/auditmos/saas-on-cf",
@@ -30,22 +46,6 @@
     "stars": 0,
     "language": "TypeScript",
     "updatedAt": "2026-08-08T05:24:27Z"
-  },
-  {
-    "fullName": "auditmos/landingos",
-    "description": "Mobile PWA helping budget travelers on Poland → Milan-Bergamo (BGY) flights plan airport-to-Milan transit and coordinate via one temporary per-flight chat room. TanStack Start + Hono on Cloudflare Workers.",
-    "url": "https://github.com/auditmos/landingos",
-    "stars": 0,
-    "language": "TypeScript",
-    "updatedAt": "2026-08-06T09:59:16Z"
-  },
-  {
-    "fullName": "auditmos/signmos",
-    "description": "No-account e-signature pilot for PDF upload, signature/date fields, magic-link signing, change requests, final PDFs, and agent-ready lifecycle APIs.",
-    "url": "https://github.com/auditmos/signmos",
-    "stars": 0,
-    "language": "TypeScript",
-    "updatedAt": "2026-08-04T13:17:13Z"
   },
   {
     "fullName": "tkowalczyk/wizytowka-link",
