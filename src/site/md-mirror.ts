@@ -163,7 +163,7 @@ VAT: EE102758111
 
 Address: Narva mnt 13-27, 10151 Tallinn, Estonia
 
-Contact: contact@auditmos.com
+Contact: tom@auditmos.com
 `,
 	"/work": `
 Selected Auditmos software, R&D, and security audit projects, including named and anonymised work.
@@ -184,7 +184,7 @@ Use this page to contact Auditmos about software development, R&D, or security a
 
 The contact form asks for name, email address, and message, then protects the submission with Cloudflare Turnstile. Successful submissions send a notification to Auditmos and a confirmation email to the submitter.
 
-If the form is unavailable, email contact@auditmos.com directly.
+If the form is unavailable, email tom@auditmos.com directly.
 `,
 	"/partners": `
 Put Auditmos in front of your client. Keep your name on the work.
@@ -208,7 +208,7 @@ Subcontracting senior work is a reputational bet: the agency's name is on the de
 
 ## Start
 
-Describe the client work you can't risk: /contact.md — or email contact@auditmos.com.
+Describe the client work you can't risk: /contact.md — or email tom@auditmos.com.
 `,
 	"/privacy": privacyPage.sections
 		.map((section) => [`## ${section.heading}`, "", ...section.body].join("\n\n"))

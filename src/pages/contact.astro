@@ -23,7 +23,7 @@ const turnstileSiteKey =
 					</p>
 					<div class="mt-10 border-neutral-800 border-t pt-6">
 						<p class="eyebrow text-neutral-500">Prefer email?</p>
-						<a class="mt-2 inline-block text-brand-accent hover:text-white" href="mailto:contact@auditmos.com">contact@auditmos.com ↗</a>
+						<a class="mt-2 inline-block text-brand-accent hover:text-white" href="mailto:tom@auditmos.com">tom@auditmos.com ↗</a>
 					</div>
 				</div>
 
@@ -101,7 +101,7 @@ const turnstileSiteKey =
 						tabindex="-1"
 						role="alert"
 					>
-						The message could not be sent. Try again, or email contact@auditmos.com directly.
+						The message could not be sent. Try again, or email tom@auditmos.com directly.
 					</div>
 
 					<button
@@ -165,11 +165,11 @@ const turnstileSiteKey =
 				globalThis.turnstile?.reset();
 				showNotice(
 					error,
-					body.error ?? "The message could not be sent. Try again, or email contact@auditmos.com directly.",
+					body.error ?? "The message could not be sent. Try again, or email tom@auditmos.com directly.",
 				);
 			} catch {
 				globalThis.turnstile?.reset();
-				showNotice(error, "Network error. Try again, or email contact@auditmos.com directly.");
+				showNotice(error, "Network error. Try again, or email tom@auditmos.com directly.");
 			} finally {
 				submit.disabled = false;
 			}

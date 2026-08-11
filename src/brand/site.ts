@@ -7,7 +7,7 @@ export const site = {
 	defaultTitle: "Auditmos: Software Development, Security Audits and R&D",
 	defaultDescription: `The independent practice of Tomasz Kowalczyk — software delivery, security audits with ${auditReports.count} public reports, applied R&D.`,
 	url: "https://auditmos.com",
-	contactEmail: "contact@auditmos.com",
+	contactEmail: "tom@auditmos.com",
 	auditsRepoUrl: "https://github.com/auditmos/audits",
 	founder: {
 		name: "Tomasz Kowalczyk",

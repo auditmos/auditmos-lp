@@ -166,7 +166,7 @@ export const privacyPage = {
 			heading: "Your rights",
 			body: [
 				"You can request access, correction, or erasure of personal data Auditmos holds about you.",
-				"Send data requests to contact@auditmos.com.",
+				"Send data requests to tom@auditmos.com.",
 			],
 		},
 	],

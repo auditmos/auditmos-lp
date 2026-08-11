@@ -38,7 +38,7 @@ describe("site identity", () => {
 		expect(organizationJsonLd.legalName).toBe("Auditmos OÜ");
 		expect(organizationJsonLd.vatID).toBe("EE102758111");
 		expect(organizationJsonLd.address.streetAddress).toBe("Narva mnt 13-27");
-		expect(organizationJsonLd.contactPoint.email).toBe("contact@auditmos.com");
+		expect(organizationJsonLd.contactPoint.email).toBe("tom@auditmos.com");
 	});
 
 	it("keeps the Phase 2 navigation as local content links", () => {

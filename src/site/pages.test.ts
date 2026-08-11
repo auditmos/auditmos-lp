@@ -69,6 +69,6 @@ describe("privacyPage", () => {
 		expect(copy).toContain("retention");
 		expect(copy).toContain("access");
 		expect(copy).toContain("erasure");
-		expect(copy).toContain("contact@auditmos.com");
+		expect(copy).toContain("tom@auditmos.com");
 	});
 });

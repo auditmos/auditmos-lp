@@ -77,7 +77,7 @@ describe("renderLlmsTxt", () => {
 		expect(llmsTxt).toContain(
 			`# Auditmos\n\nThe independent practice of Tomasz Kowalczyk — software delivery, security audits with ${auditReports.count} public reports, applied R&D.`,
 		);
-		expect(llmsTxt).toContain("Contact: contact@auditmos.com");
+		expect(llmsTxt).toContain("Contact: tom@auditmos.com");
 		expect(llmsTxt).toContain(
 			"- [Software Development | Auditmos](https://auditmos.com/software-development.md): Senior software development for reliable systems, internal tools, and product delivery.",
 		);
