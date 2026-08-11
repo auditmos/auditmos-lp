@@ -45,6 +45,7 @@ import {
 } from "./build-output";
 import { CONTENT_SIGNAL } from "./discovery-headers";
 import { staticPages } from "./pages";
+import { SECURITY_HEADERS } from "./security-headers";
 
 // 52 KB: the original 50 KB budget plus ~2 KB of CSS for the self-hosted brand
 // typefaces (Space Grotesk + IBM Plex Mono @font-face) and texture utilities.
@@ -230,6 +231,24 @@ describe("static build output", () => {
 		// `/work/*` wildcard. This redirect is the only thing stopping
 		// `/work/<slug>/` from being a second reachable URL for the same page.
 		expect(workerEntrySource()).toContain("max-age=3600");
+	});
+
+	it("carries the baseline security headers on every asset the server answers", () => {
+		// `_headers` reaches everything the asset server serves, which is every
+		// static file plus the prerendered pages behind `run_worker_first`.
+		const siteWideRules = headerRuleBlocks().get("/*") ?? [];
+
+		for (const [name, value] of Object.entries(SECURITY_HEADERS)) {
+			expect(siteWideRules).toContain(`${name}: ${value}`);
+		}
+	});
+
+	it("bundles the security header layer into the deployed Worker entry", () => {
+		// `_headers` stops at the asset server, so the routes the Worker renders
+		// itself — /api/contact, /mcp, both OAuth endpoints — would ship bare
+		// without this. Measured on production 11 Aug 2026: /llms.txt carried the
+		// `_headers` rules, /mcp and /api/contact carried none.
+		expect(workerEntrySource()).toContain("X-XSS-Protection");
 	});
 
 	it("bundles the markdown negotiation layer into the deployed Worker entry", () => {

@@ -16,6 +16,7 @@ import { fileURLToPath } from "node:url";
 import type { AstroIntegration } from "astro";
 import { API_CATALOG_MEDIA_TYPE, API_CATALOG_PATH, agentSurfaces } from "../agents/surfaces";
 import { SERVER_CARD_WELL_KNOWN_PATH } from "../mcp/server-card";
+import { SECURITY_HEADERS } from "./security-headers";
 
 interface DiscoveryLink {
 	readonly target: string;
@@ -133,7 +134,14 @@ const mediaTypeRules: readonly { pattern: string; type: string }[] = [
 export function renderDiscoveryHeaders(pageRoutes: readonly string[]): string {
 	// The policy leads the site-wide block: it governs what a client may do with
 	// everything the Link relations then point at.
-	const siteWideHeaders = [`Content-Signal: ${CONTENT_SIGNAL}`, ...linkHeaders(siteWideLinks)];
+	// Security headers last: they are unconditional and uninteresting to a
+	// client reading the file, and appending them keeps the policy and the
+	// catalog at the top where a reader looks first.
+	const siteWideHeaders = [
+		`Content-Signal: ${CONTENT_SIGNAL}`,
+		...linkHeaders(siteWideLinks),
+		...Object.entries(SECURITY_HEADERS).map(([name, value]) => `${name}: ${value}`),
+	];
 	const alternateRules = [...pageRoutes].sort().flatMap((route) =>
 		patternsFor(route).map((pattern) =>
 			renderRule(

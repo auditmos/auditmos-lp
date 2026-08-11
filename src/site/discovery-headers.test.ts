@@ -7,6 +7,7 @@ import {
 	SERVER_CARD_WELL_KNOWN_PATH,
 } from "@/mcp/server-card";
 import { CONTENT_SIGNAL, renderDiscoveryHeaders } from "./discovery-headers";
+import { SECURITY_HEADERS } from "./security-headers";
 
 // Parses the Cloudflare `_headers` format: an unindented line opens a rule
 // block, the indented lines below it are that block's `Name: value` pairs.
@@ -107,6 +108,18 @@ describe("renderDiscoveryHeaders", () => {
 		const blocks = headerRuleBlocks(renderDiscoveryHeaders([]));
 
 		expect(blocks.get("/*")).toContain(`Content-Signal: ${CONTENT_SIGNAL}`);
+	});
+
+	it("carries the baseline security headers on every path", () => {
+		// The values themselves are pinned in security-headers.test.ts; what
+		// matters here is that the site-wide block is where they get delivered,
+		// so they reach the assets the Worker never sees — `/_astro/*`, `/og.png`,
+		// every `.md` twin outside `run_worker_first`.
+		const rules = headerRuleBlocks(renderDiscoveryHeaders([])).get("/*") ?? [];
+
+		for (const [name, value] of Object.entries(SECURITY_HEADERS)) {
+			expect(rules).toContain(`${name}: ${value}`);
+		}
 	});
 
 	it("maps the homepage to /index.md under a single rule", () => {

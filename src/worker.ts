@@ -14,14 +14,22 @@
 import astro from "@astrojs/cloudflare/entrypoints/server";
 import { canonicalRedirect } from "./site/canonical-url";
 import { withMarkdownNegotiation } from "./site/markdown-negotiation";
+import { withSecurityHeaders } from "./site/security-headers";
 
 export default {
-	fetch(request, env, context) {
-		// Before negotiation, so a trailing-slash URL never serves a document —
-		// in either representation — from a non-canonical path.
-		return (
+	async fetch(request, env, context) {
+		// Outermost, so it covers every response this Worker returns — including
+		// the ones the asset server never sees and `_headers` therefore cannot
+		// reach: `/api/contact`, `/mcp`, and the two OAuth routes. It sets rather
+		// than appends, so the assets that already carry these from `_headers`
+		// come out unchanged.
+		return withSecurityHeaders(
+			// Before negotiation, so a trailing-slash URL never serves a document —
+			// in either representation — from a non-canonical path.
 			canonicalRedirect(request) ??
-			withMarkdownNegotiation(request, env.ASSETS, () => astro.fetch(request, env, context))
+				(await withMarkdownNegotiation(request, env.ASSETS, () =>
+					astro.fetch(request, env, context),
+				)),
 		);
 	},
 } satisfies ExportedHandler<Env>;
