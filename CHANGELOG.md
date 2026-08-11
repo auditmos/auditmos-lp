@@ -1,3 +1,10 @@
+## [1.22.1](https://github.com/auditmos/auditmos-lp/compare/v1.22.0...v1.22.1) (2026-08-11)
+
+
+### Bug Fixes
+
+* **build:** give the build its own miniflare state directory ([1ade4d6](https://github.com/auditmos/auditmos-lp/commit/1ade4d67e2e3c810247dd617babf7fba7d8d3ab1)), closes [#37](https://github.com/auditmos/auditmos-lp/issues/37)
+
 # [1.22.0](https://github.com/auditmos/auditmos-lp/compare/v1.21.0...v1.22.0) (2026-08-11)
 
 
