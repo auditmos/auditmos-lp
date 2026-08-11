@@ -38,22 +38,25 @@ export interface RedirectFailure {
 const REQUIRED_STATUS = 301;
 
 /**
- * Every URL in a sitemap, in its non-canonical trailing-slash form.
+ * Every URL in a sitemap, in its non-canonical trailing-slash form, **rebased
+ * onto the host being tested**.
  *
  * Sitemap-driven so the probe list cannot drift behind the site: a new page or
  * project is covered the moment it is published, with nothing to remember. The
  * root is excluded — it is canonical *with* its slash and has no second form.
+ *
+ * The rebasing is not cosmetic. Every environment builds its sitemap from
+ * `site: "https://auditmos.com"`, so staging advertises production URLs; taking
+ * them literally would make `agents:verify https://staging…` probe production
+ * and report the answer as though it came from staging — green while staging is
+ * broken, or red while staging is fine. Only the path comes from the sitemap.
  */
-export function trailingSlashProbeTargets(sitemapXml: string): string[] {
-	const locations = [...sitemapXml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) =>
-		match[1].trim(),
-	);
+export function trailingSlashProbeTargets(sitemapXml: string, origin: string): string[] {
+	const paths = [...sitemapXml.matchAll(/<loc>([^<]+)<\/loc>/g)]
+		.map((match) => new URL(match[1].trim()).pathname)
+		.filter((pathname) => !pathname.endsWith("/"));
 
-	return [
-		...new Set(
-			locations.filter((location) => !location.endsWith("/")).map((location) => `${location}/`),
-		),
-	].sort();
+	return [...new Set(paths.map((pathname) => new URL(`${pathname}/`, origin).toString()))].sort();
 }
 
 /**

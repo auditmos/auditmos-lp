@@ -74,7 +74,10 @@ async function verifyCanonicalRedirects(origin: string): Promise<{
 		};
 	}
 
-	const targets = trailingSlashProbeTargets(await sitemapResponse.text());
+	// Rebased onto `origin`: staging's sitemap advertises production URLs, so
+	// only the paths are taken from it. Otherwise verifying staging would probe
+	// production and report the result as staging's.
+	const targets = trailingSlashProbeTargets(await sitemapResponse.text(), origin);
 	const probes = await Promise.all(
 		targets.map(async (url) => {
 			// `manual` so the status is the site's own answer rather than whatever

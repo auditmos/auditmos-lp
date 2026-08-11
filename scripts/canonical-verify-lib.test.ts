@@ -21,26 +21,46 @@ function probe(overrides: Partial<RedirectProbe> = {}): RedirectProbe {
 	};
 }
 
+const apex = "https://auditmos.com";
+
 describe("trailingSlashProbeTargets", () => {
 	it("derives the trailing-slash form of every sitemap URL", () => {
-		expect(trailingSlashProbeTargets(sitemap)).toEqual([
+		expect(trailingSlashProbeTargets(sitemap, apex)).toEqual([
 			"https://auditmos.com/about/",
 			"https://auditmos.com/work/a-slug/",
 		]);
 	});
 
+	it("probes the host under test, not the host the sitemap names", () => {
+		// Every environment builds its sitemap with `site: "https://auditmos.com"`,
+		// so staging advertises production URLs. Taking those at face value would
+		// mean `agents:verify https://staging…` silently reporting on production —
+		// green while staging is broken, or red while staging is fine.
+		expect(trailingSlashProbeTargets(sitemap, "https://staging.auditmos.com")).toEqual([
+			"https://staging.auditmos.com/about/",
+			"https://staging.auditmos.com/work/a-slug/",
+		]);
+	});
+
+	it("keeps a port and scheme from the target origin", () => {
+		expect(trailingSlashProbeTargets(sitemap, "http://localhost:4321")).toEqual([
+			"http://localhost:4321/about/",
+			"http://localhost:4321/work/a-slug/",
+		]);
+	});
+
 	it("excludes the root, which is canonical with its slash", () => {
-		expect(trailingSlashProbeTargets(sitemap)).not.toContain("https://auditmos.com//");
+		expect(trailingSlashProbeTargets(sitemap, apex)).not.toContain("https://auditmos.com//");
 	});
 
 	it("covers project pages without being told about them", () => {
 		// The point of reading the sitemap rather than importing the page list:
 		// a newly published project is probed the moment it ships.
-		expect(trailingSlashProbeTargets(sitemap)).toContain("https://auditmos.com/work/a-slug/");
+		expect(trailingSlashProbeTargets(sitemap, apex)).toContain("https://auditmos.com/work/a-slug/");
 	});
 
 	it("deduplicates and returns nothing for an empty sitemap", () => {
-		expect(trailingSlashProbeTargets("<urlset></urlset>")).toEqual([]);
+		expect(trailingSlashProbeTargets("<urlset></urlset>", apex)).toEqual([]);
 	});
 });
 
