@@ -24,6 +24,7 @@
 		"secrets:production": "tsx scripts/push-secrets.ts production",
 		"cf-typegen": "wrangler types",
 		"agents:verify": "tsx scripts/agents-verify.ts",
+		"csp:violations": "tsx scripts/csp-violations.ts",
 		"test": "vitest run",
 		"test:watch": "vitest",
 		"test:coverage": "vitest run --coverage",
