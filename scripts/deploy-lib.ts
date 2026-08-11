@@ -75,6 +75,26 @@ export function missingVars(vars: Record<string, string>, required: readonly str
 	return required.filter((key) => !vars[key]);
 }
 
+/**
+ * What to print when a deploy step exits non-zero.
+ *
+ * The steps run with `stdio: "inherit"`, so the child's stderr is already on
+ * the terminal — measured during issue #37, the workerd fatal error was there
+ * in full. What hid it was letting the rejection go unhandled: node then dumps
+ * the whole `ExecaError` object, 25 lines of execa internals whose last legible
+ * sentence is "Command failed with exit code 1", printed *below* the real
+ * diagnosis. So this replaces that dump rather than adding to it, and stays
+ * short enough that the build's own output remains the thing on screen.
+ */
+export function describeStepFailure(step: string, exitCode: number | undefined): string {
+	const reason = exitCode === undefined ? "was terminated" : `exited with code ${exitCode}`;
+
+	return [
+		`\nDeploy aborted: the ${step} step ${reason}.`,
+		"Its output is above — that is where the actual error is.",
+	].join("\n");
+}
+
 /** Subset of parsed vars that must be uploaded as Worker secrets. */
 export function runtimeSecrets(vars: Record<string, string>): Record<string, string> {
 	const secrets: Record<string, string> = {};

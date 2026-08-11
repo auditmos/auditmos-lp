@@ -18,6 +18,7 @@ import { execa } from "execa";
 import {
 	BUILD_TIME_VARS,
 	DEPLOY_ENVS,
+	describeStepFailure,
 	isDeployEnv,
 	missingVars,
 	parseDotVars,
@@ -57,11 +58,8 @@ for (const key of BUILD_TIME_VARS) {
 	if (value) buildEnv[key] = value;
 }
 
-await execa("pnpm", ["run", "build"], { cwd: root, stdio: "inherit", env: buildEnv });
-await execa("pnpm", ["exec", "wrangler", "deploy", "--env", targetEnv], {
-	cwd: root,
-	stdio: "inherit",
-});
+await runStep("build", ["run", "build"], buildEnv);
+await runStep("deploy", ["exec", "wrangler", "deploy", "--env", targetEnv]);
 
 console.log(
 	`\nDeployed ${targetEnv}. If this Worker's secrets are not set yet, run: pnpm secrets:${targetEnv}`,
@@ -71,4 +69,23 @@ function readDotVars(fileName: string): Record<string, string> {
 	const filePath = resolve(root, fileName);
 	if (!existsSync(filePath)) return {};
 	return parseDotVars(readFileSync(filePath, "utf8"));
+}
+
+/**
+ * Runs one step with its output inherited, and on failure prints a short reason
+ * instead of letting the rejection reach node's default handler — which would
+ * bury the step's own error under a full `ExecaError` dump. See
+ * `describeStepFailure`.
+ */
+async function runStep(
+	step: string,
+	args: string[],
+	env: Record<string, string> = {},
+): Promise<void> {
+	const result = await execa("pnpm", args, { cwd: root, stdio: "inherit", env, reject: false });
+
+	if (result.exitCode === 0) return;
+
+	console.error(describeStepFailure(step, result.exitCode));
+	process.exit(1);
 }

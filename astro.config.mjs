@@ -3,6 +3,7 @@ import cloudflare from "@astrojs/cloudflare";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
 import { agentDiscoveryHeaders } from "./src/site/discovery-headers";
+import { ASTRO_MINIFLARE_STATE_PATH } from "./src/site/miniflare-state";
 
 // https://astro.build/config
 export default defineConfig({
@@ -12,7 +13,10 @@ export default defineConfig({
 	// server resolves the same slash-free URLs as production.
 	// `build.format` stays "directory".
 	trailingSlash: "never",
-	adapter: cloudflare(),
+	// Not `.wrangler/state`: `wrangler dev` runs a different miniflare major and
+	// corrupts that directory for the build, blocking every deploy path until
+	// it is deleted by hand. See src/site/miniflare-state.ts.
+	adapter: cloudflare({ persistState: { path: ASTRO_MINIFLARE_STATE_PATH } }),
 	// Astro refuses any on-demand POST with a form-like content type unless the
 	// request's `Origin` matches this site. RFC 6749 requires the OAuth token
 	// request to be `application/x-www-form-urlencoded`, and it is sent by a

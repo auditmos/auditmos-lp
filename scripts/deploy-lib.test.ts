@@ -1,6 +1,7 @@
 import {
 	BUILD_TIME_VARS,
 	DEPLOY_ENVS,
+	describeStepFailure,
 	isDeployEnv,
 	missingVars,
 	parseDotVars,
@@ -93,5 +94,39 @@ describe("BUILD_TIME_VARS", () => {
 		for (const key of BUILD_TIME_VARS) {
 			expect(runtime.has(key)).toBe(false);
 		}
+	});
+});
+
+describe("describeStepFailure", () => {
+	// Measured on the real failure (issue #37): the build's own stderr *did*
+	// reach the terminal at line 46, and execa's unhandled-rejection dump then
+	// printed 25 further lines of its own internals below it. The operator reads
+	// the bottom, sees "Command failed with exit code 1", and concludes the build
+	// swallowed the error. So this replaces the dump — it does not add output.
+	it("names the step that failed and its exit code", () => {
+		const message = describeStepFailure("build", 1);
+
+		expect(message).toContain("build");
+		expect(message).toContain("1");
+	});
+
+	it("points the reader back up at the output that carries the real error", () => {
+		expect(describeStepFailure("build", 1)).toMatch(/above/i);
+	});
+
+	it("keeps itself short enough to survive on one screen", () => {
+		// The whole point is not being a wall of text under the real diagnosis.
+		expect(describeStepFailure("build", 1).split("\n").length).toBeLessThanOrEqual(4);
+	});
+
+	it("handles a signal kill, where there is no exit code", () => {
+		expect(describeStepFailure("deploy", undefined)).toContain("deploy");
+	});
+
+	it("names the deploy step when that is what failed", () => {
+		const message = describeStepFailure("deploy", 2);
+
+		expect(message).toContain("deploy");
+		expect(message).not.toContain("build");
 	});
 });
