@@ -43,6 +43,7 @@ import {
 	sitemapFileNames,
 	workerEntrySource,
 } from "./build-output";
+import { CSP_REPORT_PATH } from "./content-security-policy";
 import { staticPages } from "./pages";
 import { claimsPath } from "./run-worker-first";
 
@@ -218,6 +219,15 @@ describe("static build output", () => {
 		// Without this the asset server 307s `/about` to `/about/`, contradicting
 		// the canonical, og:url, and every internal href, which are all slash-free.
 		expect(deployedAssetsConfig().html_handling).toBe("drop-trailing-slash");
+	});
+
+	it("keeps the CSP report sink a rendered route, not a prerendered asset", () => {
+		// A `prerender = true` slipped onto this route would not break the build:
+		// it would emit a static file, every violation report would be answered
+		// by the asset server, and the sink would go quiet. Silence is exactly
+		// what "safe to enforce" looks like, so the failure mode is flipping
+		// `CSP_MODE` on evidence that was never collected.
+		expect(astroOnDemandRoutePatterns()).toContain(CSP_REPORT_PATH);
 	});
 
 	it("routes every prerendered page through the Worker so Accept can be negotiated", () => {

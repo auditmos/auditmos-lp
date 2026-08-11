@@ -6,6 +6,7 @@ import {
 	SERVER_CARD_PATH,
 	SERVER_CARD_WELL_KNOWN_PATH,
 } from "@/mcp/server-card";
+import { CSP_HEADER_NAME } from "./content-security-policy";
 import { CONTENT_SIGNAL, renderDiscoveryHeaders } from "./discovery-headers";
 import { SECURITY_HEADERS } from "./security-headers";
 
@@ -120,6 +121,22 @@ describe("renderDiscoveryHeaders", () => {
 		for (const [name, value] of Object.entries(SECURITY_HEADERS)) {
 			expect(rules).toContain(`${name}: ${value}`);
 		}
+	});
+
+	it("states one content security policy site-wide, carrying the build's script hashes", () => {
+		// One `/*` rule rather than a per-page one. Workers joins repeated header
+		// names with a comma, and a comma-separated CSP value is not one policy
+		// with more sources — it is two policies, each enforced in full. A
+		// page-specific rule would therefore be *intersected* with the site-wide
+		// one, and the page would lose every script the site-wide policy omits.
+		// The cost is that a hash admitted for one page is admitted for all of
+		// them, which is the standard trade for a statically served site.
+		const rules = headerRuleBlocks(renderDiscoveryHeaders([], ["AAA=", "BBB="])).get("/*") ?? [];
+		const policies = rules.filter((rule) => rule.startsWith(`${CSP_HEADER_NAME}:`));
+
+		expect(policies).toHaveLength(1);
+		expect(policies[0]).toContain("'sha256-AAA='");
+		expect(policies[0]).toContain("'sha256-BBB='");
 	});
 
 	it("maps the homepage to /index.md under a single rule", () => {

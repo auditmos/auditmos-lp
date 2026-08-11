@@ -7,6 +7,7 @@
  * with the rest of the suite — see `./build-once`.
  */
 
+import { createHash } from "node:crypto";
 import { API_CATALOG_PATH, agentSurfaces } from "@/agents/surfaces";
 import { buildRunCount } from "./build-once";
 import {
@@ -15,11 +16,24 @@ import {
 	buildSite,
 	generatedHtmlRoutes,
 	headerRuleBlocks,
+	htmlFor,
+	inlineScriptsIn,
 	linkHeaderTargets,
 	markdownTwinPathFor,
 } from "./build-output";
+import { CSP_HEADER_NAME } from "./content-security-policy";
 import { CONTENT_SIGNAL } from "./discovery-headers";
 import { SECURITY_HEADERS } from "./security-headers";
+
+/** The one site-wide policy, as the asset server will replay it. */
+function contentSecurityPolicy(): string {
+	const rules = headerRuleBlocks().get("/*") ?? [];
+	const policies = rules.filter((rule) => rule.startsWith(`${CSP_HEADER_NAME}:`));
+
+	expect(policies).toHaveLength(1);
+
+	return policies[0] ?? "";
+}
 
 describe("generated _headers", () => {
 	beforeAll(async () => {
@@ -41,6 +55,33 @@ describe("generated _headers", () => {
 		for (const [name, value] of Object.entries(SECURITY_HEADERS)) {
 			expect(siteWideRules).toContain(`${name}: ${value}`);
 		}
+	});
+
+	it("admits every executable inline script the build emitted, by the hash of its body", () => {
+		// The check the hardcoded-hash approach cannot have: hashes are derived
+		// from the emitted HTML, so this fails the moment an inline block is added
+		// or a character inside one changes without the policy following. It fails
+		// closed in production — a browser refuses the script and the page renders
+		// without it — which is exactly the failure a test has to catch first.
+		const policy = contentSecurityPolicy();
+		const inline = generatedHtmlRoutes()
+			.flatMap((route) => inlineScriptsIn(htmlFor(route)))
+			.filter((script) => !/\bsrc=/.test(script.tag));
+		const unhashed = inline.filter(
+			(script) =>
+				!policy.includes(
+					`'sha256-${createHash("sha256").update(script.body, "utf8").digest("base64")}'`,
+				),
+		);
+
+		expect(inline.length).toBeGreaterThan(0);
+		// What the policy does not name has to be a data block — a `<script>` the
+		// browser parses and never executes, and so never checks against
+		// `script-src`. Any other tag surfacing here is a script that would be
+		// refused, and the diff names it.
+		expect(unhashed.map((script) => script.tag)).toEqual(
+			unhashed.map(() => '<script type="application/ld+json">'),
+		);
 	});
 
 	it("advertises RFC 8288 agent-discovery Link relations site-wide and on the homepage", () => {

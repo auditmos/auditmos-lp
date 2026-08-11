@@ -1,9 +1,9 @@
 /**
  * The Auditmos MCP endpoint — Streamable HTTP transport.
  *
- * The second and last request-time route on the site (see the PRD): MCP is
- * JSON-RPC over HTTP POST, which a prerendered asset cannot serve. All protocol
- * logic lives in `@/mcp/server`; this file only does HTTP.
+ * One of the site's few request-time routes (see the PRD): MCP is JSON-RPC over
+ * HTTP POST, which a prerendered asset cannot serve. All protocol logic lives
+ * in `@/mcp/server`; this file only does HTTP.
  */
 
 import { getCollection } from "astro:content";

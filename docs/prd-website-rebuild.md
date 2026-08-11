@@ -134,10 +134,20 @@ The system is composed as twelve deep modules with narrow interfaces:
 
     **Why the media types live in `_headers`:** a prerendered endpoint's own `Response` headers do not survive the build — the output is a static file and Cloudflare types it by extension. That left `/mcp/server-card`, extensionless by spec, with *no* `Content-Type` at all and silently downgraded the catalog to `application/json`. The `agentDiscoveryHeaders()` integration restates both types, and the CORS header all three documents need, at the layer that actually serves them.
 
+13. **Content Security Policy** — one policy, stated site-wide, delivered under a single header name by two surfaces: the `/*` rule of the generated `_headers` (everything the asset server answers, including the prerendered pages behind `run_worker_first`) and `withSecurityHeaders()` in `src/worker.ts` (the responses the Worker renders itself, which the asset server never sees). `src/site/content-security-policy.ts` owns the directives; the Worker *fills in* rather than sets, so a page's own policy is never replaced by the hash-free fallback.
+
+    **Why hashes, derived at build time:** prerendered pages are served as static assets, so there is no per-request render in which to stamp a nonce. That leaves hashes for the two executable inline blocks (the WebMCP registration on `/`, the contact form handler on `/contact`), and a hardcoded hash list would rot on the first copy edit and fail *closed* — the browser refuses the script and the page renders without it. `agentDiscoveryHeaders()` therefore reads the emitted HTML and hashes what it finds, and a build-output test fails if any inline script in `dist/` has no matching hash in the policy.
+
+    **What is deliberately not hashed:** JSON-LD blocks. HTML's "prepare the script element" returns at the data-block step, before the inline-CSP check runs, so a browser never compares them to a hash; hashing all 14 would lengthen a header sent on every response and enforce nothing. `style-src` keeps `'unsafe-inline'` for the same class of reason — Shiki writes its colours into `style` *attributes*, which hashes do not govern at all.
+
+    **Report-only first.** The site's real XSS exposure is low — static-first, no user-generated content rendered into a page — so this is defence in depth, not an urgent hole, and there is no urgency worth trading a blank homepage for. `CSP_MODE` in `src/site/content-security-policy.ts` is the single switch; flipping it to `"enforce"` after a quiet week of production traffic is the last step. A test pins the current mode so that flip is a deliberate edit.
+
+    **Why `/api/csp-report` is the third request-time route:** a report-only policy with nowhere to report is a policy nobody can validate before enforcing it, and a prerendered asset cannot read a POST body. The endpoint answers `report-uri` only — deprecated, and still the one spelling every engine reads; it takes a path resolved against the document, so one static `_headers` serves dev, staging and production, whereas `Reporting-Endpoints` takes a URL and the only URL a static build could bake in is production's. The two cannot be shipped as a fallback pair, because Chrome ignores `report-uri` outright whenever `report-to` is present. Being unauthenticated it is rate limited to 60 reports per 60 seconds per client IP via the `CSP_REPORT_RATE_LIMITER` binding, and it logs a bounded projection of each report — directive, blocked URI, document URI, each truncated — never the raw body, which is attacker-influenced and unbounded.
+
 ### System boundaries
 
 - **Build time:** GitHub REST API (OSS aggregator), MD content collection, brand SVG assets.
-- **Request time (Worker):** `/api/contact` (Cloudflare Turnstile siteverify, Resend HTTP API) and `/mcp` (no external calls — answers from build-time data) are the only two *rendered* routes. Page routes also pass through the Worker (`run_worker_first`, component 11) so `Accept` can be negotiated, but they are still served from the same prerendered asset.
+- **Request time (Worker):** `/api/contact` (Cloudflare Turnstile siteverify, Resend HTTP API), `/mcp` (no external calls — answers from build-time data) and `/api/csp-report` (writes to the Workers log, no external calls) are the *rendered* routes, alongside the two OAuth routes that issue and exchange credentials. Page routes also pass through the Worker (`run_worker_first`, component 11) so `Accept` can be negotiated, but they are still served from the same prerendered asset.
 - **Browser (one page only):** `/contact` loads the Turnstile widget script; every other page ships zero JS by default.
 
 ### Third-party services
@@ -177,6 +187,7 @@ The schema validates that exactly one shape is present. The rendering layer read
 | `/contact` | Prerendered | Form + Turnstile widget |
 | `/privacy` | Prerendered | GDPR baseline copy |
 | `/api/contact` | Worker (POST only) | Form submission handler |
+| `/api/csp-report` | Worker (POST only) | Content Security Policy violation sink |
 | `/<path>.md` | Prerendered | Markdown twin of every URL above (except `/api/contact`) |
 | `/llms.txt` | Prerendered | Index for AI agents |
 | `/sitemap.xml` | Prerendered | Search engine sitemap |

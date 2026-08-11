@@ -22,6 +22,8 @@
  * `discovery-headers.ts`, which is build-time only.
  */
 
+import { CSP_HEADER_NAME, renderContentSecurityPolicy } from "./content-security-policy";
+
 /**
  * `X-Frame-Options: SAMEORIGIN` rather than `DENY`: nothing frames the site
  * today, and `DENY` would also forbid same-origin embedding for no gain.
@@ -50,6 +52,17 @@ export function withSecurityHeaders(response: Response): Response {
 
 	for (const [name, value] of Object.entries(SECURITY_HEADERS)) {
 		secured.headers.set(name, value);
+	}
+
+	// Fills in, rather than sets — the one header here that must not overwrite.
+	// An asset response arrives carrying the policy `_headers` gave it, hashes
+	// and all, and this fallback has no hashes to offer: overwriting would refuse
+	// every inline script on the page. What reaches this branch is what the asset
+	// server never saw — the Worker's own JSON responses and canonical redirects,
+	// which load nothing and are governed here by `frame-ancestors` and
+	// `base-uri` alone.
+	if (!secured.headers.has(CSP_HEADER_NAME)) {
+		secured.headers.set(CSP_HEADER_NAME, renderContentSecurityPolicy([]));
 	}
 
 	return secured;

@@ -53,10 +53,12 @@
 		"enabled": true,
 		"head_sampling_rate": 1
 	},
-	// Rate limit for the unauthenticated MCP endpoint. Bindings are not
-	// inherited by named environments, so this is repeated in each `env` block —
-	// verify it survives into dist/server/wrangler.json after changing it.
-	// `period` accepts only 10 or 60.
+	// Rate limits for the two unauthenticated endpoints: MCP, and the CSP
+	// violation sink. Bindings are not inherited by named environments, so these
+	// are repeated in each `env` block — verify they survive into
+	// dist/server/wrangler.json after changing them. `period` accepts only 10
+	// or 60. `CSP_REPORT_RATE_LIMITER` must match `CSP_REPORT_RATE_LIMIT` in
+	// src/csp/report-handler.ts; nothing can catch those two drifting apart.
 	"ratelimits": [
 		{
 			"name": "MCP_RATE_LIMITER",
@@ -67,6 +69,11 @@
 			"name": "MCP_RATE_LIMITER_AUTH",
 			"namespace_id": "1002",
 			"simple": { "limit": 600, "period": 60 }
+		},
+		{
+			"name": "CSP_REPORT_RATE_LIMITER",
+			"namespace_id": "1003",
+			"simple": { "limit": 60, "period": 60 }
 		}
 	],
 	"vars": {
@@ -85,6 +92,11 @@
 					"name": "MCP_RATE_LIMITER_AUTH",
 					"namespace_id": "1002",
 					"simple": { "limit": 600, "period": 60 }
+				},
+				{
+					"name": "CSP_REPORT_RATE_LIMITER",
+					"namespace_id": "1003",
+					"simple": { "limit": 60, "period": 60 }
 				}
 			],
 			"vars": {
@@ -103,6 +115,11 @@
 					"name": "MCP_RATE_LIMITER_AUTH",
 					"namespace_id": "1002",
 					"simple": { "limit": 600, "period": 60 }
+				},
+				{
+					"name": "CSP_REPORT_RATE_LIMITER",
+					"namespace_id": "1003",
+					"simple": { "limit": 60, "period": 60 }
 				}
 			],
 			"routes": [{ "pattern": "staging.auditmos.com", "custom_domain": true }],
@@ -122,6 +139,11 @@
 					"name": "MCP_RATE_LIMITER_AUTH",
 					"namespace_id": "1002",
 					"simple": { "limit": 600, "period": 60 }
+				},
+				{
+					"name": "CSP_REPORT_RATE_LIMITER",
+					"namespace_id": "1003",
+					"simple": { "limit": 60, "period": 60 }
 				}
 			],
 			"routes": [{ "pattern": "auditmos.com", "custom_domain": true }],

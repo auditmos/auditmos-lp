@@ -1,3 +1,4 @@
+import { CSP_HEADER_NAME } from "./content-security-policy";
 import { withSecurityHeaders } from "./security-headers";
 
 describe("withSecurityHeaders", () => {
@@ -23,6 +24,33 @@ describe("withSecurityHeaders", () => {
 		const secured = withSecurityHeaders(new Response("ok"));
 
 		expect(secured.headers.get("X-XSS-Protection")).toBe("0");
+	});
+
+	it("gives a Worker-rendered response a policy of its own", () => {
+		// `/api/contact`, `/mcp` and the OAuth routes never touch the asset server,
+		// so the generated `_headers` cannot reach them. Measured against
+		// production on 11 Aug 2026, they carried no CSP at all — which left
+		// `frame-ancestors` and `base-uri` unstated on every response the Worker
+		// renders itself.
+		const secured = withSecurityHeaders(new Response('{"ok":true}'));
+
+		expect(secured.headers.get(CSP_HEADER_NAME)).toContain("frame-ancestors 'self'");
+		expect(secured.headers.get(CSP_HEADER_NAME)).toContain("base-uri 'none'");
+	});
+
+	it("leaves a page's own hashed policy alone rather than replacing it", () => {
+		// Every page route runs through the Worker (`run_worker_first`) but is
+		// still answered from its prerendered asset, so it arrives here already
+		// carrying the policy `_headers` gave it — including the script hashes,
+		// which this module has no way to recompute. Overwriting would refuse
+		// every inline script on the site.
+		const fromAssetServer = new Response("<html></html>", {
+			headers: { [CSP_HEADER_NAME]: "script-src 'self' 'sha256-abc='" },
+		});
+
+		expect(withSecurityHeaders(fromAssetServer).headers.get(CSP_HEADER_NAME)).toBe(
+			"script-src 'self' 'sha256-abc='",
+		);
 	});
 
 	it("leaves the response it was handed otherwise intact", async () => {

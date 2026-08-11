@@ -10,12 +10,18 @@
  * bundled into the Worker.
  */
 
+import { createHash } from "node:crypto";
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { AstroIntegration } from "astro";
 import { API_CATALOG_MEDIA_TYPE, API_CATALOG_PATH, agentSurfaces } from "../agents/surfaces";
 import { SERVER_CARD_WELL_KNOWN_PATH } from "../mcp/server-card";
+import {
+	CSP_HEADER_NAME,
+	executableInlineScripts,
+	renderContentSecurityPolicy,
+} from "./content-security-policy";
 import { SECURITY_HEADERS } from "./security-headers";
 
 interface DiscoveryLink {
@@ -131,16 +137,27 @@ const mediaTypeRules: readonly { pattern: string; type: string }[] = [
 	{ pattern: SERVER_CARD_WELL_KNOWN_PATH, type: "application/json" },
 ];
 
-export function renderDiscoveryHeaders(pageRoutes: readonly string[]): string {
+export function renderDiscoveryHeaders(
+	pageRoutes: readonly string[],
+	scriptHashes: readonly string[] = [],
+): string {
 	// The policy leads the site-wide block: it governs what a client may do with
 	// everything the Link relations then point at.
 	// Security headers last: they are unconditional and uninteresting to a
 	// client reading the file, and appending them keeps the policy and the
 	// catalog at the top where a reader looks first.
+	//
+	// The CSP is stated once, under `/*`, and never per page. Workers joins
+	// repeated header names with a comma, and a comma-separated CSP value is two
+	// policies both enforced in full rather than one policy with more sources —
+	// so a page-level rule would be intersected with this one and lose whatever
+	// this one omits. A hash admitted for one page is therefore admitted for all
+	// of them, which is the usual trade for a statically served site.
 	const siteWideHeaders = [
 		`Content-Signal: ${CONTENT_SIGNAL}`,
 		...linkHeaders(siteWideLinks),
 		...Object.entries(SECURITY_HEADERS).map(([name, value]) => `${name}: ${value}`),
+		`${CSP_HEADER_NAME}: ${renderContentSecurityPolicy(scriptHashes)}`,
 	];
 	const alternateRules = [...pageRoutes].sort().flatMap((route) =>
 		patternsFor(route).map((pattern) =>
@@ -191,6 +208,23 @@ function routeOf(clientDir: string, htmlFile: string): string {
 	return `/${relativePath.slice(0, -".html".length)}`;
 }
 
+/**
+ * A base64 SHA-256 digest of every inline script the build emitted, deduped.
+ *
+ * Derived from the HTML rather than written down, because a hardcoded list rots
+ * on the first copy edit and fails *closed*: the browser refuses the script and
+ * the page renders without it. Sorted so an unchanged build produces an
+ * unchanged `_headers` file.
+ */
+function inlineScriptHashes(clientDir: string): string[] {
+	const digests = walkFiles(clientDir)
+		.filter((file) => file.endsWith(".html"))
+		.flatMap((file) => executableInlineScripts(readFileSync(file, "utf8")))
+		.map((body) => createHash("sha256").update(body, "utf8").digest("base64"));
+
+	return [...new Set(digests)].sort();
+}
+
 function mirroredRoutes(clientDir: string): string[] {
 	return walkFiles(clientDir)
 		.filter((file) => file.endsWith(".html"))
@@ -210,7 +244,7 @@ export function agentDiscoveryHeaders(): AstroIntegration {
 				// this file from an earlier `astro:build:done` hook, and `_headers`
 				// rules are additive — so append rather than replace.
 				const existing = existsSync(headersFile) ? readFileSync(headersFile, "utf8").trimEnd() : "";
-				const discoveryHeaders = renderDiscoveryHeaders(routes);
+				const discoveryHeaders = renderDiscoveryHeaders(routes, inlineScriptHashes(clientDir));
 
 				writeFileSync(
 					headersFile,
