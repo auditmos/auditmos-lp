@@ -1,3 +1,10 @@
+## [1.22.3](https://github.com/auditmos/auditmos-lp/compare/v1.22.2...v1.22.3) (2026-08-11)
+
+
+### Bug Fixes
+
+* **scripts:** probe the host under test, not the one the sitemap names ([3e32cb1](https://github.com/auditmos/auditmos-lp/commit/3e32cb12455dc959653b021e9eda76540395a1d1)), closes [#38](https://github.com/auditmos/auditmos-lp/issues/38) [#38](https://github.com/auditmos/auditmos-lp/issues/38)
+
 ## [1.22.2](https://github.com/auditmos/auditmos-lp/compare/v1.22.1...v1.22.2) (2026-08-11)
 
 
