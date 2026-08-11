@@ -1,3 +1,10 @@
+# [1.24.0](https://github.com/auditmos/auditmos-lp/compare/v1.23.0...v1.24.0) (2026-08-11)
+
+
+### Features
+
+* **scripts:** watch a deployed env for CSP violations ([0dee5eb](https://github.com/auditmos/auditmos-lp/commit/0dee5ebb526de42c6e7a7df83fe66273ff4431eb)), closes [#30](https://github.com/auditmos/auditmos-lp/issues/30) [#30](https://github.com/auditmos/auditmos-lp/issues/30)
+
 # [1.23.0](https://github.com/auditmos/auditmos-lp/compare/v1.22.3...v1.23.0) (2026-08-11)
 
 
