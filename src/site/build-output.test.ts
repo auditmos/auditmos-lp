@@ -44,6 +44,7 @@ import {
 	workerEntrySource,
 } from "./build-output";
 import { staticPages } from "./pages";
+import { claimsPath } from "./run-worker-first";
 
 // 52 KB: the original 50 KB budget plus ~2 KB of CSS for the self-hosted brand
 // typefaces (Space Grotesk + IBM Plex Mono @font-face) and texture utilities.
@@ -220,14 +221,35 @@ describe("static build output", () => {
 	});
 
 	it("routes every prerendered page through the Worker so Accept can be negotiated", () => {
-		const workerFirst = new Set(deployedAssetsConfig().run_worker_first ?? []);
+		const patterns = deployedAssetsConfig().run_worker_first ?? [];
 
 		// The asset server would otherwise answer these before the Worker runs,
 		// and `Accept: text/markdown` would never be looked at.
 		for (const route of astroBuildPageRoutePatterns()) {
-			const pattern = route === "/work/[slug]" ? "/work/*" : route;
+			const path = route === "/work/[slug]" ? sampleProjectRoutes[0] : route;
 
-			expect({ route, negotiable: workerFirst.has(pattern) }).toEqual({ route, negotiable: true });
+			expect({ path, negotiable: claimsPath(patterns, path) }).toEqual({ path, negotiable: true });
+		}
+	});
+
+	it("routes the trailing-slash form of every page through the Worker too", () => {
+		// `run_worker_first` matches paths literally, so `/about` leaves `/about/`
+		// to the asset server, which answers it with `html_handling`'s **307**.
+		// Only a 301 consolidates ranking signals onto the canonical URL, which is
+		// the entire reason `canonicalRedirect()` exists — and it never runs for a
+		// request that does not reach the Worker. Issue #38.
+		const patterns = deployedAssetsConfig().run_worker_first ?? [];
+
+		for (const route of astroBuildPageRoutePatterns()) {
+			// The root is canonical *with* its slash, so it has no second form.
+			if (route === "/") continue;
+
+			const path = route === "/work/[slug]" ? sampleProjectRoutes[0] : route;
+
+			expect({ path: `${path}/`, negotiable: claimsPath(patterns, `${path}/`) }).toEqual({
+				path: `${path}/`,
+				negotiable: true,
+			});
 		}
 	});
 

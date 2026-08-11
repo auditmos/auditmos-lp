@@ -19,16 +19,32 @@
 		// The page still comes from the same static asset; the Worker adds one
 		// hop, not a render. A new page must be added here too — a build-output
 		// test asserts this list covers Astro's prerendered page routes.
+		//
+		// **Both URL forms, and that is not redundant.** These patterns match the
+		// path literally, so `/about` does not claim `/about/`. Left out, the
+		// slash form is answered by `html_handling` above with a 307, and the 301
+		// in `canonicalRedirect()` never runs — only a permanent redirect
+		// consolidates ranking signals onto the canonical URL. `/work` needs no
+		// `/work/` because the `/work/*` wildcard already spans both, which is
+		// why project pages were the only ones behaving correctly. Issue #38.
 		"run_worker_first": [
 			"/",
 			"/about",
+			"/about/",
 			"/contact",
+			"/contact/",
 			"/open-source",
+			"/open-source/",
 			"/partners",
+			"/partners/",
 			"/privacy",
+			"/privacy/",
 			"/r-and-d",
+			"/r-and-d/",
 			"/security-audits",
+			"/security-audits/",
 			"/software-development",
+			"/software-development/",
 			"/work",
 			"/work/*"
 		]
