@@ -1,3 +1,10 @@
+## [1.22.2](https://github.com/auditmos/auditmos-lp/compare/v1.22.1...v1.22.2) (2026-08-11)
+
+
+### Bug Fixes
+
+* **routing:** claim both URL forms in run_worker_first so pages 301 ([67f24ea](https://github.com/auditmos/auditmos-lp/commit/67f24eaa85be6cacdb797f9b2945c162d685568b)), closes [#38](https://github.com/auditmos/auditmos-lp/issues/38)
+
 ## [1.22.1](https://github.com/auditmos/auditmos-lp/compare/v1.22.0...v1.22.1) (2026-08-11)
 
 
