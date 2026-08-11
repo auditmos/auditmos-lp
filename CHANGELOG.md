@@ -1,3 +1,11 @@
+## [1.24.1](https://github.com/auditmos/auditmos-lp/compare/v1.24.0...v1.24.1) (2026-08-11)
+
+
+### Bug Fixes
+
+* **contact:** move the contact address to tom@auditmos.com ([75a29f2](https://github.com/auditmos/auditmos-lp/commit/75a29f2c897dc55badadc1c9d32da752f0de3e5b))
+* **contact:** record Resend message ids and rejection details ([3193cd5](https://github.com/auditmos/auditmos-lp/commit/3193cd552625f8f3eded0dffa28aa7278dacb1f1))
+
 # [1.24.0](https://github.com/auditmos/auditmos-lp/compare/v1.23.0...v1.24.0) (2026-08-11)
 
 
