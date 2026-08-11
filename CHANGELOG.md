@@ -1,3 +1,10 @@
+# [1.22.0](https://github.com/auditmos/auditmos-lp/compare/v1.21.0...v1.22.0) (2026-08-11)
+
+
+### Features
+
+* **site:** send baseline application-security response headers ([0d33554](https://github.com/auditmos/auditmos-lp/commit/0d33554f6fe4b7da6cf9a6205b6739eb6177ee45)), closes [#29](https://github.com/auditmos/auditmos-lp/issues/29)
+
 # [1.21.0](https://github.com/auditmos/auditmos-lp/compare/v1.20.0...v1.21.0) (2026-08-10)
 
 
