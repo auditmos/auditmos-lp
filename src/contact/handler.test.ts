@@ -150,7 +150,7 @@ describe("handleContactRequest", () => {
 			.mockResolvedValueOnce(jsonResponse({ success: true }))
 			.mockResolvedValueOnce(jsonResponse({ id: "notification-id" }))
 			.mockResolvedValueOnce(jsonResponse({ error: "Resend unavailable" }, { status: 503 }));
-		const logger = { error: vi.fn() };
+		const logger = { error: vi.fn(), info: vi.fn() };
 
 		const response = await handleContactRequest(jsonRequest(validPayload), {
 			env,
@@ -205,11 +205,116 @@ describe("createContactHandlerDependencies", () => {
 	});
 
 	it("threads env and logger through unchanged", () => {
-		const logger = { error: vi.fn() };
+		const logger = { error: vi.fn(), info: vi.fn() };
 		const deps = createContactHandlerDependencies(env, logger);
 
 		expect(deps.env).toBe(env);
 		expect(deps.logger).toBe(logger);
+	});
+});
+
+describe("Resend dispatch observability", () => {
+	// Resend accepts a message with 200 + id and can still drop it later
+	// (suppression list, recipient-side quarantine). Without the id in the
+	// Worker log there is nothing to look the submission up by, which is
+	// exactly what blocked diagnosing mail that never reached the inbox.
+	it("logs the Resend message id for both sends when delivery is accepted", async () => {
+		const fetch = vi
+			.fn<ContactHandlerDependencies["fetch"]>()
+			.mockResolvedValueOnce(jsonResponse({ success: true }))
+			.mockResolvedValueOnce(jsonResponse({ id: "notification-id" }))
+			.mockResolvedValueOnce(jsonResponse({ id: "confirmation-id" }));
+		const logger = { error: vi.fn(), info: vi.fn() };
+
+		const response = await handleContactRequest(jsonRequest(validPayload), {
+			env,
+			fetch,
+			logger,
+		});
+
+		expect(response.status).toBe(200);
+		expect(logger.info).toHaveBeenCalledWith("contact_email_dispatched", {
+			confirmationId: "confirmation-id",
+			notificationId: "notification-id",
+			recipient: "contact@auditmos.com",
+			submitter: "jane@example.com",
+		});
+		expect(logger.error).not.toHaveBeenCalled();
+	});
+
+	it("logs the status and Resend error detail when a send is rejected", async () => {
+		const fetch = vi
+			.fn<ContactHandlerDependencies["fetch"]>()
+			.mockResolvedValueOnce(jsonResponse({ success: true }))
+			.mockResolvedValueOnce(
+				jsonResponse(
+					{ message: "The auditmos.com domain is not verified", name: "validation_error" },
+					{ status: 422 },
+				),
+			);
+		const logger = { error: vi.fn(), info: vi.fn() };
+
+		const response = await handleContactRequest(jsonRequest(validPayload), {
+			env,
+			fetch,
+			logger,
+		});
+
+		expect(response.status).toBe(502);
+		expect(logger.error).toHaveBeenCalledWith("contact_email_failed", {
+			detail: "validation_error: The auditmos.com domain is not verified",
+			recipient: "contact@auditmos.com",
+			stage: "notification",
+			status: 422,
+			submitter: "jane@example.com",
+		});
+	});
+
+	it("reports a non-JSON Resend rejection without throwing", async () => {
+		const fetch = vi
+			.fn<ContactHandlerDependencies["fetch"]>()
+			.mockResolvedValueOnce(jsonResponse({ success: true }))
+			.mockResolvedValueOnce(new Response("<html>502 Bad Gateway</html>", { status: 502 }));
+		const logger = { error: vi.fn(), info: vi.fn() };
+
+		const response = await handleContactRequest(jsonRequest(validPayload), {
+			env,
+			fetch,
+			logger,
+		});
+
+		expect(response.status).toBe(502);
+		expect(logger.error).toHaveBeenCalledWith("contact_email_failed", {
+			detail: "unparseable Resend response",
+			recipient: "contact@auditmos.com",
+			stage: "notification",
+			status: 502,
+			submitter: "jane@example.com",
+		});
+	});
+
+	it("attributes the failure to the confirmation stage when only it is rejected", async () => {
+		const fetch = vi
+			.fn<ContactHandlerDependencies["fetch"]>()
+			.mockResolvedValueOnce(jsonResponse({ success: true }))
+			.mockResolvedValueOnce(jsonResponse({ id: "notification-id" }))
+			.mockResolvedValueOnce(
+				jsonResponse(
+					{ message: "Rate limit exceeded", name: "rate_limit_exceeded" },
+					{ status: 429 },
+				),
+			);
+		const logger = { error: vi.fn(), info: vi.fn() };
+
+		await handleContactRequest(jsonRequest(validPayload), { env, fetch, logger });
+
+		expect(logger.error).toHaveBeenCalledWith("contact_email_failed", {
+			detail: "rate_limit_exceeded: Rate limit exceeded",
+			recipient: "contact@auditmos.com",
+			stage: "confirmation",
+			status: 429,
+			submitter: "jane@example.com",
+		});
 	});
 });
 

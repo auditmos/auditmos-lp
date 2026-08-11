@@ -11,7 +11,7 @@ type FetchLike = (input: RequestInfo | URL, init?: RequestInit) => Promise<Respo
 export interface ContactHandlerDependencies {
 	env: ContactEnv;
 	fetch: FetchLike;
-	logger?: Pick<Console, "error">;
+	logger?: Pick<Console, "error" | "info">;
 }
 
 /**
@@ -23,7 +23,7 @@ export interface ContactHandlerDependencies {
  */
 export function createContactHandlerDependencies(
 	env: ContactEnv,
-	logger?: Pick<Console, "error">,
+	logger?: Pick<Console, "error" | "info">,
 ): ContactHandlerDependencies {
 	return {
 		env,
@@ -51,11 +51,13 @@ interface ResendEmail {
 	to: string[];
 }
 
-async function readJson(request: Request): Promise<unknown> {
+const UNPARSEABLE = Symbol("unparseable");
+
+async function readJson(source: Request | Response): Promise<unknown> {
 	try {
-		return await request.json();
+		return await source.json();
 	} catch {
-		return undefined;
+		return UNPARSEABLE;
 	}
 }
 
@@ -89,10 +91,18 @@ async function verifyTurnstile(
 	return result.success === true;
 }
 
+/**
+ * The outcome of one Resend API call. `ok` only means Resend *accepted* the
+ * message — it can still be dropped afterwards (suppression list, recipient-side
+ * quarantine), so the id is the only handle a later investigation has. Discarding
+ * it, and the rejection detail, is what makes vanished mail undiagnosable.
+ */
+type ResendDispatch = { ok: true; id: string } | { ok: false; detail: string; status: number };
+
 async function sendResendEmail(
 	email: ResendEmail,
 	deps: ContactHandlerDependencies,
-): Promise<boolean> {
+): Promise<ResendDispatch> {
 	const response = await deps.fetch("https://api.resend.com/emails", {
 		method: "POST",
 		headers: {
@@ -102,7 +112,29 @@ async function sendResendEmail(
 		body: JSON.stringify(email),
 	});
 
-	return response.ok;
+	const payload = await readJson(response);
+
+	if (!response.ok) {
+		return { ok: false, detail: describeResendError(payload), status: response.status };
+	}
+
+	return { ok: true, id: readStringField(payload, "id") ?? "" };
+}
+
+function readStringField(payload: unknown, field: string): string | undefined {
+	if (typeof payload !== "object" || payload === null) return undefined;
+
+	const value = (payload as Record<string, unknown>)[field];
+	return typeof value === "string" && value !== "" ? value : undefined;
+}
+
+/** Resend rejections carry `{ name, message }`; edge failures carry neither. */
+function describeResendError(payload: unknown): string {
+	const message = readStringField(payload, "message");
+	if (!message) return "unparseable Resend response";
+
+	const name = readStringField(payload, "name");
+	return name ? `${name}: ${message}` : message;
 }
 
 function notificationEmail(input: ContactInput, env: ContactEnv): ResendEmail {
@@ -167,22 +199,45 @@ export async function handleContactRequest(
 		return json({ error: "Anti-spam verification failed" }, 403);
 	}
 
-	const notificationSent = await sendResendEmail(notificationEmail(parsed.data, deps.env), deps);
-	const confirmationSent =
-		notificationSent && (await sendResendEmail(confirmationEmail(parsed.data, deps.env), deps));
+	const audit = {
+		recipient: deps.env.CONTACT_TO_EMAIL,
+		submitter: parsed.data.email,
+	};
 
-	if (!notificationSent || !confirmationSent) {
-		if (notificationSent && !confirmationSent) {
-			deps.logger?.error("contact_email_inconsistency", {
-				confirmationSent,
-				notificationSent,
-				recipient: deps.env.CONTACT_TO_EMAIL,
-				submitter: parsed.data.email,
-			});
-		}
+	const notification = await sendResendEmail(notificationEmail(parsed.data, deps.env), deps);
+	if (!notification.ok) {
+		deps.logger?.error("contact_email_failed", {
+			detail: notification.detail,
+			stage: "notification",
+			status: notification.status,
+			...audit,
+		});
 
 		return json({ error: "Email delivery failed" }, 502);
 	}
+
+	const confirmation = await sendResendEmail(confirmationEmail(parsed.data, deps.env), deps);
+	if (!confirmation.ok) {
+		deps.logger?.error("contact_email_failed", {
+			detail: confirmation.detail,
+			stage: "confirmation",
+			status: confirmation.status,
+			...audit,
+		});
+		deps.logger?.error("contact_email_inconsistency", {
+			confirmationSent: false,
+			notificationSent: true,
+			...audit,
+		});
+
+		return json({ error: "Email delivery failed" }, 502);
+	}
+
+	deps.logger?.info("contact_email_dispatched", {
+		confirmationId: confirmation.id,
+		notificationId: notification.id,
+		...audit,
+	});
 
 	return json({ ok: true }, 200);
 }

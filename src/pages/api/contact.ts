@@ -9,6 +9,10 @@ const logger = {
 		// biome-ignore lint/suspicious/noConsole: Worker structured logs are required for partial email delivery failures.
 		console.error(message, fields);
 	},
+	info(message: string, fields: Record<string, unknown>) {
+		// biome-ignore lint/suspicious/noConsole: the Resend message id is the only handle for tracing a submission that Resend accepted but never delivered.
+		console.info(message, fields);
+	},
 };
 
 const contactRoute: APIRoute = ({ request }) =>
