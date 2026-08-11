@@ -1,3 +1,10 @@
+# [1.23.0](https://github.com/auditmos/auditmos-lp/compare/v1.22.3...v1.23.0) (2026-08-11)
+
+
+### Features
+
+* **site:** ship a report-only Content Security Policy ([010d771](https://github.com/auditmos/auditmos-lp/commit/010d7719091aa03d1d7afc3d405c84c07bf0e060)), closes [#30](https://github.com/auditmos/auditmos-lp/issues/30)
+
 ## [1.22.3](https://github.com/auditmos/auditmos-lp/compare/v1.22.2...v1.22.3) (2026-08-11)
 
 
