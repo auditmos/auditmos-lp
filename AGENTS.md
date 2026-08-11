@@ -127,6 +127,7 @@ Run manually before declaring done:
 - **Test only the module's public boundary** (exported functions), not internals — see `.claude/rules/deep-modules.md`
 - **Pure functions only** in unit tests. For code that touches fs / network / process, extract a pure helper and test it; cover the side-effecting orchestrator with a separate integration test (none ship by default)
 - Reference: `scripts/init-project-lib.test.ts` shows the convention — `describe` per exported function, `it.each` for parametric cases
+- **Asserting against build output:** call `buildSite()` from `src/site/build-output.ts` in `beforeAll`. It runs `astro build` *once per test run* behind an on-disk lock (`src/site/build-once.ts`), because vitest runs suites in parallel isolated workers and `astro build` empties `dist/` before writing it — two unsynchronised builds leave every build-output suite intermittently reading a directory the other just wiped. `vitest.global-setup.ts` clears that state at the start of each run (and on each watch re-run) and deliberately never builds, so filtering to an unrelated file still costs nothing. Every suite that reads `dist/` asserts `buildRunCount() === 1`, so a regression here fails loudly instead of going flaky.
 </important>
 
 <important if="you are creating or reviewing design documents">

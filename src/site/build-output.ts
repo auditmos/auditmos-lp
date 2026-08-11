@@ -20,6 +20,7 @@ import { createHash } from "node:crypto";
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { resolve } from "node:path";
 import { execa } from "execa";
+import { buildOnce } from "./build-once";
 
 const root = resolve(import.meta.dirname, "..", "..");
 const distClient = resolve(root, "dist", "client");
@@ -30,9 +31,15 @@ const distClient = resolve(root, "dist", "client");
  * these on fenced code blocks with the colours inlined in a `style` attribute. */
 const thirdPartyClasses = new Set(["cf-turnstile", "astro-code", "github-dark-default", "line"]);
 
-/** Runs the production build the assertions then read. */
+/**
+ * Runs the production build the assertions then read — once per test run, no
+ * matter how many suites ask for it. See `./build-once` for why that has to be
+ * coordinated on disk rather than memoized in the module.
+ */
 export async function buildSite(): Promise<void> {
-	await execa("pnpm", ["build"], { cwd: root });
+	await buildOnce(async () => {
+		await execa("pnpm", ["build"], { cwd: root });
+	});
 }
 
 function distPath(urlPath: string): string {

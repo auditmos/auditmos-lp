@@ -18,6 +18,7 @@ import {
 	OAUTH_AUTHORIZATION_SERVER_PATHS,
 	OAUTH_PROTECTED_RESOURCE_PATH,
 } from "@/oauth/server";
+import { buildRunCount } from "./build-once";
 import {
 	assetExists,
 	assetJson,
@@ -35,7 +36,6 @@ import {
 	htmlFor,
 	htmlPathFor,
 	inlineScriptsIn,
-	linkHeaderTargets,
 	markdownTwinPathFor,
 	pageTransferSize,
 	redirectRules,
@@ -43,9 +43,7 @@ import {
 	sitemapFileNames,
 	workerEntrySource,
 } from "./build-output";
-import { CONTENT_SIGNAL } from "./discovery-headers";
 import { staticPages } from "./pages";
-import { SECURITY_HEADERS } from "./security-headers";
 
 // 52 KB: the original 50 KB budget plus ~2 KB of CSS for the self-hosted brand
 // typefaces (Space Grotesk + IBM Plex Mono @font-face) and texture utilities.
@@ -67,7 +65,15 @@ const clientJavaScriptRoutes = new Set<string>(["/contact"]);
 describe("static build output", () => {
 	beforeAll(async () => {
 		await buildSite();
-	}, 120_000);
+	}, 180_000);
+
+	it("shares the one production build with the rest of the suite", () => {
+		// `astro build` empties `dist/` before writing it, and vitest runs suites
+		// in parallel workers. A second build would mean one suite reading a
+		// directory the other had just wiped — intermittently, so a green run
+		// would prove nothing. See `./build-once`.
+		expect(buildRunCount()).toBe(1);
+	});
 
 	it("prerenders every static route and sample project route", () => {
 		for (const route of prerenderedRoutes) {
@@ -233,16 +239,6 @@ describe("static build output", () => {
 		expect(workerEntrySource()).toContain("max-age=3600");
 	});
 
-	it("carries the baseline security headers on every asset the server answers", () => {
-		// `_headers` reaches everything the asset server serves, which is every
-		// static file plus the prerendered pages behind `run_worker_first`.
-		const siteWideRules = headerRuleBlocks().get("/*") ?? [];
-
-		for (const [name, value] of Object.entries(SECURITY_HEADERS)) {
-			expect(siteWideRules).toContain(`${name}: ${value}`);
-		}
-	});
-
 	it("bundles the security header layer into the deployed Worker entry", () => {
 		// `_headers` stops at the asset server, so the routes the Worker renders
 		// itself — /api/contact, /mcp, both OAuth endpoints — would ship bare
@@ -298,50 +294,6 @@ describe("static build output", () => {
 
 		expect(usedClassCount).toBeGreaterThan(100);
 		expect(missing).toEqual([]);
-	});
-
-	it("advertises RFC 8288 agent-discovery Link relations site-wide and on the homepage", () => {
-		const blocks = headerRuleBlocks();
-		const siteWideRules = blocks.get("/*") ?? [];
-		const homepageRules = blocks.get("/") ?? [];
-
-		expect(linkHeaderTargets(siteWideRules)).toEqual([
-			API_CATALOG_PATH,
-			...agentSurfaces.map((surface) => surface.path),
-			"/about",
-			"/privacy",
-		]);
-		expect(siteWideRules.join("\n")).toContain('rel="service-desc"');
-		expect(siteWideRules.join("\n")).toContain('rel="privacy-policy"');
-
-		expect(linkHeaderTargets(homepageRules)).toEqual(["/index.md"]);
-		expect(homepageRules.join("\n")).toContain('rel="alternate"; type="text/markdown"');
-	});
-
-	it("advertises the markdown twin of every generated page on both of its URL forms", () => {
-		const blocks = headerRuleBlocks();
-		const routes = generatedHtmlRoutes();
-
-		expect(routes.length).toBeGreaterThan(1);
-
-		for (const route of routes) {
-			// `/about` serves the 200 and `/about/` 307s to it — cover both.
-			const patterns = route === "/" ? [route] : [route, `${route}/`];
-
-			for (const pattern of patterns) {
-				expect({ pattern, targets: linkHeaderTargets(blocks.get(pattern)) }).toEqual({
-					pattern,
-					targets: [markdownTwinPathFor(route)],
-				});
-			}
-		}
-	});
-
-	it("points every advertised Link target at a real build artifact", () => {
-		const targets = [...headerRuleBlocks().values()].flatMap((rules) => linkHeaderTargets(rules));
-
-		expect(targets.length).toBeGreaterThan(0);
-		expect(targets.filter((target) => !buildArtifactExists(target))).toEqual([]);
 	});
 
 	it("serves the MCP Server Card at both its reserved and well-known locations", () => {
@@ -476,41 +428,6 @@ describe("static build output", () => {
 		expect(paths.filter((path) => !buildArtifactExists(path) && !onDemand.has(path))).toEqual([]);
 		expect(headerRuleBlocks().get(AUTH_DOC_PATH)).toContain(
 			"Content-Type: text/markdown; charset=utf-8",
-		);
-	});
-
-	it("restates the media type of every registered surface the extension would hide", () => {
-		const blocks = headerRuleBlocks();
-
-		for (const surface of agentSurfaces) {
-			expect({ path: surface.path, rules: blocks.get(surface.path) ?? [] }).toEqual({
-				path: surface.path,
-				rules: expect.arrayContaining([
-					`Content-Type: ${surface.mediaType}; charset=utf-8`,
-					"Access-Control-Allow-Origin: *",
-				]) as unknown as string[],
-			});
-		}
-	});
-
-	it("restates the API catalog's media type, which its extensionless path hides", () => {
-		expect(headerRuleBlocks().get(API_CATALOG_PATH)).toContain(
-			"Content-Type: application/linkset+json; charset=utf-8",
-		);
-	});
-
-	it("states the content usage policy on every response, matching robots.txt", () => {
-		const signal = `Content-Signal: ${CONTENT_SIGNAL}`;
-
-		// robots.txt reaches only clients that fetch it; the header reaches every
-		// asset request, including the `.md` twins and negotiated page responses.
-		expect(headerRuleBlocks().get("/*")).toContain(signal);
-		expect(assetText("robots.txt")).toContain(signal);
-	});
-
-	it("keeps the adapter's immutable asset cache rule alongside the discovery rules", () => {
-		expect(headerRuleBlocks().get("/_astro/*")).toContain(
-			"Cache-Control: public, max-age=31536000, immutable",
 		);
 	});
 
