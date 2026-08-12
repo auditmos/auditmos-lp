@@ -1,3 +1,10 @@
+# [1.25.0](https://github.com/auditmos/auditmos-lp/compare/v1.24.1...v1.25.0) (2026-08-12)
+
+
+### Features
+
+* **resend:** add a signature-verified delivery webhook ([39340b7](https://github.com/auditmos/auditmos-lp/commit/39340b74ad42e5ae7830eb152e1b5f6f3c984ff2))
+
 ## [1.24.1](https://github.com/auditmos/auditmos-lp/compare/v1.24.0...v1.24.1) (2026-08-11)
 
 
