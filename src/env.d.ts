@@ -4,6 +4,7 @@ interface Env {
 	CONTACT_TO_EMAIL: string;
 	OAUTH_SIGNING_KEY: string;
 	RESEND_API_KEY: string;
+	RESEND_WEBHOOK_SECRET: string;
 	TURNSTILE_SECRET_KEY: string;
 }
 
@@ -11,6 +12,7 @@ declare namespace Cloudflare {
 	interface Env {
 		CONTACT_TO_EMAIL: string;
 		RESEND_API_KEY: string;
+		RESEND_WEBHOOK_SECRET: string;
 		TURNSTILE_SECRET_KEY: string;
 	}
 }

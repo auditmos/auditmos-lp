@@ -20,10 +20,15 @@ export const BUILD_TIME_VARS = ["TURNSTILE_SITE_KEY"] as const;
  * so it must be cryptographically random and distinct per environment — a
  * staging credential minted from a shared key would authenticate against
  * production.
+ *
+ * `RESEND_WEBHOOK_SECRET` is the Svix signing secret Resend issues per webhook
+ * endpoint, so it is also distinct per environment. `/api/resend-webhook` fails
+ * closed without it: an unverified sink would let anyone forge delivery events.
  */
 export const RUNTIME_SECRET_VARS = [
 	"TURNSTILE_SECRET_KEY",
 	"RESEND_API_KEY",
+	"RESEND_WEBHOOK_SECRET",
 	"CONTACT_TO_EMAIL",
 	"OAUTH_SIGNING_KEY",
 ] as const;

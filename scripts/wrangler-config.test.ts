@@ -110,6 +110,31 @@ describe("wrangler.jsonc deployment envs", () => {
 		}
 	});
 
+	// The limits themselves are not asserted here: their constants stay unexported
+	// so the handler modules keep a narrow interface, which is why the comment in
+	// wrangler.jsonc warns that the pair can drift. What *is* catchable, and the
+	// realistic mistake, is adding a limiter to the top-level block and forgetting
+	// an env block — bindings are not inherited, so the endpoint would then answer
+	// unlimited in exactly one environment.
+	it.each([
+		"CSP_REPORT_RATE_LIMITER",
+		"RESEND_WEBHOOK_RATE_LIMITER",
+	])("binds %s in every environment", (name) => {
+		const blocks = [
+			{ label: "top level", ratelimits: wranglerConfig.ratelimits },
+			...Object.entries(wranglerConfig.env ?? {}).map(([label, env]) => ({
+				label,
+				ratelimits: env.ratelimits,
+			})),
+		];
+
+		for (const block of blocks) {
+			const binding = block.ratelimits?.find((rateLimit) => rateLimit.name === name);
+
+			expect(binding?.name, `${name} missing from ${block.label}`).toBe(name);
+		}
+	});
+
 	it("issues staging OAuth documents for the host staging actually answers on", () => {
 		// The OAuth module hard-codes the staging origin because a prerendered
 		// document cannot ask the runtime where it lives. This is the guard
@@ -128,6 +153,7 @@ describe("per-environment vars examples", () => {
 	it.each([
 		"TURNSTILE_SITE_KEY",
 		"RESEND_API_KEY",
+		"RESEND_WEBHOOK_SECRET",
 		"TURNSTILE_SECRET_KEY",
 		"CONTACT_TO_EMAIL",
 	])("declares %s for every environment", (varName) => {

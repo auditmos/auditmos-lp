@@ -114,6 +114,7 @@ ahead of `.dev.vars` when `CLOUDFLARE_ENV=<env>` is set.
 |---|---|
 | `TURNSTILE_SITE_KEY` | Public Cloudflare Turnstile widget key for `/contact` |
 | `RESEND_API_KEY` | Resend transactional email |
+| `RESEND_WEBHOOK_SECRET` | Svix signing secret for `/api/resend-webhook` (per endpoint, per env) |
 | `TURNSTILE_SECRET_KEY` | Cloudflare Turnstile siteverify |
 | `CONTACT_TO_EMAIL` | Form recipient inbox (`tom@auditmos.com` in production) |
 | `GITHUB_TOKEN` *(optional)* | Raises OSS aggregator rate limit at build time |

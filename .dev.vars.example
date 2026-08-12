@@ -8,5 +8,7 @@ TURNSTILE_SITE_KEY=
 # Runtime Worker secrets:
 TURNSTILE_SECRET_KEY=
 RESEND_API_KEY=
+# From the Resend dashboard, Webhooks → your endpoint → Signing Secret (whsec_...):
+RESEND_WEBHOOK_SECRET=
 CONTACT_TO_EMAIL=
 OAUTH_SIGNING_KEY=

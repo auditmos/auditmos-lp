@@ -144,10 +144,20 @@ The system is composed as twelve deep modules with narrow interfaces:
 
     **Why `/api/csp-report` is the third request-time route:** a report-only policy with nowhere to report is a policy nobody can validate before enforcing it, and a prerendered asset cannot read a POST body. The endpoint answers `report-uri` only — deprecated, and still the one spelling every engine reads; it takes a path resolved against the document, so one static `_headers` serves dev, staging and production, whereas `Reporting-Endpoints` takes a URL and the only URL a static build could bake in is production's. The two cannot be shipped as a fallback pair, because Chrome ignores `report-uri` outright whenever `report-to` is present. Being unauthenticated it is rate limited to 60 reports per 60 seconds per client IP via the `CSP_REPORT_RATE_LIMITER` binding, and it logs a bounded projection of each report — directive, blocked URI, document URI, each truncated — never the raw body, which is attacker-influenced and unbounded.
 
+14. **Resend delivery webhook** — `/api/resend-webhook` receives Resend's event callbacks and writes each one to the Workers log, promoting the delivery failures to `error` so they surface instead of accumulating silently.
+
+    **Why this exists (incident, 2026-08-11):** contact form notifications to `contact@auditmos.com` stopped arriving while the endpoint kept returning 200 and submitters kept receiving their confirmation. The address had been placed on Resend's suppression list after a history of hard bounces, and **a suppressed send is still answered `200 OK` with a message id** — the same response a delivered message gets. Nothing observable at request time distinguishes the two, so `/api/contact` cannot detect this, no matter what it logs: by the time Resend decides not to deliver, it has already replied. The outcome only exists asynchronously, and a webhook is the only channel that carries it. The failure was found by hand in the Resend dashboard four days after it started.
+
+    **Why this is the fourth request-time route:** a webhook is an inbound POST whose body must be read and whose signature must be verified before it is trusted; a prerendered asset can do neither. The endpoint writes to the Workers log and makes no external calls.
+
+    **Severity mapping is the point.** `email.bounced`, `email.failed`, `email.suppressed` and `suppression.added` log at `error` — these are the events that mean a message the site believed it had sent will never arrive. `email.complained` and `email.delivery_delayed` log at `warn`. Everything else (`email.sent`, `email.delivered`, opens, clicks) logs at `info`. Had this existed, the incident would have surfaced as an `error` on the first suppressed send.
+
+    **Trust boundary.** The endpoint is public, so it is signature-verified before anything is parsed: Resend signs via Svix (HMAC-SHA256 over `id.timestamp.body`, keyed on the base64 body of the `whsec_` secret), compared in constant time, with a five-minute timestamp tolerance so a captured payload cannot be replayed. It **fails closed** — no configured secret means every request is refused, because an unauthenticated webhook sink is a log-injection endpoint that lets anyone forge delivery events. It is rate limited to 120 requests per 60 seconds per client IP via `RESEND_WEBHOOK_RATE_LIMITER`, and it logs a bounded projection of each event, never the raw body.
+
 ### System boundaries
 
 - **Build time:** GitHub REST API (OSS aggregator), MD content collection, brand SVG assets.
-- **Request time (Worker):** `/api/contact` (Cloudflare Turnstile siteverify, Resend HTTP API), `/mcp` (no external calls — answers from build-time data) and `/api/csp-report` (writes to the Workers log, no external calls) are the *rendered* routes, alongside the two OAuth routes that issue and exchange credentials. Page routes also pass through the Worker (`run_worker_first`, component 11) so `Accept` can be negotiated, but they are still served from the same prerendered asset.
+- **Request time (Worker):** `/api/contact` (Cloudflare Turnstile siteverify, Resend HTTP API), `/mcp` (no external calls — answers from build-time data), `/api/csp-report` and `/api/resend-webhook` (both write to the Workers log, no external calls) are the *rendered* routes, alongside the two OAuth routes that issue and exchange credentials. Page routes also pass through the Worker (`run_worker_first`, component 11) so `Accept` can be negotiated, but they are still served from the same prerendered asset.
 - **Browser (one page only):** `/contact` loads the Turnstile widget script; every other page ships zero JS by default.
 
 ### Third-party services
@@ -188,6 +198,7 @@ The schema validates that exactly one shape is present. The rendering layer read
 | `/privacy` | Prerendered | GDPR baseline copy |
 | `/api/contact` | Worker (POST only) | Form submission handler |
 | `/api/csp-report` | Worker (POST only) | Content Security Policy violation sink |
+| `/api/resend-webhook` | Worker (POST only) | Resend delivery-event sink (signature-verified) |
 | `/<path>.md` | Prerendered | Markdown twin of every URL above (except `/api/contact`) |
 | `/llms.txt` | Prerendered | Index for AI agents |
 | `/sitemap.xml` | Prerendered | Search engine sitemap |

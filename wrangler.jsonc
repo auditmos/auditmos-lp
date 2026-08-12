@@ -58,7 +58,9 @@
 	// are repeated in each `env` block — verify they survive into
 	// dist/server/wrangler.json after changing them. `period` accepts only 10
 	// or 60. `CSP_REPORT_RATE_LIMITER` must match `CSP_REPORT_RATE_LIMIT` in
-	// src/csp/report-handler.ts; nothing can catch those two drifting apart.
+	// src/csp/report-handler.ts, and `RESEND_WEBHOOK_RATE_LIMITER` must match
+	// `RESEND_WEBHOOK_RATE_LIMIT` in src/resend/webhook-handler.ts; nothing can
+	// catch those pairs drifting apart.
 	"ratelimits": [
 		{
 			"name": "MCP_RATE_LIMITER",
@@ -74,6 +76,11 @@
 			"name": "CSP_REPORT_RATE_LIMITER",
 			"namespace_id": "1003",
 			"simple": { "limit": 60, "period": 60 }
+		},
+		{
+			"name": "RESEND_WEBHOOK_RATE_LIMITER",
+			"namespace_id": "1004",
+			"simple": { "limit": 120, "period": 60 }
 		}
 	],
 	"vars": {
@@ -97,6 +104,11 @@
 					"name": "CSP_REPORT_RATE_LIMITER",
 					"namespace_id": "1003",
 					"simple": { "limit": 60, "period": 60 }
+				},
+				{
+					"name": "RESEND_WEBHOOK_RATE_LIMITER",
+					"namespace_id": "1004",
+					"simple": { "limit": 120, "period": 60 }
 				}
 			],
 			"vars": {
@@ -120,6 +132,11 @@
 					"name": "CSP_REPORT_RATE_LIMITER",
 					"namespace_id": "1003",
 					"simple": { "limit": 60, "period": 60 }
+				},
+				{
+					"name": "RESEND_WEBHOOK_RATE_LIMITER",
+					"namespace_id": "1004",
+					"simple": { "limit": 120, "period": 60 }
 				}
 			],
 			"routes": [{ "pattern": "staging.auditmos.com", "custom_domain": true }],
@@ -144,6 +161,11 @@
 					"name": "CSP_REPORT_RATE_LIMITER",
 					"namespace_id": "1003",
 					"simple": { "limit": 60, "period": 60 }
+				},
+				{
+					"name": "RESEND_WEBHOOK_RATE_LIMITER",
+					"namespace_id": "1004",
+					"simple": { "limit": 120, "period": 60 }
 				}
 			],
 			"routes": [{ "pattern": "auditmos.com", "custom_domain": true }],
