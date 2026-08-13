@@ -136,6 +136,52 @@ Post-deploy checks:
 - Optional: `www.auditmos.com` has never had DNS — add a zone redirect rule
   (www → apex) in the dashboard if wanted.
 
+## Mail security (DNS)
+
+Mail for `auditmos.com` is Google Workspace (five `aspmx.l.google.com` MX hosts).
+Two systems send *as* the domain: Workspace itself, and Resend for the
+`/api/contact` notification and confirmation. Everything below is a DNS record
+on the zone — no code, and none of it is exercised by a deploy.
+
+| Record | Value | Status |
+| --- | --- | --- |
+| `auditmos.com` TXT | `v=spf1 include:_spf.google.com ~all` | live |
+| `google._domainkey` TXT | Workspace DKIM (RSA) | live |
+| `resend._domainkey` TXT | Resend DKIM, `d=auditmos.com` | live |
+| `send.auditmos.com` TXT | `v=spf1 include:amazonses.com ~all` — Resend's Return-Path | live |
+| `_dmarc` TXT | `v=DMARC1; p=none; rua=mailto:dmarc@auditmos.com` | phase 1 of 4 (#32) |
+| `_smtp._tls` TXT | `v=TLSRPTv1; rua=mailto:dmarc@auditmos.com` | live 2026-08-13 (#33) |
+
+Both report streams land in `dmarc@auditmos.com`, which is a real Workspace
+address rather than a catch-all — worth knowing, because a `rua` pointing at a
+non-existent mailbox fails silently: reports are simply never delivered and the
+absence looks identical to nobody sending any. Verify a destination before
+publishing it:
+
+```bash
+# 250 = accepted. Probe a nonsense address in the same session — a domain that
+# accepts everything tells you nothing.
+printf 'EHLO x\r\nMAIL FROM:<>\r\nRCPT TO:<dmarc@auditmos.com>\r\nQUIT\r\n' \
+  | nc aspmx.l.google.com 25
+```
+
+Two traps to avoid when this moves forward:
+
+- **Do not add `include:amazonses.com` to the root SPF.** Resend passes DMARC
+  via its own DKIM plus relaxed SPF alignment on `send.auditmos.com`. Adding the
+  include would authorize the whole shared SES pool to send as `auditmos.com`.
+- **Do not set `aspf=s` when DMARC advances** (#32 phase 3 suggests it).
+  Resend's Return-Path is a *subdomain*, so strict SPF alignment fails on every
+  contact-form email. `adkim=s` is safe — Resend signs as `d=auditmos.com`.
+
+TLS-RPT reports arrive as gzipped JSON, at most once per sending domain per day,
+and only from senders that implement it — in practice Google and Microsoft. It
+exists so that a failed STARTTLS or a certificate problem on *inbound* mail is
+visible at all; without it, mail either arrives or does not and nothing says why.
+It is also the prerequisite for MTA-STS: that policy is deployed in `testing`
+mode first precisely so failures get reported instead of blocking mail, and
+TLS-RPT is what reports them.
+
 ## Agent discovery: DNS-AID records + DNSSEC
 
 **Status (2026-08-07): complete.** Records published, zone signed, DS published
