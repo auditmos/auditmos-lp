@@ -1,6 +1,5 @@
 ---
 import {
-	buildCloudflareAnalyticsScript,
 	legalEntity,
 	navigationItems,
 	organizationJsonLd,
@@ -23,9 +22,9 @@ const {
 	path = "/",
 	schema = [],
 } = Astro.props;
-const analyticsScript = buildCloudflareAnalyticsScript(
-	import.meta.env.CLOUDFLARE_WEB_ANALYTICS_TOKEN,
-);
+// No analytics tag here on purpose: Cloudflare injects the Web Analytics beacon
+// at the edge, after this response leaves the Worker. Emitting one here too would
+// load a second beacon and double-count every pageview (#39).
 const canonicalUrl = new URL(path, `${site.url}/`).toString();
 const ogImageUrl = new URL("/og.png", `${site.url}/`).toString();
 const extraSchemas = Array.isArray(schema) ? schema : [schema];
@@ -58,7 +57,6 @@ const footerServiceLinks = navigationItems.slice(0, 3);
 				<script is:inline type="application/ld+json" set:html={JSON.stringify(item)} />
 			))
 		}
-		{analyticsScript && <Fragment set:html={analyticsScript} />}
 	</head>
 	<body class="min-h-dvh bg-neutral-950 font-sans text-neutral-100 antialiased">
 		<a

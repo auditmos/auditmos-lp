@@ -51,9 +51,27 @@ Both fail fast when `.dev.vars.<env>` is incomplete.
 4. **Resend**: verify the `auditmos.com` sending domain (SPF + DKIM DNS
    records) and create an API key. Without a verified domain every form
    submission returns 502 — the endpoint requires both emails to send.
-5. Optional — **Cloudflare Web Analytics**: create a site for auditmos.com and
-   put the token in `.env` as `CLOUDFLARE_WEB_ANALYTICS_TOKEN` (build-time;
-   analytics is silently off without it).
+5. **Cloudflare Web Analytics** (dashboard → Web Analytics → Manage site):
+   hostname `auditmos.com`, RUM set to **Enable** — "the JS Snippet will be
+   automatically injected". Enabled 2026-08-13. There is **no token to copy**
+   under this option; Cloudflare owns it and injects the beacon at the edge as
+   the HTML response leaves for the browser. The manual *"Enable with JS Snippet
+   installation"* option is the only one that surfaces a token, and this site
+   does not use it — the layout emits no analytics tag, deliberately, because a
+   second beacon would double-count every pageview (#39).
+
+   Two consequences worth knowing before debugging this:
+
+   - **Injection is gated on the request `Accept` header**, not the user-agent.
+     `curl -sI https://auditmos.com/` sends a wildcard `Accept` and returns a
+     beacon-free page whether or not analytics works — a false negative that
+     once hid this for weeks. Check it with `pnpm agents:verify`, which sends a
+     browser `Accept` and fails on zero *or* duplicate beacons.
+   - **It is zone-wide.** Only `auditmos.com` is a configured hostname, yet
+     `staging.auditmos.com` is served the same token, so staging traffic merges
+     into production's numbers. Separating them needs Web Analytics Rules (Pro
+     plan); the Worker cannot strip the tag, because the edge injects it after
+     the Worker has already returned the response.
 
 ## Configure env files
 

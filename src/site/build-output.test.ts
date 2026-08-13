@@ -318,6 +318,21 @@ describe("static build output", () => {
 		}
 	});
 
+	it("emits no analytics beacon of its own — the edge injects the only one", () => {
+		// Cloudflare injects the Web Analytics beacon after the Worker returns
+		// (#39). A tag emitted here would not replace that one, it would be a
+		// second beacon, and every pageview would be counted twice while the
+		// numbers still looked plausible. The wire-side half of this guard is
+		// `pnpm agents:verify`, which fails on zero beacons *or* duplicates;
+		// this half fails the build before it can ship a duplicate.
+		for (const route of generatedHtmlRoutes()) {
+			expect({ route, beacons: htmlFor(route).includes("cloudflareinsights.com") }).toEqual({
+				route,
+				beacons: false,
+			});
+		}
+	});
+
 	it("ships a CSS rule for every class the built HTML actually uses", () => {
 		// `globals.css` narrows Tailwind to `.astro` sources so plain TypeScript
 		// tokens stop generating dead utilities. This is the safety net for that:

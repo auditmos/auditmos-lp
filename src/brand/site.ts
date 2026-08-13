@@ -70,10 +70,3 @@ export const organizationJsonLd = {
 		availableLanguage: "en",
 	},
 } as const;
-
-export function buildCloudflareAnalyticsScript(token: string | undefined): string {
-	if (!token) return "";
-
-	const escapedToken = token.replaceAll('"', "&quot;");
-	return `<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"${escapedToken}"}' data-token="${escapedToken}"></script>`;
-}

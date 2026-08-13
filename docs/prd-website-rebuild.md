@@ -77,7 +77,9 @@ Success looks like: a prospect arrives via a LinkedIn referral, lands on `/`, ca
 ### Visitor — privacy
 
 26. As a privacy-conscious EU visitor, I want to read a `/privacy` page that lists what data is collected, processors used (Resend, Cloudflare), retention, and my rights under GDPR, so that I can decide whether to submit the form.
-27. As a privacy-conscious visitor, I want the site not to set tracking cookies or load third-party analytics, so that no consent banner is required.
+27. As a privacy-conscious visitor, I want the site not to set tracking cookies or load tracking analytics, so that no consent banner is required.
+
+    *Reconciled 2026-08-13 (#39).* As originally worded — "no third-party analytics" — this story contradicted the choice of Cloudflare Web Analytics at line 165 and line 280 below. The intent behind the story is the consent banner, not the vendor count: Cloudflare Web Analytics sets no cookies, stores no identifiers, and needs no consent, so it satisfies the *so that* clause while technically being a third party. The wording now says what was actually meant. Anything that would require a consent banner remains out of scope.
 
 ### Author — Auditmos team member adding content
 
@@ -162,7 +164,7 @@ The system is composed as twelve deep modules with narrow interfaces:
 
 ### Third-party services
 
-- **Cloudflare:** Workers (host), Turnstile (anti-spam), Web Analytics (privacy-respecting, no cookies, no consent banner needed). DNS already on Cloudflare.
+- **Cloudflare:** Workers (host), Turnstile (anti-spam), Web Analytics (privacy-respecting, no cookies, no consent banner needed — delivered by RUM automatic injection at the edge, *not* by a snippet in the layout; see #39). DNS already on Cloudflare.
 - **Resend:** transactional email for the contact form. Sender `noreply@auditmos.com` (requires DKIM + SPF on auditmos.com DNS — *blocker before launch*). Two emails per submission: notification to `contact@auditmos.com` + confirmation to submitter.
 - **GitHub:** repo host, Actions CI/CD, REST API for OSS aggregator. Optional `GITHUB_TOKEN` for higher rate limits at build time.
 
@@ -261,7 +263,7 @@ The PRD is delivered (v1 shipped) when:
 - Lighthouse thresholds met on home + a representative project page.
 - The `.md`-mirror coverage test passes.
 - The content-collection schema test passes.
-- Cloudflare Web Analytics is wired and reporting traffic on staging.
+- Cloudflare Web Analytics is wired and reporting traffic. **Met 2026-08-13** via RUM automatic injection, which is zone-wide — so staging and production report under one token and cannot be separated without the Pro plan (#39). Verify with `pnpm agents:verify`, never with a bare `curl`: injection is gated on an HTML `Accept` header.
 - The cutover to production custom domain completes with no broken-link reports from the old site for ≥ 7 days (use a simple 404 monitor; out-of-scope old paths can 301 to `/` or 404 — confirm at cutover).
 
 ## Out of Scope
