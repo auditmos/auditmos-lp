@@ -24,6 +24,29 @@ Both fail fast when `.dev.vars.<env>` is incomplete.
    the rule runs ahead of Workers and 301-loops on a Worker custom domain, and
    Flexible mode plus any HTTPS redirect loops as well. Enabled 2026-08-13; a
    zone rebuild must restore both.
+
+   Same panel: **Minimum TLS Version → TLS 1.2**, set 2026-08-13 (#28). This
+   drops TLS 1.0 and 1.1, and with them `TLS_RSA_WITH_3DES_EDE_CBC_SHA` — 3DES
+   is offered only under TLS 1.0 here, so no separate cipher setting is needed.
+   The floor is zone-wide, so `staging.auditmos.com` inherits it. Clients that
+   cannot reach TLS 1.2 are pre-2014 (Android < 5, IE 10 on Windows 7); this
+   site's audience is agencies, developers and AI agents.
+
+   Verifying this needs a client that will actually *offer* the old protocol.
+   OpenSSL 3.x refuses at the client side and reports `no protocols available`,
+   which looks identical to a server rejection but proves nothing:
+
+   ```bash
+   # Wrong — the local client refuses before a packet is sent
+   openssl s_client -connect auditmos.com:443 -tls1_1 </dev/null
+
+   # Right — forces the legacy offer; the server answers "alert protocol version"
+   openssl s_client -connect auditmos.com:443 -servername auditmos.com \
+     -tls1_1 -cipher 'ALL:@SECLEVEL=0' </dev/null
+
+   # Or enumerate what the edge really supports, per protocol and cipher
+   nmap --script ssl-enum-ciphers -p 443 auditmos.com
+   ```
 2. **HSTS** (same panel → **HTTP Strict Transport Security**): enabled
    2026-08-13 at **`max-age=15552000` (6 months) with `includeSubDomains`, no
    `preload`** (#27). Prefer this toggle over the `_headers` file: `_headers`
