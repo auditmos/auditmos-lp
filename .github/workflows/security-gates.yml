@@ -1,0 +1,198 @@
+name: Security gates
+
+# Three security changes were deliberately deferred rather than skipped:
+# MTA-STS leaves `testing` for `enforce` (#34), DMARC leaves `p=none` for
+# `quarantine` (#32), and the CAA policy is only proven by a certificate
+# renewal months later (#31). None of them fails anything if forgotten — the
+# site keeps working, slightly less protected than intended, forever. This
+# workflow is the thing that remembers.
+#
+# It never touches DNS. Two of the three gates are DNS-only, and the third
+# needs a repo edit paired with a DNS edit, so the automation stops at
+# preparing the repo half and telling a human about the rest.
+#
+# Daily rather than weekly on purpose: these fire on dates, and a weekly cron
+# would sit on an elapsed gate for up to six days, which is most of the soak
+# window it was waiting through.
+
+on:
+  schedule:
+    - cron: "0 8 * * *" # 08:00 UTC daily
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: security-gates
+  cancel-in-progress: false
+
+env:
+  TRACKING_ISSUE_TITLE: "Security gates: action needed"
+
+jobs:
+  gates:
+    name: Evaluate deferred security gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      needs_attention: ${{ steps.evaluate.outputs.needs_attention }}
+      mta_sts_due: ${{ steps.evaluate.outputs.mta_sts_due }}
+      report: ${{ steps.evaluate.outputs.report }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      # Reads live DNS and TLS, writes the step summary, and sets the outputs
+      # above. Exits 0 even when a gate is blocked: a cron that goes red every
+      # day is a cron people stop reading.
+      - name: Evaluate gates
+        id: evaluate
+        run: pnpm run security:gates
+
+  notify:
+    name: Open or refresh the tracking issue
+    needs: gates
+    if: needs.gates.outputs.needs_attention == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      # One long-lived issue, rewritten in place, rather than a fresh one per
+      # run. A daily issue for a gate that stays open for a fortnight is how a
+      # reminder turns into noise and then into something nobody reads.
+      #
+      # The report goes through `env:` and is written with printf rather than
+      # interpolated into the script — it is assembled from DNS records, and a
+      # DNS record is not a thing to paste into a shell.
+      - name: Upsert tracking issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          REPORT: ${{ needs.gates.outputs.report }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          {
+            printf 'Rewritten on every run of `.github/workflows/security-gates.yml`, so this\n'
+            printf 'always reflects the latest observation. [Latest run](%s)\n\n' "${RUN_URL}"
+            printf '%s\n' "${REPORT}"
+            printf -- '---\n\n'
+            printf '**What this workflow cannot check:** both mail gates ultimately depend on\n'
+            printf 'the reports arriving in `dmarc@auditmos.com` — DMARC aggregates and TLS-RPT\n'
+            printf 'failures. Nothing here has credentials for that mailbox, so a gate marked\n'
+            printf '`due` means the timer elapsed and the machine-checkable preconditions hold,\n'
+            printf 'never that the reports are clean. Read them before acting.\n\n'
+            printf 'Reproduce locally with `pnpm security:gates`.\n'
+          } > issue-body.md
+
+          NUMBER=$(gh issue list --state open --search "in:title \"${TRACKING_ISSUE_TITLE}\"" \
+            --json number,title \
+            --jq "[.[] | select(.title == \"${TRACKING_ISSUE_TITLE}\")] | first | .number // empty")
+
+          if [ -n "${NUMBER}" ]; then
+            gh issue edit "${NUMBER}" --body-file issue-body.md
+            echo "Refreshed #${NUMBER}"
+          else
+            gh issue create --title "${TRACKING_ISSUE_TITLE}" --body-file issue-body.md --label security
+            echo "Opened a new tracking issue"
+          fi
+
+  prepare-mta-sts:
+    name: Prepare the MTA-STS enforce commit
+    needs: gates
+    if: needs.gates.outputs.mta_sts_due == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      # Only the repo half of the change. The policy does not change for
+      # senders until the Worker is redeployed *and* the `_mta-sts` TXT id is
+      # bumped, so merging this PR alone is inert — the safe failure.
+      #
+      # Both substitutions are verified: perl -i -pe is silent when its pattern
+      # stops matching, and an unnoticed no-op here would open an empty PR
+      # claiming a change it did not make.
+      - name: Flip MTA_STS_MODE to enforce
+        run: |
+          set -euo pipefail
+          perl -i -pe 's/^export const MTA_STS_MODE = "testing";/export const MTA_STS_MODE = "enforce";/' src/mail/mta-sts.ts
+          perl -i -pe 's/expect\(MTA_STS_MODE\)\.toBe\("testing"\);/expect(MTA_STS_MODE).toBe("enforce");/' src/mail/mta-sts.test.ts
+
+          grep -q 'export const MTA_STS_MODE = "enforce";' src/mail/mta-sts.ts \
+            || { echo "::error::MTA_STS_MODE was not rewritten — the constant moved, fix this workflow"; exit 1; }
+          grep -q 'expect(MTA_STS_MODE).toBe("enforce");' src/mail/mta-sts.test.ts \
+            || { echo "::error::the mode assertion was not rewritten — the test moved, fix this workflow"; exit 1; }
+
+          git --no-pager diff --stat
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm run lint:ci
+
+      - name: Type check
+        run: pnpm run types
+
+      - name: Test
+        run: pnpm run test
+
+      - name: Open PR
+        uses: peter-evans/create-pull-request@v8
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: chore/mta-sts-enforce
+          delete-branch: true
+          commit-message: "feat(mail): move the MTA-STS policy to mode: enforce"
+          title: "feat(mail): move the MTA-STS policy to mode: enforce"
+          body: |
+            The MTA-STS soak window has elapsed (#34). This is the **repo half** of
+            the change, prepared automatically; on its own it changes nothing for
+            senders.
+
+            ### Before merging
+
+            - [ ] Read the TLS-RPT reports in `dmarc@auditmos.com`. This workflow
+                  cannot see them, and `enforce` on a domain with real TLS failures
+                  turns those failures into undelivered mail.
+            - [ ] Run `pnpm mta-sts:verify` — the `mx:` list must match the live MX
+                  records exactly. A mismatch under `enforce` refuses inbound mail.
+
+            ### After merging
+
+            - [ ] `pnpm deploy:mta-sts`
+            - [ ] Bump the `id` in the `_mta-sts` TXT record — **required**. Senders
+                  cache the policy for `max_age` (7 days) and only re-fetch when the
+                  id changes, so without this they keep enforcing the old one.
+            - [ ] `pnpm mta-sts:verify` again, against the deployed policy.
+
+            Commands for both steps are in `docs/deployment.md`.
+
+            Note: `secrets.GITHUB_TOKEN` does not trigger CI on PRs it creates.
+            Push an empty commit or re-run the jobs to kick CI.
+          labels: security

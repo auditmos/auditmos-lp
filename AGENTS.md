@@ -61,6 +61,7 @@ pnpm agents:verify <url>       # ...or any other deployed host
 
 pnpm deploy:mta-sts            # deploy the standalone MTA-STS policy Worker
 pnpm mta-sts:verify            # policy vs. live MX + the _mta-sts TXT id
+pnpm security:gates            # are the deferred security changes due yet?
 
 pnpm csp:violations            # watch production for CSP violations (Ctrl-C summarises)
 pnpm csp:violations staging    # ...or any configured env
