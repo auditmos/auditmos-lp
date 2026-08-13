@@ -24,6 +24,8 @@
 		"secrets:production": "tsx scripts/push-secrets.ts production",
 		"cf-typegen": "wrangler types",
 		"agents:verify": "tsx scripts/agents-verify.ts",
+		"deploy:mta-sts": "wrangler deploy -c workers/mta-sts/wrangler.jsonc",
+		"mta-sts:verify": "tsx scripts/mta-sts-verify.ts",
 		"csp:violations": "tsx scripts/csp-violations.ts",
 		"test": "vitest run",
 		"test:watch": "vitest",

@@ -1,0 +1,19 @@
+{
+	"$schema": "../../node_modules/wrangler/config-schema.json",
+	"name": "auditmos-mta-sts",
+	"main": "./index.ts",
+	"compatibility_date": "2026-05-25",
+	// One hostname, one file. `custom_domain` provisions the DNS record and the
+	// certificate together, which matters more here than usual: HSTS on the zone
+	// carries `includeSubDomains`, so a subdomain that resolves before it can
+	// complete a TLS handshake is unreachable for browsers until the policy
+	// expires. Deploying is what creates the name, so the two cannot separate.
+	"routes": [{ "pattern": "mta-sts.auditmos.com", "custom_domain": true }],
+	"observability": {
+		"enabled": true,
+		"head_sampling_rate": 1
+	}
+	// No assets, no bindings, no secrets, and deliberately nothing else: this
+	// Worker is in the path of inbound mail policy for the domain. Anything added
+	// here is something that can fail there.
+}

@@ -151,6 +151,8 @@ on the zone — no code, and none of it is exercised by a deploy.
 | `send.auditmos.com` TXT | `v=spf1 include:amazonses.com ~all` — Resend's Return-Path | live |
 | `_dmarc` TXT | `v=DMARC1; p=none; rua=mailto:dmarc@auditmos.com` | phase 1 of 4 (#32) |
 | `_smtp._tls` TXT | `v=TLSRPTv1; rua=mailto:dmarc@auditmos.com` | live 2026-08-13 (#33) |
+| `_mta-sts` TXT | `v=STSv1; id=<stamp>` | `mode: testing` (#34) |
+| `mta-sts` A | Worker custom domain, serves the policy | `pnpm deploy:mta-sts` |
 
 Both report streams land in `dmarc@auditmos.com`, which is a real Workspace
 address rather than a catch-all — worth knowing, because a `rua` pointing at a
@@ -173,6 +175,46 @@ Two traps to avoid when this moves forward:
 - **Do not set `aspf=s` when DMARC advances** (#32 phase 3 suggests it).
   Resend's Return-Path is a *subdomain*, so strict SPF alignment fails on every
   contact-form email. `adkim=s` is safe — Resend signs as `d=auditmos.com`.
+
+### MTA-STS
+
+The policy is served by a **second, standalone Worker** (`workers/mta-sts/`,
+deployed with `pnpm deploy:mta-sts`), not by the site Worker. That is not
+fastidiousness: Workers Assets answers static assets *before* the Worker runs
+for any path outside `assets.run_worker_first`, and that list matches on path,
+not host. Bind `mta-sts.auditmos.com` to the site Worker and
+`mta-sts.auditmos.com/og.png`, `/sitemap.xml` and `/_astro/*` are served from
+the asset server without the Worker seeing them — a second URL for site content
+on a hostname that exists to publish a mail policy. The only way to intercept
+them would be `run_worker_first: ["/*"]`, routing every asset of the main site
+through the Worker to tidy up a subdomain.
+
+The policy text, the MX list and the 404-everything-else rule live in
+`src/mail/mta-sts.ts`, shared by the Worker and its tests, so the file that mail
+servers fetch has exactly one source.
+
+**Changing the policy takes two edits, and one alone is worse than neither.**
+`max_age` is a week, so senders cache it for that long and only re-fetch when
+the `id` in the `_mta-sts` TXT record changes. Edit the constant *and* bump the
+id in the same change:
+
+```bash
+# after editing src/mail/mta-sts.ts
+pnpm deploy:mta-sts
+# then bump the TXT id — any strictly-increasing value; a UTC stamp is readable
+curl -X PATCH "https://api.cloudflare.com/client/v4/zones/$ZONE/dns_records/$ID" \
+  -H "Authorization: Bearer $CLOUDFLARE_DNS_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  --data '{"content":"v=STSv1; id=20260813120000"}'
+
+pnpm mta-sts:verify   # TXT id present, policy 200 text/plain, mx == live MX
+```
+
+`pnpm mta-sts:verify` is the gate for the `testing` → `enforce` flip. Under
+`enforce`, an MX list that does not match DNS **refuses inbound mail**, and
+that is a failure no test in this repo can see: the MX records live in
+Cloudflare DNS and change without the repo being touched. Flip the mode only
+after TLS-RPT has been quiet for a week — that is what `testing` is for.
 
 TLS-RPT reports arrive as gzipped JSON, at most once per sending domain per day,
 and only from senders that implement it — in practice Google and Microsoft. It
