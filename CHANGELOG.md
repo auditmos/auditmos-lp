@@ -1,3 +1,10 @@
+# [1.28.0](https://github.com/auditmos/auditmos-lp/compare/v1.27.0...v1.28.0) (2026-08-13)
+
+
+### Features
+
+* **security:** check the deployed security.txt in pnpm agents:verify ([867d3c3](https://github.com/auditmos/auditmos-lp/commit/867d3c356a9d36b38c45b74b7fcc075ac8b8801d))
+
 # [1.27.0](https://github.com/auditmos/auditmos-lp/compare/v1.26.0...v1.27.0) (2026-08-13)
 
 
