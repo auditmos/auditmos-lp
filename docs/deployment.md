@@ -24,13 +24,34 @@ Both fail fast when `.dev.vars.<env>` is incomplete.
    the rule runs ahead of Workers and 301-loops on a Worker custom domain, and
    Flexible mode plus any HTTPS redirect loops as well. Enabled 2026-08-13; a
    zone rebuild must restore both.
-2. **Turnstile** (Cloudflare dashboard → Turnstile): create a widget with
+2. **HSTS** (same panel → **HTTP Strict Transport Security**): enabled
+   2026-08-13 at **`max-age=15552000` (6 months) with `includeSubDomains`, no
+   `preload`** (#27). Prefer this toggle over the `_headers` file: `_headers`
+   is applied by the asset server, so it never reaches a response the Worker
+   renders itself (`/mcp`, `/api/contact`) — the zone toggle covers every
+   response including redirects. Nothing in the repo sets this header; keep it
+   that way, or the zone and the build will fight over one header.
+
+   `includeSubDomains` binds **every** subdomain for the whole `max-age`
+   window, and no server-side change revokes it early — a browser that saw the
+   policy enforces it until it expires. So **any new hostname on this zone
+   needs working HTTPS before its DNS record goes live**, including the
+   `www.auditmos.com` redirect floated under Decommission below. Verified
+   HTTPS-only when the flag shipped: `mapy`, `staging`, `grota`, `waas`,
+   `api-grota`, `pay` (Stripe). `checkout`, `wass` and `www` had no DNS.
+
+   **Preload: deliberately not submitted.** Removal from the browser list
+   takes months, so it is earned rather than claimed. Revisiting it means
+   first raising `max-age` to `31536000` — hstspreload.org rejects anything
+   under a year — and letting that run clean with `includeSubDomains`. The
+   6-month value is otherwise a deliberate choice, not a step in a ramp.
+3. **Turnstile** (Cloudflare dashboard → Turnstile): create a widget with
    hostnames `auditmos.com` **and** `staging.auditmos.com` → yields the site
    key (build-time, public) and secret key (runtime).
-3. **Resend**: verify the `auditmos.com` sending domain (SPF + DKIM DNS
+4. **Resend**: verify the `auditmos.com` sending domain (SPF + DKIM DNS
    records) and create an API key. Without a verified domain every form
    submission returns 502 — the endpoint requires both emails to send.
-4. Optional — **Cloudflare Web Analytics**: create a site for auditmos.com and
+5. Optional — **Cloudflare Web Analytics**: create a site for auditmos.com and
    put the token in `.env` as `CLOUDFLARE_WEB_ANALYTICS_TOKEN` (build-time;
    analytics is silently off without it).
 
