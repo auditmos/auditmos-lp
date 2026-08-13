@@ -1,3 +1,10 @@
+# [1.26.0](https://github.com/auditmos/auditmos-lp/compare/v1.25.1...v1.26.0) (2026-08-13)
+
+
+### Features
+
+* **mail:** serve an MTA-STS policy from a standalone Worker ([7f253ab](https://github.com/auditmos/auditmos-lp/commit/7f253ab2122bafd29700616b81b00a514173abe3)), closes [#34](https://github.com/auditmos/auditmos-lp/issues/34) [#34](https://github.com/auditmos/auditmos-lp/issues/34)
+
 ## [1.25.1](https://github.com/auditmos/auditmos-lp/compare/v1.25.0...v1.25.1) (2026-08-13)
 
 
