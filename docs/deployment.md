@@ -136,6 +136,41 @@ Post-deploy checks:
 - Optional: `www.auditmos.com` has never had DNS — add a zone redirect rule
   (www → apex) in the dashboard if wanted.
 
+## CAA — who may issue certificates
+
+Published 2026-08-13 (#31). Six `issue` values, six `issuewild`, and one
+`iodef` pointing mis-issuance reports at `tom@auditmos.com`.
+
+**Only two of those records were written by hand.** Cloudflare injects its own
+partner CAs — `pki.goog`, `letsencrypt.org`, `ssl.com`, `digicert.com`,
+`comodoca.com` — the moment *any* CAA record exists on a zone with Universal
+SSL, and those injected records never appear in the dashboard. So the way to
+read this policy is `dig`, not the DNS panel:
+
+```bash
+dig +short CAA auditmos.com @1.1.1.1 | sort
+```
+
+That behaviour is also what makes this safe. The documented risk with CAA is a
+policy too narrow to permit the next renewal, failing silently weeks later —
+but the CA Cloudflare will actually use is added by Cloudflare itself.
+
+Two things worth knowing before touching it:
+
+- **`issuewild` matters here.** `*.mapy.auditmos.com` is a live wildcard. When
+  no `issuewild` exists, `issue` governs wildcards too; once *any* `issuewild`
+  is present it takes precedence, so a CA listed only under `issue` can no
+  longer sign a wildcard. Cloudflare's injected records created exactly that
+  asymmetry for Sectigo, which is why `issuewild "sectigo.com"` is published by
+  hand. Add both tags, or neither.
+- **A CNAME target's CAA wins.** `pay.auditmos.com` is an alias for Stripe, and
+  `stripecdn.com` publishes its own policy (`amazon.com`, `digicert.com`,
+  `pki.goog`). Nothing on this zone governs that hostname's certificates, and
+  nothing here can break them.
+
+The real test is a renewal, not a `dig`. The current leaf expires
+**2026-11-08**; if it renews after that date, the policy is right.
+
 ## Mail security (DNS)
 
 Mail for `auditmos.com` is Google Workspace (five `aspmx.l.google.com` MX hosts).
