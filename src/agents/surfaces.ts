@@ -32,6 +32,7 @@ import {
 	OAUTH_AUTHORIZATION_SERVER_PATHS,
 	OAUTH_PROTECTED_RESOURCE_PATH,
 } from "@/oauth/server";
+import { SECURITY_TXT_PATH } from "@/site/security-txt";
 
 /**
  * The RFC 8288 relations a surface can hold, and what each one means here:
@@ -123,6 +124,14 @@ export const agentSurfaces: readonly AgentSurface[] = [
 		mediaType: "application/json",
 		title: "Auditmos agent skills index",
 		relation: "service-desc",
+	},
+	{
+		// Metadata about the service rather than a description of it: it says how
+		// to report a defect in the thing, not what the thing does.
+		path: SECURITY_TXT_PATH,
+		mediaType: "text/plain",
+		title: "Auditmos security contact (RFC 9116)",
+		relation: "service-meta",
 	},
 	{
 		// `service-doc` rather than `service-meta`: this one is meant to be read,
