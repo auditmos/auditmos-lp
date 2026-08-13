@@ -1,3 +1,10 @@
+# [1.29.0](https://github.com/auditmos/auditmos-lp/compare/v1.28.0...v1.29.0) (2026-08-13)
+
+
+### Features
+
+* **ci:** remember the three deferred security gates ([27e369a](https://github.com/auditmos/auditmos-lp/commit/27e369a8a4b5a2405ab351774d4d86dadf2253c8))
+
 # [1.28.0](https://github.com/auditmos/auditmos-lp/compare/v1.27.0...v1.28.0) (2026-08-13)
 
 
