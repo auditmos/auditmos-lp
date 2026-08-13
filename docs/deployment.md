@@ -16,13 +16,21 @@ Both fail fast when `.dev.vars.<env>` is incomplete.
 
 ## One-time prerequisites (dashboards)
 
-1. **Turnstile** (Cloudflare dashboard → Turnstile): create a widget with
+1. **Zone TLS** (Cloudflare dashboard → SSL/TLS, zone `auditmos.com`):
+   encryption mode **Full** or **Full (strict)**, and **Edge Certificates →
+   Always Use HTTPS → on**. Without the toggle, `http://auditmos.com/` answers
+   `200` in the clear and no HSTS policy downstream is worth anything (#26).
+   Use that toggle, **never** the "Redirect from HTTP to HTTPS" redirect rule —
+   the rule runs ahead of Workers and 301-loops on a Worker custom domain, and
+   Flexible mode plus any HTTPS redirect loops as well. Enabled 2026-08-13; a
+   zone rebuild must restore both.
+2. **Turnstile** (Cloudflare dashboard → Turnstile): create a widget with
    hostnames `auditmos.com` **and** `staging.auditmos.com` → yields the site
    key (build-time, public) and secret key (runtime).
-2. **Resend**: verify the `auditmos.com` sending domain (SPF + DKIM DNS
+3. **Resend**: verify the `auditmos.com` sending domain (SPF + DKIM DNS
    records) and create an API key. Without a verified domain every form
    submission returns 502 — the endpoint requires both emails to send.
-3. Optional — **Cloudflare Web Analytics**: create a site for auditmos.com and
+4. Optional — **Cloudflare Web Analytics**: create a site for auditmos.com and
    put the token in `.env` as `CLOUDFLARE_WEB_ANALYTICS_TOKEN` (build-time;
    analytics is silently off without it).
 
