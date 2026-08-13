@@ -1,3 +1,10 @@
+# [1.27.0](https://github.com/auditmos/auditmos-lp/compare/v1.26.0...v1.27.0) (2026-08-13)
+
+
+### Features
+
+* **security:** publish an RFC 9116 security.txt ([4d88e3b](https://github.com/auditmos/auditmos-lp/commit/4d88e3b20db7a134ae4234dc64317fcc4c0304d1))
+
 # [1.26.0](https://github.com/auditmos/auditmos-lp/compare/v1.25.1...v1.26.0) (2026-08-13)
 
 
