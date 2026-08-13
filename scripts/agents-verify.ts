@@ -10,6 +10,7 @@
  */
 
 import { site } from "../src/brand/site";
+import { SECURITY_TXT_PATH, verifySecurityTxt } from "../src/site/security-txt";
 import { formatVerifyReport, isApex, type ScanReport, verifyScan } from "./agents-verify-lib";
 import {
 	beaconProbeTargets,
@@ -73,7 +74,16 @@ const beaconFailures = await verifyAnalyticsBeacon(target, sitemapXml);
 process.stdout.write("\nWeb Analytics\n\n");
 process.stdout.write(beaconFailures.report);
 
-if (!result.ok || redirectFailures.failed || beaconFailures.failed) {
+// security.txt, for the third variant of the same problem: its `Expires` is
+// derived from the build, so the document decays on a clock rather than on a
+// change. Nothing errors when it lapses — a researcher just reads "do not rely
+// on this" and goes away, which is indistinguishable from never being found.
+const securityTxt = await verifySecurityTxtOn(target);
+
+process.stdout.write("\nsecurity.txt\n\n");
+process.stdout.write(securityTxt.report);
+
+if (!result.ok || redirectFailures.failed || beaconFailures.failed || securityTxt.failed) {
 	console.error(
 		"\nA check the site implements has stopped passing. Deploy propagation can\n" +
 			"take a couple of minutes — re-run before treating it as a real regression.",
@@ -114,6 +124,41 @@ async function verifyCanonicalRedirects(
 	return {
 		report: formatRedirectReport(failures, probes.length),
 		failed: failures.length > 0 || probes.length === 0,
+	};
+}
+
+async function verifySecurityTxtOn(origin: string): Promise<{
+	report: string;
+	failed: boolean;
+}> {
+	const url = new URL(SECURITY_TXT_PATH, origin).toString();
+	const response = await fetch(url).catch((error: Error) => error);
+
+	if (response instanceof Error) {
+		return { report: `  MISSING    ${url} did not load: ${response.message}\n`, failed: true };
+	}
+
+	const problems = verifySecurityTxt({
+		url,
+		status: response.status,
+		contentType: response.headers.get("content-type"),
+		body: await response.text(),
+		now: new Date(),
+	});
+
+	if (problems.length === 0) {
+		return { report: "  OK         published, valid, and not near expiry\n", failed: false };
+	}
+
+	return {
+		report: problems
+			.map(({ severity, reason }) =>
+				severity === "renew" ? `  RENEW      ${reason}\n` : `  REGRESSED  ${reason}\n`,
+			)
+			.join(""),
+		// A renewal notice is not a regression: any deploy renews the file, so
+		// failing here would block the very thing that fixes it.
+		failed: problems.some(({ severity }) => severity === "fail"),
 	};
 }
 
