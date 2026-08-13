@@ -1,3 +1,10 @@
+## [1.25.1](https://github.com/auditmos/auditmos-lp/compare/v1.25.0...v1.25.1) (2026-08-13)
+
+
+### Bug Fixes
+
+* **analytics:** delete the build-time beacon and assert the edge one instead ([107b3dc](https://github.com/auditmos/auditmos-lp/commit/107b3dc4610d3231ee7b1393b4289ae9f2032176)), closes [#39](https://github.com/auditmos/auditmos-lp/issues/39) [#39](https://github.com/auditmos/auditmos-lp/issues/39) [#39](https://github.com/auditmos/auditmos-lp/issues/39)
+
 # [1.25.0](https://github.com/auditmos/auditmos-lp/compare/v1.24.1...v1.25.0) (2026-08-12)
 
 
