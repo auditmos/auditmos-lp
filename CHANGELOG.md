@@ -1,3 +1,10 @@
+# [1.31.0](https://github.com/auditmos/auditmos-lp/compare/v1.30.0...v1.31.0) (2026-08-17)
+
+
+### Features
+
+* **content:** list the newest case study first on /work ([367ec3e](https://github.com/auditmos/auditmos-lp/commit/367ec3eb2c345759f13242c3b608549685ed4e3a))
+
 # [1.30.0](https://github.com/auditmos/auditmos-lp/compare/v1.29.1...v1.30.0) (2026-08-17)
 
 
