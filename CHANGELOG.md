@@ -1,3 +1,10 @@
+# [1.30.0](https://github.com/auditmos/auditmos-lp/compare/v1.29.1...v1.30.0) (2026-08-17)
+
+
+### Features
+
+* **content:** publish the CCTV GPU Engine case study on /work ([ff04ebc](https://github.com/auditmos/auditmos-lp/commit/ff04ebc8e19c1bea933ae408753e9042fae52366))
+
 ## [1.29.1](https://github.com/auditmos/auditmos-lp/compare/v1.29.0...v1.29.1) (2026-08-17)
 
 
