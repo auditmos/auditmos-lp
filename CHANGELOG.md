@@ -1,3 +1,10 @@
+## [1.29.1](https://github.com/auditmos/auditmos-lp/compare/v1.29.0...v1.29.1) (2026-08-17)
+
+
+### Bug Fixes
+
+* **seo:** noindex every non-production host ([b33a3bd](https://github.com/auditmos/auditmos-lp/commit/b33a3bd0a8f4785538d1eaaee6b8c5a187833054))
+
 # [1.29.0](https://github.com/auditmos/auditmos-lp/compare/v1.28.0...v1.29.0) (2026-08-13)
 
 
