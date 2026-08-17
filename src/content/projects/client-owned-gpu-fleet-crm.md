@@ -14,7 +14,7 @@ stack:
   - "Neon Postgres"
   - "Better Auth"
 featured: true
-order: 1
+order: 2
 ---
 
 ## TLDR
