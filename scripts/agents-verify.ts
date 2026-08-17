@@ -11,7 +11,13 @@
 
 import { site } from "../src/brand/site";
 import { SECURITY_TXT_PATH, verifySecurityTxt } from "../src/site/security-txt";
-import { formatVerifyReport, isApex, type ScanReport, verifyScan } from "./agents-verify-lib";
+import {
+	formatVerifyReport,
+	isApex,
+	type ScanReport,
+	verifyIndexability,
+	verifyScan,
+} from "./agents-verify-lib";
 import {
 	beaconProbeTargets,
 	formatBeaconReport,
@@ -83,7 +89,22 @@ const securityTxt = await verifySecurityTxtOn(target);
 process.stdout.write("\nsecurity.txt\n\n");
 process.stdout.write(securityTxt.report);
 
-if (!result.ok || redirectFailures.failed || beaconFailures.failed || securityTxt.failed) {
+// Indexability, the fourth wire-only check: the X-Robots-Tag value is baked in
+// per environment at build time, so whether the *deployed host* serves the one
+// its environment demands — production indexable, everything else noindex — is
+// a deploy-time fact no build artifact describes.
+const indexability = await verifyIndexabilityOn(target);
+
+process.stdout.write("\nIndexability\n\n");
+process.stdout.write(indexability.report);
+
+if (
+	!result.ok ||
+	redirectFailures.failed ||
+	beaconFailures.failed ||
+	securityTxt.failed ||
+	indexability.failed
+) {
 	console.error(
 		"\nA check the site implements has stopped passing. Deploy propagation can\n" +
 			"take a couple of minutes — re-run before treating it as a real regression.",
@@ -124,6 +145,28 @@ async function verifyCanonicalRedirects(
 	return {
 		report: formatRedirectReport(failures, probes.length),
 		failed: failures.length > 0 || probes.length === 0,
+	};
+}
+
+async function verifyIndexabilityOn(origin: string): Promise<{
+	report: string;
+	failed: boolean;
+}> {
+	const url = new URL("/", origin).toString();
+	const response = await fetch(url).catch((error: Error) => error);
+
+	if (response instanceof Error) {
+		return { report: `  MISSING    ${url} did not load: ${response.message}\n`, failed: true };
+	}
+
+	const verdict = verifyIndexability(
+		{ status: response.status, robotsTag: response.headers.get("x-robots-tag") },
+		{ apex: isApex(origin, site.url) },
+	);
+
+	return {
+		report: verdict.ok ? `  OK         ${verdict.reason}\n` : `  REGRESSED  ${verdict.reason}\n`,
+		failed: !verdict.ok,
 	};
 }
 

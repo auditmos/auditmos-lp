@@ -22,7 +22,7 @@ import {
 	executableInlineScripts,
 	renderContentSecurityPolicy,
 } from "./content-security-policy";
-import { SECURITY_HEADERS } from "./security-headers";
+import { ROBOTS_TAG_HEADER_NAME, robotsTagFor, SECURITY_HEADERS } from "./security-headers";
 
 interface DiscoveryLink {
 	readonly target: string;
@@ -140,7 +140,12 @@ const mediaTypeRules: readonly { pattern: string; type: string }[] = [
 export function renderDiscoveryHeaders(
 	pageRoutes: readonly string[],
 	scriptHashes: readonly string[] = [],
+	cloudflareEnv: string | undefined = undefined,
 ): string {
+	// Undefined env means a local or dev build, and those stay out of search
+	// engines too — only a build explicitly stamped `production` by the deploy
+	// script may be indexed. Rationale on `robotsTagFor`.
+	const robotsTag = robotsTagFor(cloudflareEnv);
 	// The policy leads the site-wide block: it governs what a client may do with
 	// everything the Link relations then point at.
 	// Security headers last: they are unconditional and uninteresting to a
@@ -157,6 +162,7 @@ export function renderDiscoveryHeaders(
 		`Content-Signal: ${CONTENT_SIGNAL}`,
 		...linkHeaders(siteWideLinks),
 		...Object.entries(SECURITY_HEADERS).map(([name, value]) => `${name}: ${value}`),
+		...(robotsTag ? [`${ROBOTS_TAG_HEADER_NAME}: ${robotsTag}`] : []),
 		`${CSP_HEADER_NAME}: ${renderContentSecurityPolicy(scriptHashes)}`,
 	];
 	const alternateRules = [...pageRoutes].sort().flatMap((route) =>
@@ -244,7 +250,14 @@ export function agentDiscoveryHeaders(): AstroIntegration {
 				// this file from an earlier `astro:build:done` hook, and `_headers`
 				// rules are additive — so append rather than replace.
 				const existing = existsSync(headersFile) ? readFileSync(headersFile, "utf8").trimEnd() : "";
-				const discoveryHeaders = renderDiscoveryHeaders(routes, inlineScriptHashes(clientDir));
+				// The same CLOUDFLARE_ENV `scripts/deploy.ts` exports into the build —
+				// unset on a local `pnpm build`, which is what makes a local build
+				// noindex by default.
+				const discoveryHeaders = renderDiscoveryHeaders(
+					routes,
+					inlineScriptHashes(clientDir),
+					process.env.CLOUDFLARE_ENV,
+				);
 
 				writeFileSync(
 					headersFile,

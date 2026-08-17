@@ -4,6 +4,7 @@ import {
 	REQUIRED_CHECKS,
 	type RequiredCheck,
 	type ScanReport,
+	verifyIndexability,
 	verifyScan,
 } from "./agents-verify-lib";
 
@@ -201,5 +202,47 @@ describe("formatVerifyReport", () => {
 		expect(output).toContain("https://auditmos.com");
 		expect(output).toContain("every required check passes");
 		expect(output).not.toContain("REGRESSED");
+	});
+});
+
+describe("verifyIndexability", () => {
+	it("accepts a production host that serves no robots directive", () => {
+		const verdict = verifyIndexability({ status: 200, robotsTag: null }, { apex: true });
+
+		expect(verdict.ok).toBe(true);
+	});
+
+	it("fails a production host that says noindex — the site would leave Google", () => {
+		// The value is baked in at build time, so this is the accident of
+		// deploying a non-production build to the apex: nothing errors, the
+		// pages render fine, and the site quietly drops out of every index.
+		const verdict = verifyIndexability({ status: 200, robotsTag: "noindex" }, { apex: true });
+
+		expect(verdict).toEqual({ ok: false, reason: expect.stringContaining("noindex") as string });
+	});
+
+	it("requires noindex on every non-apex host", () => {
+		// A crawlable staging is what put every staging page into Search
+		// Console's "Alternate page with proper canonical tag" report: same
+		// content, canonical pointing at production.
+		const verdict = verifyIndexability({ status: 200, robotsTag: null }, { apex: false });
+
+		expect(verdict.ok).toBe(false);
+	});
+
+	it("accepts a preview host that says noindex, wherever in the list it appears", () => {
+		// X-Robots-Tag is a directive list; the check must not demand the bare
+		// value, only that noindex is among them.
+		const verdict = verifyIndexability(
+			{ status: 200, robotsTag: "noindex, nofollow" },
+			{ apex: false },
+		);
+
+		expect(verdict.ok).toBe(true);
+	});
+
+	it("treats a non-200 homepage as unverified rather than passing either way", () => {
+		expect(verifyIndexability({ status: 503, robotsTag: null }, { apex: true }).ok).toBe(false);
+		expect(verifyIndexability({ status: 503, robotsTag: null }, { apex: false }).ok).toBe(false);
 	});
 });

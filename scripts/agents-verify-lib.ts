@@ -122,6 +122,52 @@ export const REQUIRED_CHECKS: readonly RequiredCheck[] = [
 	},
 ];
 
+export interface IndexabilityProbe {
+	/** Status of the homepage — anything but 200 leaves indexability unproven. */
+	status: number;
+	/** The `X-Robots-Tag` response header, `null` when absent. */
+	robotsTag: string | null;
+}
+
+/**
+ * Whether the host's `X-Robots-Tag` matches what its environment demands.
+ *
+ * The header is stamped by the build (`robotsTagFor` in
+ * src/site/security-headers.ts), so which value a *host* serves is a deploy-time
+ * fact no build artifact can attest — the same reason the other wire checks
+ * exist. Both directions are regressions: production saying `noindex` would
+ * drop the whole site out of Google, and a preview host without it serves every
+ * page as a crawlable duplicate whose canonical points at production — which
+ * Search Console files under "Alternate page with proper canonical tag".
+ */
+export function verifyIndexability(
+	probe: IndexabilityProbe,
+	options: { apex: boolean },
+): { ok: boolean; reason: string } {
+	if (probe.status !== 200) {
+		return { ok: false, reason: `homepage answered ${probe.status}; indexability unverified` };
+	}
+
+	const noindex = (probe.robotsTag ?? "").toLowerCase().includes("noindex");
+
+	if (options.apex) {
+		return noindex
+			? {
+					ok: false,
+					reason: `production serves "X-Robots-Tag: ${probe.robotsTag}" — search engines would drop the entire site`,
+				}
+			: { ok: true, reason: "production carries no noindex; the site stays indexable" };
+	}
+
+	return noindex
+		? { ok: true, reason: "noindex, as every non-production host must be" }
+		: {
+				ok: false,
+				reason:
+					"host serves no X-Robots-Tag: noindex — its pages are crawlable duplicates of production",
+			};
+}
+
 function flattenChecks(report: ScanReport): Map<string, ScanCheck> {
 	const flat = new Map<string, ScanCheck>();
 

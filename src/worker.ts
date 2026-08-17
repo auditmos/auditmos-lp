@@ -30,6 +30,7 @@ export default {
 				(await withMarkdownNegotiation(request, env.ASSETS, () =>
 					astro.fetch(request, env, context),
 				)),
+			env.CLOUDFLARE_ENV,
 		);
 	},
 } satisfies ExportedHandler<Env>;

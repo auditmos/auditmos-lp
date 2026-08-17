@@ -157,6 +157,17 @@ describe("generated _headers", () => {
 		expect(assetText("robots.txt")).toContain(signal);
 	});
 
+	it("keeps this non-production build out of search engines", () => {
+		// The test build runs without CLOUDFLARE_ENV=production — the same shape
+		// as the staging and dev deploys, whose hosts serve every page as a
+		// crawlable duplicate with a canonical pointing at production (Search
+		// Console: "Alternate page with proper canonical tag"). Any build not
+		// explicitly stamped production must therefore say noindex; that a
+		// *production* deploy does not is asserted where it can be — against the
+		// deployed host, by `pnpm agents:verify`.
+		expect(headerRuleBlocks().get("/*")).toContain("X-Robots-Tag: noindex");
+	});
+
 	it("keeps the adapter's immutable asset cache rule alongside the discovery rules", () => {
 		expect(headerRuleBlocks().get("/_astro/*")).toContain(
 			"Cache-Control: public, max-age=31536000, immutable",

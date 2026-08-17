@@ -40,6 +40,24 @@ export const SECURITY_HEADERS = {
 	"X-XSS-Protection": "0",
 } as const;
 
+export const ROBOTS_TAG_HEADER_NAME = "X-Robots-Tag";
+
+/**
+ * `noindex` for every environment that is not explicitly production.
+ *
+ * Staging and the dev Worker serve the same prerendered pages as production,
+ * each carrying a canonical URL that points at `auditmos.com` — so Google
+ * crawls them as duplicates and files every page under "Alternate page with
+ * proper canonical tag" in Search Console. The canonical tag cannot say
+ * "don't crawl this host"; only this header can. Production is the single
+ * env allowed to be indexed, and `pnpm agents:verify` asserts both directions
+ * on the wire: a preview host without `noindex` leaks duplicates into search,
+ * a production host *with* it would drop the whole site out of Google.
+ */
+export function robotsTagFor(cloudflareEnv: string | undefined): string | undefined {
+	return cloudflareEnv === "production" ? undefined : "noindex";
+}
+
 /**
  * The response, carrying the baseline headers.
  *
@@ -47,11 +65,24 @@ export const SECURITY_HEADERS = {
  * response the Worker proxies — have immutable headers, so editing in place
  * throws. Same reason `markdown-negotiation.ts` re-wraps.
  */
-export function withSecurityHeaders(response: Response): Response {
+export function withSecurityHeaders(
+	response: Response,
+	cloudflareEnv: string | undefined,
+): Response {
 	const secured = new Response(response.body, response);
 
 	for (const [name, value] of Object.entries(SECURITY_HEADERS)) {
 		secured.headers.set(name, value);
+	}
+
+	// Same value the generated `_headers` stamps on asset responses — both
+	// derive from the one CLOUDFLARE_ENV the deploy baked in, so setting it
+	// again on a proxied asset changes nothing. On production it sets nothing
+	// rather than deleting: there is no legitimate source of a stray value to
+	// clean up, and silently removing one would mask a build gone wrong.
+	const robotsTag = robotsTagFor(cloudflareEnv);
+	if (robotsTag) {
+		secured.headers.set(ROBOTS_TAG_HEADER_NAME, robotsTag);
 	}
 
 	// Fills in, rather than sets — the one header here that must not overwrite.

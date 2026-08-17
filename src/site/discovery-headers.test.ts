@@ -111,6 +111,27 @@ describe("renderDiscoveryHeaders", () => {
 		expect(blocks.get("/*")).toContain(`Content-Signal: ${CONTENT_SIGNAL}`);
 	});
 
+	it.each([
+		"dev",
+		"staging",
+		undefined,
+	])("keeps a %s build out of search engines, site-wide", (cloudflareEnv) => {
+		// Preview hosts serve every page as a crawlable duplicate whose
+		// canonical points at production — Search Console's "Alternate page
+		// with proper canonical tag". Only an explicit production build may
+		// omit the noindex, so an unset env fails toward staying unindexed.
+		const rules =
+			headerRuleBlocks(renderDiscoveryHeaders(["/"], [], cloudflareEnv)).get("/*") ?? [];
+
+		expect(rules).toContain("X-Robots-Tag: noindex");
+	});
+
+	it("keeps a production build free of any robots directive", () => {
+		// The opposite mistake deindexes the entire site, which is why
+		// `pnpm agents:verify` re-checks this against the deployed host.
+		expect(renderDiscoveryHeaders(["/"], [], "production")).not.toContain("X-Robots-Tag");
+	});
+
 	it("carries the baseline security headers on every path", () => {
 		// The values themselves are pinned in security-headers.test.ts; what
 		// matters here is that the site-wide block is where they get delivered,
