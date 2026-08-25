@@ -1,3 +1,10 @@
+# [1.32.0](https://github.com/auditmos/auditmos-lp/compare/v1.31.0...v1.32.0) (2026-08-25)
+
+
+### Features
+
+* **content:** publish the HiveOS notification case study on /work ([16c60ac](https://github.com/auditmos/auditmos-lp/commit/16c60acc79b1d98289fe8622ac2e53cbc45f2cef))
+
 # [1.31.0](https://github.com/auditmos/auditmos-lp/compare/v1.30.0...v1.31.0) (2026-08-17)
 
 
