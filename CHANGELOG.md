@@ -1,3 +1,10 @@
+# [1.34.0](https://github.com/auditmos/auditmos-lp/compare/v1.33.0...v1.34.0) (2026-09-01)
+
+
+### Features
+
+* **navigation:** add open-source link to main menu ([a84f961](https://github.com/auditmos/auditmos-lp/commit/a84f961c960093d224fd5e6b07ce8eb294ffa70c))
+
 # [1.33.0](https://github.com/auditmos/auditmos-lp/compare/v1.32.0...v1.33.0) (2026-09-01)
 
 
