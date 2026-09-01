@@ -1,5 +1,11 @@
 import path from "node:path";
 import { parse as parseYaml } from "yaml";
+import {
+	PROJECT_CAPABILITIES,
+	PROJECT_PROVENANCES,
+	type ProjectCapability,
+	type ProjectProvenance,
+} from "../src/projects/taxonomy";
 import { escapeYamlString, slugifyProjectTitle } from "./new-project-lib";
 
 /**
@@ -42,11 +48,11 @@ export interface ArticleDefaults {
 
 export type ProjectClient = { name: string; url?: string } | { sector: string };
 
-export interface ProjectFileInput {
+interface ProjectFileBase {
 	title: string;
 	slug: string;
 	summary: string;
-	client: ProjectClient;
+	capabilities: readonly ProjectCapability[];
 	industry?: string;
 	year: number;
 	tags: readonly string[];
@@ -55,11 +61,17 @@ export interface ProjectFileInput {
 	featured?: boolean;
 }
 
+export type ProjectFileInput = ProjectFileBase &
+	(
+		| { provenance: "internal-r-and-d"; client?: never }
+		| { provenance?: "client-work"; client: ProjectClient }
+	);
+
 const FRONTMATTER_BLOCK = /^﻿?---\r?\n([\s\S]*?)\r?\n---[ \t]*(?:\r?\n|$)/;
 const H1_LINE = /^#[ \t]+(.+?)[ \t]*$/m;
 const LEADING_H1 = /^#[ \t]+.*(?:\r?\n)+/;
 const ORDER_LINE = /^order:[ \t]*(-?\d+)[ \t]*$/m;
-const SENTENCE = /[^.!?]+[.!?]+(?=\s|$)/g;
+const SENTENCE = /.*?[.!?]+(?=\s|$)|.+$/g;
 
 /** Tags shown on `/work` are short and human-readable, not a full dependency list. */
 const MAX_TAGS = 6;
@@ -171,6 +183,37 @@ function deriveTags(frontmatter: Record<string, unknown>, searchText: string): s
 	]);
 	const tags = declared.length > 0 ? declared : inferTags(searchText);
 	return tags.slice(0, MAX_TAGS);
+}
+
+function isProjectCapability(value: string): value is ProjectCapability {
+	return PROJECT_CAPABILITIES.some((capability) => capability === value);
+}
+
+export function parseProjectCapabilities(input: string): ProjectCapability[] {
+	const values = dedupe(readStringList(input));
+	const invalid = values.filter((value) => !isProjectCapability(value));
+
+	if (values.length === 0 || invalid.length > 0) {
+		const detail = invalid.length > 0 ? ` Invalid: ${invalid.join(", ")}.` : "";
+		throw new ArticleImportError(
+			`Capabilities must include one or more of: ${PROJECT_CAPABILITIES.join(", ")}.${detail}`,
+		);
+	}
+
+	return values.filter(isProjectCapability);
+}
+
+export function parseProjectProvenance(input: string | undefined): ProjectProvenance {
+	const value = input?.trim() || "client-work";
+	const provenance = PROJECT_PROVENANCES.find((candidate) => candidate === value);
+
+	if (!provenance) {
+		throw new ArticleImportError(
+			`Provenance must be one of: ${PROJECT_PROVENANCES.join(", ")}. Received: ${value}.`,
+		);
+	}
+
+	return provenance;
 }
 
 /** Prose blocks only — headings, lists, tables, quotes and fences are not summaries. */
@@ -353,26 +396,34 @@ export function resolveArticlePath(input: string, cwd: string, home: string): st
 	return path.resolve(cwd, value);
 }
 
-export function buildProjectMarkdown(source: ArticleSource, input: ProjectFileInput): string {
-	const quoted = (key: string, value: string, indent = "") =>
-		`${indent}${key}: "${escapeYamlString(value)}"`;
+function quotedYaml(key: string, value: string, indent = ""): string {
+	return `${indent}${key}: "${escapeYamlString(value)}"`;
+}
 
+function clientFrontmatter(client: ProjectClient): string[] {
+	if ("sector" in client) return ["client:", quotedYaml("sector", client.sector, "  ")];
+
+	const lines = ["client:", quotedYaml("name", client.name, "  ")];
+	if (client.url) lines.push(quotedYaml("url", client.url, "  "));
+	return lines;
+}
+
+export function buildProjectMarkdown(source: ArticleSource, input: ProjectFileInput): string {
 	const lines: string[] = [
 		"---",
-		quoted("title", input.title),
-		quoted("slug", input.slug),
-		quoted("summary", input.summary),
-		"client:",
+		quotedYaml("title", input.title),
+		quotedYaml("slug", input.slug),
+		quotedYaml("summary", input.summary),
 	];
 
-	if ("name" in input.client) {
-		lines.push(quoted("name", input.client.name, "  "));
-		if (input.client.url) lines.push(quoted("url", input.client.url, "  "));
-	} else {
-		lines.push(quoted("sector", input.client.sector, "  "));
+	if (input.provenance) lines.push(quotedYaml("provenance", input.provenance));
+	lines.push("capabilities:", ...input.capabilities.map((capability) => `  - "${capability}"`));
+
+	if (input.provenance !== "internal-r-and-d") {
+		lines.push(...clientFrontmatter(input.client));
 	}
 
-	if (input.industry) lines.push(quoted("industry", input.industry));
+	if (input.industry) lines.push(quotedYaml("industry", input.industry));
 	lines.push(`year: ${input.year}`);
 
 	if (input.tags.length === 0) {
@@ -388,7 +439,7 @@ export function buildProjectMarkdown(source: ArticleSource, input: ProjectFileIn
 	if (links.length > 0) {
 		lines.push("links:");
 		for (const link of links) {
-			lines.push(quoted("- label", link.label, "  "), quoted("url", link.url, "    "));
+			lines.push(quotedYaml("- label", link.label, "  "), quotedYaml("url", link.url, "    "));
 		}
 	}
 

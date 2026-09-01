@@ -6,6 +6,7 @@ import readline from "node:readline/promises";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
 import {
+	type ArticleDefaults,
 	ArticleImportError,
 	type ArticleSource,
 	articleDefaults,
@@ -13,6 +14,8 @@ import {
 	nextProjectOrder,
 	type ProjectClient,
 	parseArticle,
+	parseProjectCapabilities,
+	parseProjectProvenance,
 	projectFilePath,
 	projectOrder,
 	resolveArticlePath,
@@ -44,6 +47,8 @@ const OPTIONS = {
 	"client-url": { type: "string" },
 	sector: { type: "string" },
 	industry: { type: "string" },
+	provenance: { type: "string" },
+	capabilities: { type: "string" },
 } as const;
 
 function usage(): string {
@@ -58,6 +63,8 @@ function usage(): string {
 		"  --client-url <url>  Client URL, only valid with --client",
 		"  --sector <label>    Anonymised client sector instead of a name",
 		"  --industry <label>  Industry label; pass an empty string to omit it",
+		"  --provenance <type> client-work (default) or internal-r-and-d",
+		"  --capabilities <csv> One or more of: software, security, applied-r-and-d",
 		"  --dry-run           Print the generated file instead of writing it",
 		"  --yes               Skip the write confirmation",
 	].join("\n");
@@ -257,10 +264,47 @@ async function resolveClient(
 	return { sector: await askRequired(session, "Sector for the anonymised client", defaultSector) };
 }
 
-async function run(session: PromptSession, positionals: string[], flags: Flags): Promise<number> {
-	const { file, source } = await readArticle(session, positionals[0] ?? "");
-	const defaults = articleDefaults(source, CURRENT_YEAR);
+async function resolveCapabilities(session: PromptSession, preset: string | undefined) {
+	if (preset !== undefined) return parseProjectCapabilities(preset);
 
+	for (;;) {
+		try {
+			return parseProjectCapabilities(
+				await askRequired(
+					session,
+					"Capabilities (comma-separated: software, security, applied-r-and-d)",
+				),
+			);
+		} catch (error) {
+			console.error(
+				`  ${error instanceof ArticleImportError ? error.message : "Enter valid capabilities."}`,
+			);
+		}
+	}
+}
+
+async function resolvePublication(
+	session: PromptSession,
+	flags: Flags,
+	defaultSector: string | undefined,
+) {
+	const provenance = parseProjectProvenance(
+		typeof flags.provenance === "string" ? flags.provenance : undefined,
+	);
+	const capabilities = await resolveCapabilities(
+		session,
+		typeof flags.capabilities === "string" ? flags.capabilities : undefined,
+	);
+
+	if (provenance === "internal-r-and-d") return { provenance, capabilities } as const;
+	return {
+		provenance,
+		capabilities,
+		client: await resolveClient(session, flags, defaultSector),
+	} as const;
+}
+
+function printArticleDefaults(file: string, defaults: ArticleDefaults): void {
 	console.log(`\nRead ${file}`);
 	console.log(`  Title:   ${defaults.title}`);
 	console.log(`  Slug:    ${defaults.slug}`);
@@ -272,9 +316,16 @@ async function run(session: PromptSession, positionals: string[], flags: Flags):
 		);
 	}
 	console.log("");
+}
+
+async function run(session: PromptSession, positionals: string[], flags: Flags): Promise<number> {
+	const { file, source } = await readArticle(session, positionals[0] ?? "");
+	const defaults = articleDefaults(source, CURRENT_YEAR);
+
+	printArticleDefaults(file, defaults);
 
 	const year = await askYear(session, defaults.year, flags.year as string | undefined);
-	const client = await resolveClient(session, flags, defaults.sector);
+	const publication = await resolvePublication(session, flags, defaults.sector);
 	const industry =
 		typeof flags.industry === "string"
 			? flags.industry.trim()
@@ -287,21 +338,27 @@ async function run(session: PromptSession, positionals: string[], flags: Flags):
 		(targetExists ? projectOrder(fs.readFileSync(target, "utf-8")) : undefined) ??
 		nextProjectOrder(otherProjectFiles(target));
 
-	const markdown = buildProjectMarkdown(source, {
+	const projectInput = {
 		title: defaults.title,
 		slug: defaults.slug,
 		summary: defaults.summary,
-		client,
 		industry: industry || undefined,
 		year,
 		tags: defaults.tags,
 		links: defaults.links,
 		order,
 		featured: false,
-	});
+	} as const;
+	const markdown = buildProjectMarkdown(source, { ...projectInput, ...publication });
 
 	console.log("");
-	console.log(`  Client:   ${clientDisplay(client)}`);
+	console.log(
+		`  Provenance:   ${publication.provenance === "internal-r-and-d" ? "Internal R&D" : "Client work"}`,
+	);
+	console.log(`  Capabilities: ${publication.capabilities.join(", ")}`);
+	if (publication.provenance !== "internal-r-and-d") {
+		console.log(`  Client:       ${clientDisplay(publication.client)}`);
+	}
 	console.log(`  Industry: ${industry || "(none)"}`);
 	console.log(`  Year:     ${year}`);
 	console.log(`  Order:    ${order}`);

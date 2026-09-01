@@ -8,6 +8,8 @@ const namedClientProject = {
 		title: "Auditmos Website Rebuild",
 		slug: "auditmos-website-rebuild",
 		summary: "A static-first rebuild for a trust-focused company website.",
+		provenance: "client-work",
+		capabilities: ["software"],
 		client: { name: "Auditmos OÜ" },
 		stack: ["Astro"],
 		featured: true,
@@ -22,6 +24,8 @@ const anonymisedProject = {
 		title: "Regulated Platform Security Review",
 		slug: "regulated-platform-security-review",
 		summary: "A security review for a regulated platform.",
+		provenance: "client-work",
+		capabilities: ["security"],
 		client: { sector: "Banking" },
 		stack: [],
 		featured: false,
@@ -31,7 +35,22 @@ const anonymisedProject = {
 	body: "Findings were delivered as a procurement-ready report.",
 } as const satisfies McpProjectEntry;
 
-const projects = [namedClientProject, anonymisedProject];
+const internalProject = {
+	data: {
+		title: "Measured Product Experiment",
+		slug: "measured-product-experiment",
+		summary: "An internal experiment with a measured outcome.",
+		provenance: "internal-r-and-d",
+		capabilities: ["software", "applied-r-and-d"],
+		stack: ["Astro"],
+		featured: false,
+		links: [],
+		year: 2026,
+	},
+	body: "The system worked; the market did not respond.",
+} as const satisfies McpProjectEntry;
+
+const projects = [namedClientProject, anonymisedProject, internalProject];
 
 function runTool(name: string, args: Record<string, unknown> = {}) {
 	const tool = createSiteTools(projects).find((candidate) => candidate.name === name);
@@ -84,6 +103,18 @@ describe("createSiteTools", () => {
 
 		expect(named).toMatchObject({ client: "Auditmos OÜ", clientIsNamed: true });
 		expect(anonymised).toMatchObject({ client: "Banking", clientIsNamed: false });
+	});
+
+	it("exposes internal provenance and capabilities without inventing a client", () => {
+		const listed = parsed("list_projects") as Record<string, unknown>[];
+		const internal = listed.find((project) => project.slug === internalProject.data.slug);
+
+		expect(internal).toMatchObject({
+			provenance: "internal-r-and-d",
+			capabilities: ["software", "applied-r-and-d"],
+		});
+		expect(internal).not.toHaveProperty("client");
+		expect(internal).not.toHaveProperty("clientIsNamed");
 	});
 
 	it("filters to featured work on request", () => {

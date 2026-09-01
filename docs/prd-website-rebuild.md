@@ -84,8 +84,8 @@ Success looks like: a prospect arrives via a LinkedIn referral, lands on `/`, ca
 ### Author — Auditmos team member adding content
 
 28. As an Auditmos team member, I want to add a new project by writing one markdown file in `src/content/projects/`, so that I don't have to learn a CMS.
-29. As an Auditmos team member, I want the build to reject a malformed project file (missing title, invalid client shape) with a clear error, so that I catch typos before they reach production.
-30. As an Auditmos team member, I want to publish a project under either a real client name (with permission) or a sector descriptor (anonymised, for NDA work), so that I can use the same pipeline for both confidentiality modes.
+29. As an Auditmos team member, I want the build to reject a malformed project file (missing title, missing capabilities, or invalid provenance/client shape) with a clear error, so that I catch typos before they reach production.
+30. As an Auditmos team member, I want to publish client work under either a real client name (with permission) or a sector descriptor (anonymised, for NDA work), and publish self-initiated experiments as internal R&D without inventing a client, so that the same pipeline remains truthful for both provenances.
 31. As an Auditmos team member, I want to push a project MD to `main` and see it live on production within minutes, so that publishing has no manual gate.
 
 ### Maintainer — Auditmos developer working on the site
@@ -108,7 +108,7 @@ Success looks like: a prospect arrives via a LinkedIn referral, lands on `/`, ca
 
 The system is composed as twelve deep modules with narrow interfaces:
 
-1. **Content collection** — Astro Content Collections with a Zod schema for `projects`. Single typed interface: `getCollection('projects')` + `getEntry('projects', slug)`. Hides frontmatter parsing, MD rendering, slug derivation, and named-vs-anonymised client handling.
+1. **Content collection** — Astro Content Collections with a Zod schema for `projects`. Single typed interface: `getCollection('projects')` + `getEntry('projects', slug)`. Hides frontmatter parsing, MD rendering, slug derivation, client-work vs internal-R&D provenance, named-vs-anonymised client handling, and capability classification.
 2. **Page routes** — Astro `.astro` pages, all `prerender = true` except `/api/contact`. URL → HTML. Hides layout composition, Tailwind utility composition, per-page SEO meta + JSON-LD.
 3. **MD-mirror endpoint** — Single source-of-truth helper that lists every renderable page; `.md.ts` endpoints serve each one as `text/markdown`. `/llms.txt` is the index, and the generated `Link` headers (component 9) are the third surface. Adding a new page automatically adds it to all three; no manual sync.
 4. **OSS aggregator** — Build-time fetch from `github.com/auditmos` org via GitHub REST API. Returns `OssProject[]` (name, description, stars, language, URL). Degrades gracefully on rate-limit or 5xx by returning the last-known list (cached at build) or an empty list, never failing the build.
@@ -175,14 +175,21 @@ The system is composed as twelve deep modules with narrow interfaces:
 3. **Author → new project:** edit MD in `src/content/projects/` → `git push main` → GitHub Actions → `wrangler deploy` → live.
 4. **AI agent → site:** `GET /` → RFC 8288 `Link` response headers point at `/llms.txt` and the page's `.md` twin → `GET /llms.txt` → index of every URL with `.md` counterparts → `GET /<path>.md` → `text/markdown`.
 
-### Confidentiality model for projects
+### Provenance, confidentiality, and capabilities for projects
 
-The `projects` Zod schema has a `client` field accepting either:
+The `projects` Zod schema has a `provenance` field:
+
+- `client-work` — the default when the field is omitted; requires `client`
+- `internal-r-and-d` — explicitly declared; forbids `client`
+
+For client work, `client` accepts either:
 
 - `{ name: string, url?: string }` — public, named (OSS, R&D, named-with-permission client work)
 - `{ sector: string }` — anonymised (e.g. `"Banking"`, `"FinTech"`, `"Public sector"`)
 
-The schema validates that exactly one shape is present. The rendering layer reads which variant and emits either the client name + logo (if URL) or the sector descriptor.
+The schema validates that exactly one client shape is present for client work. The rendering layer emits `Client` with the name/sector for client work and `Origin: Internal R&D` for internal work; provenance is also visible on `/work` and homepage featured cards.
+
+Every project explicitly declares one or more `capabilities`: `software`, `security`, or `applied-r-and-d`. `/work` uses these for a single-choice `All | Software | Security | Applied R&D` HTML/CSS filter. The filter ships no JavaScript, has no separate filtered URLs, and falls back to showing every item when CSS filtering is unavailable.
 
 ### Pages and routes
 
@@ -190,9 +197,9 @@ The schema validates that exactly one shape is present. The rendering layer read
 |---|---|---|
 | `/` | Prerendered | Hero + 3 service teasers + featured projects + contact CTA |
 | `/software-development` | Prerendered | Service detail page, SEO target |
-| `/r-and-d` | Prerendered | Service detail page, SEO target |
+| `/r-and-d` | Prerendered | Service detail page, SEO target, plus up to three capability-matched related-work links |
 | `/security-audits` | Prerendered | Service detail page, SEO target |
-| `/work` | Prerendered | Index of all projects (filterable by service/sector) |
+| `/work` | Prerendered | Index of all projects, filterable by capability with visible provenance |
 | `/work/[slug]` | Prerendered | Project detail page, generated from MD |
 | `/about` | Prerendered | Company-only — mission, values, entity |
 | `/open-source` | Prerendered | Auto-aggregated repos from `github.com/auditmos` |
@@ -240,10 +247,12 @@ Build-time + integration assertions. Done when:
 
 Zod-on-build. Done when:
 
-- A project MD missing `title`, `slug`, `summary`, or both `client.name` and `client.sector` → `astro build` fails with a clear field-level error pointing to the offending file.
+- A project MD missing `title`, `slug`, `summary`, or a non-empty `capabilities` list → `astro build` fails with a clear field-level error pointing to the offending file.
+- A client-work project missing both `client.name` and `client.sector` → build fails; an internal-R&D project that supplies any `client` field also fails.
 - A project MD with both `client.name` and `client.sector` simultaneously → build fails.
 - A valid project MD with `client.name` → renders with the name on `/work/<slug>`.
 - A valid project MD with `client.sector` → renders with the sector descriptor on `/work/<slug>`.
+- A valid internal-R&D project → renders `Origin: Internal R&D`, capabilities, and the named author on `/work/<slug>`, with no client row.
 - The frontmatter schema is the single source of truth for project listings, detail pages, structured data, and the home page "featured" carousel.
 
 ### Other quality gates (lighter)

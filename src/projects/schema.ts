@@ -1,4 +1,5 @@
 import { z } from "astro/zod";
+import { PROJECT_CAPABILITIES, PROJECT_PROVENANCES } from "./taxonomy";
 
 const nonEmptyString = z.string().trim().min(1);
 
@@ -15,7 +16,9 @@ export const projectDataSchema = z
 		title: nonEmptyString,
 		slug: nonEmptyString,
 		summary: nonEmptyString,
-		client: projectClientSchema,
+		provenance: z.enum(PROJECT_PROVENANCES).default("client-work"),
+		capabilities: z.array(z.enum(PROJECT_CAPABILITIES)).min(1),
+		client: projectClientSchema.optional(),
 		industry: nonEmptyString.optional(),
 		year: z.number().int().optional(),
 		stack: z.array(nonEmptyString).default([]),
@@ -32,6 +35,26 @@ export const projectDataSchema = z
 			.default([]),
 	})
 	.superRefine((project, ctx) => {
+		if (project.provenance === "internal-r-and-d") {
+			if (project.client) {
+				ctx.addIssue({
+					code: "custom",
+					path: ["client"],
+					message: "Internal R&D must not provide a client.",
+				});
+			}
+			return;
+		}
+
+		if (!project.client) {
+			ctx.addIssue({
+				code: "custom",
+				path: ["client"],
+				message: "Client work must provide a client.",
+			});
+			return;
+		}
+
 		const hasName = Boolean(project.client.name);
 		const hasSector = Boolean(project.client.sector);
 

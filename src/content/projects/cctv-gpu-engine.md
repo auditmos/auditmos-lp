@@ -4,6 +4,9 @@ slug: "cctv-gpu-engine"
 summary: "Batch video analysis that turns recorded CCTV footage into structured activity reports: how many people were present, when, and what they were doing."
 client:
   sector: "Industrial video analytics"
+capabilities:
+  - "software"
+  - "applied-r-and-d"
 industry: "Industrial facilities"
 year: 2026
 stack:

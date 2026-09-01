@@ -56,7 +56,7 @@ const maxTransferredBytes = 52 * 1024;
 // runaway page. Both numbers are uncompressed — over the wire the same page is
 // ~11 KB of HTML plus ~6 KB of CSS after gzip.
 const maxProjectTransferredBytes = 64 * 1024;
-const sampleProjectRoutes = ["/work/client-owned-gpu-fleet-crm"] as const;
+const sampleProjectRoutes = ["/work/client-owned-gpu-fleet-crm", "/work/wizytowka-link"] as const;
 const projectRoutes = new Set<string>(sampleProjectRoutes);
 const prerenderedRoutes = [
 	...staticPages.map((page) => page.path),
@@ -488,5 +488,39 @@ describe("static build output", () => {
 		expect(anonymisedHtml).toContain("Distributed GPU compute");
 		expect(anonymisedHtml).toContain("Auditmos OÜ");
 		expect(anonymisedHtml).toContain("Discuss it with Auditmos");
+	});
+
+	it("renders internal R&D with provenance, capabilities and author instead of a client", () => {
+		const internalHtml = htmlFor("/work/wizytowka-link");
+
+		expect(internalHtml).toContain("Origin");
+		expect(internalHtml).toContain("Internal R&amp;D");
+		expect(internalHtml).toContain("Software");
+		expect(internalHtml).toContain("Applied R&amp;D");
+		expect(internalHtml).toContain("Tomasz Kowalczyk");
+		expect(internalHtml).not.toContain(">Client</dt>");
+	});
+
+	it("renders a zero-JavaScript capability filter and provenance on the work index", () => {
+		const workHtml = htmlFor("/work");
+
+		expect(workHtml).toContain('name="work-capability"');
+		for (const capability of ["all", "software", "security", "applied-r-and-d"]) {
+			expect(workHtml).toContain(`value="${capability}"`);
+		}
+		expect(workHtml).toContain('data-capabilities="software applied-r-and-d"');
+		expect(workHtml).toContain("Client work");
+	});
+
+	it("shows provenance on homepage featured work", () => {
+		expect(htmlFor("/")).toContain("Client work");
+	});
+
+	it("keeps R&D as a service page with capability-matched related work", () => {
+		const rAndDHtml = htmlFor("/r-and-d");
+
+		expect(rAndDHtml).toContain("Related work");
+		expect(rAndDHtml).toContain("/work/cctv-gpu-engine");
+		expect(rAndDHtml).not.toContain("/work/hiveos-notification-system");
 	});
 });

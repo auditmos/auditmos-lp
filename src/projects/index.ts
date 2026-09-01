@@ -1,12 +1,37 @@
 import type { ProjectData } from "./schema";
+import type { ProjectCapability } from "./taxonomy";
+
+export { PROJECT_CAPABILITY_OPTIONS } from "./taxonomy";
 
 export interface ProjectEntry {
 	data: ProjectData;
 }
 
 export function getClientDisplay(project: ProjectData): string {
-	if (project.client.name) return project.client.name;
-	return project.client.sector ?? "";
+	if (project.client?.name) return project.client.name;
+	return project.client?.sector ?? "";
+}
+
+export interface ProjectContext {
+	label: "Client" | "Origin";
+	value: string;
+	url?: string;
+}
+
+export function getProjectContext(project: ProjectData): ProjectContext {
+	if (project.provenance === "internal-r-and-d") {
+		return { label: "Origin", value: "Internal R&D" };
+	}
+
+	return {
+		label: "Client",
+		value: getClientDisplay(project),
+		url: project.client?.url,
+	};
+}
+
+export function getProjectProvenanceLabel(project: ProjectData): "Client work" | "Internal R&D" {
+	return project.provenance === "internal-r-and-d" ? "Internal R&D" : "Client work";
 }
 
 function compareProjectData(a: ProjectData, b: ProjectData): number {
@@ -37,4 +62,14 @@ export function getFeaturedProjects<T extends ProjectEntry>(
 	limit = 3,
 ): T[] {
 	return sortProjects(projects.filter((project) => project.data.featured)).slice(0, limit);
+}
+
+export function getProjectsByCapability<T extends ProjectEntry>(
+	projects: readonly T[],
+	capability: ProjectCapability,
+	limit = 3,
+): T[] {
+	return sortProjects(
+		projects.filter((project) => project.data.capabilities.includes(capability)),
+	).slice(0, limit);
 }

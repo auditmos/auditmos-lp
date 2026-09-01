@@ -32,20 +32,27 @@ function problem(message: string): McpToolResult {
 }
 
 function summarise(project: ProjectData) {
-	return {
+	const published = {
 		slug: project.slug,
 		title: project.title,
 		summary: project.summary,
-		// Anonymised NDA work exposes a sector instead of a client name; the
-		// discriminated union in the schema guarantees exactly one of them.
-		client: getClientDisplay(project),
-		clientIsNamed: Boolean(project.client.name),
+		provenance: project.provenance,
+		capabilities: project.capabilities,
 		industry: project.industry,
 		year: project.year,
 		stack: project.stack,
 		featured: project.featured,
 		url: `${site.url}/work/${project.slug}`,
 		markdownUrl: `${site.url}/work/${project.slug}.md`,
+	};
+
+	if (project.provenance === "internal-r-and-d") return published;
+
+	return {
+		...published,
+		// Anonymised NDA work exposes a sector instead of a client name.
+		client: getClientDisplay(project),
+		clientIsNamed: Boolean(project.client?.name),
 	};
 }
 
@@ -100,8 +107,9 @@ export function createSiteTools(projects: readonly McpProjectEntry[]): McpTool[]
 			name: "list_projects",
 			title: "List Auditmos projects",
 			description:
-				"Selected Auditmos project history. Named client work exposes the client; " +
-				"NDA work exposes only the sector. Optionally filter to featured work.",
+				"Selected Auditmos project history with provenance and capabilities. Named client " +
+				"work exposes the client; NDA work exposes only the sector; internal R&D exposes no client. " +
+				"Optionally filter to featured work.",
 			inputSchema: {
 				type: "object",
 				properties: {
@@ -147,7 +155,7 @@ export function createSiteTools(projects: readonly McpProjectEntry[]): McpTool[]
 
 				return json({
 					...summarise(match.data),
-					clientUrl: match.data.client.url,
+					...(match.data.client?.url ? { clientUrl: match.data.client.url } : {}),
 					links: match.data.links,
 					body: match.body ?? "",
 				});

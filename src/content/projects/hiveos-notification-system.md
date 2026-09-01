@@ -4,6 +4,8 @@ slug: "hiveos-notification-system"
 summary: "The HiveOS Notification System watches around a hundred crypto-mining farms and forwards what matters to Telegram, one thread per farm."
 client:
   sector: "Crypto mining infrastructure"
+capabilities:
+  - "software"
 industry: "Cryptocurrency mining"
 year: 2026
 stack:

@@ -1,7 +1,8 @@
 ---
 import { getCollection, render } from "astro:content";
+import { site } from "@/brand/site";
 import Layout from "@/layouts/Layout.astro";
-import { getClientDisplay } from "@/projects";
+import { getProjectContext, PROJECT_CAPABILITY_OPTIONS } from "@/projects";
 // Styles the `<Content />` body below. Page-scoped rather than global so the
 // routes that render no Markdown don't carry it — see the file's own comment.
 import "@/styles/prose.css";
@@ -19,7 +20,10 @@ export async function getStaticPaths() {
 
 const { project } = Astro.props;
 const { Content } = await render(project);
-const clientDisplay = getClientDisplay(project.data);
+const projectContext = getProjectContext(project.data);
+const capabilityLabels = new Map(
+	PROJECT_CAPABILITY_OPTIONS.map((capability) => [capability.value, capability.label]),
+);
 ---
 
 <Layout
@@ -42,11 +46,17 @@ const clientDisplay = getClientDisplay(project.data);
 					<p class="eyebrow text-brand-accent">Project context</p>
 					<dl class="mt-6 border-neutral-800 border-t text-sm">
 						<div class="grid grid-cols-[6rem_1fr] border-neutral-800 border-b py-4">
-							<dt class="text-neutral-500">Client</dt>
+							<dt class="text-neutral-500">{projectContext.label}</dt>
 							<dd class="text-neutral-200">
-								{project.data.client.url ? <a class="hover:text-brand-accent" href={project.data.client.url}>{clientDisplay}</a> : clientDisplay}
+								{projectContext.url ? <a class="hover:text-brand-accent" href={projectContext.url}>{projectContext.value}</a> : projectContext.value}
 							</dd>
 						</div>
+						{project.data.provenance === "internal-r-and-d" && (
+							<div class="grid grid-cols-[6rem_1fr] border-neutral-800 border-b py-4">
+								<dt class="text-neutral-500">Author</dt>
+								<dd class="text-neutral-200">{site.founder.name}</dd>
+							</div>
+						)}
 						{project.data.industry && (
 							<div class="grid grid-cols-[6rem_1fr] border-neutral-800 border-b py-4">
 								<dt class="text-neutral-500">Industry</dt>
@@ -60,8 +70,15 @@ const clientDisplay = getClientDisplay(project.data);
 							</div>
 						)}
 					</dl>
+					<ul class="mt-6 flex flex-wrap gap-2" aria-label="Capabilities">
+						{project.data.capabilities.map((capability) => (
+							<li class="border border-brand-accent px-2.5 py-1 font-mono text-brand-accent text-xs">
+								{capabilityLabels.get(capability)}
+							</li>
+						))}
+					</ul>
 					{project.data.stack.length > 0 && (
-						<ul class="mt-6 flex flex-wrap gap-2">
+						<ul class="mt-3 flex flex-wrap gap-2" aria-label="Technology stack">
 							{project.data.stack.map((item) => <li class="border border-neutral-700 px-2.5 py-1 font-mono text-neutral-400 text-xs">{item}</li>)}
 						</ul>
 					)}

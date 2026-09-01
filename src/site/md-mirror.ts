@@ -1,13 +1,19 @@
 import { auditReports } from "@/audits/reports";
 import { site } from "@/brand/site";
 import { ossProjects } from "@/oss/projects";
+import {
+	getClientDisplay,
+	getProjectProvenanceLabel,
+	getProjectsByCapability,
+	PROJECT_CAPABILITY_OPTIONS,
+} from "@/projects";
 import type { ProjectData } from "@/projects/schema";
 import { MARKDOWN_MEDIA_TYPE, MARKDOWN_TOKENS_HEADER } from "./markdown-negotiation";
 import { privacyPage, type SitePage, staticPages } from "./pages";
 
 export interface MarkdownProjectEntry {
 	body?: string;
-	data: Pick<ProjectData, "slug" | "summary" | "title">;
+	data: ProjectData;
 }
 
 export interface MarkdownMirrorPage extends SitePage {
@@ -168,9 +174,9 @@ Contact: tom@auditmos.com
 	"/work": `
 Selected Auditmos software, R&D, and security audit projects, including named and anonymised work.
 
-Named work appears where permission exists. Anonymised sector case studies use the same pipeline when confidentiality matters.
+Every item labels its provenance as Client work or Internal R&D. Named work appears where permission exists; anonymised sector case studies use the same pipeline when confidentiality matters.
 
-Project detail pages include context, client display information, year, stack, links where available, and the case study body authored in Markdown.
+The work index can be filtered by Software, Security, or Applied R&D. Project detail pages include provenance, capabilities, context, year, stack, links where available, and the case study body authored in Markdown.
 `,
 	"/open-source": `
 Auditmos publishes open-source work on GitHub: templates, tooling, products, and public audit resources.
@@ -233,17 +239,58 @@ function projectRoute(project: MarkdownProjectEntry): SitePage {
 }
 
 function projectMarkdown(project: MarkdownProjectEntry): string {
-	return [`# ${project.data.title}`, "", (project.body ?? "").trim(), ""].join("\n");
+	const capabilities = project.data.capabilities.map(
+		(capability) =>
+			PROJECT_CAPABILITY_OPTIONS.find((option) => option.value === capability)?.label ?? capability,
+	);
+	const metadata =
+		project.data.provenance === "internal-r-and-d"
+			? [`Origin: ${getProjectProvenanceLabel(project.data)}`, `Author: ${site.founder.name}`]
+			: [
+					`Provenance: ${getProjectProvenanceLabel(project.data)}`,
+					`Client: ${getClientDisplay(project.data)}`,
+				];
+
+	metadata.push(`Capabilities: ${capabilities.join(", ")}`);
+	if (project.data.industry) metadata.push(`Industry: ${project.data.industry}`);
+	if (project.data.year) metadata.push(`Year: ${project.data.year}`);
+
+	return [`# ${project.data.title}`, "", ...metadata, "", (project.body ?? "").trim(), ""].join(
+		"\n",
+	);
+}
+
+function relatedResearchMarkdown(projects: readonly MarkdownProjectEntry[]): string {
+	const related = getProjectsByCapability(projects, "applied-r-and-d");
+	if (related.length === 0) return "";
+
+	return [
+		"## Related work",
+		"",
+		...related.map(
+			(project) =>
+				`- [${project.data.title}](${site.url}/work/${project.data.slug}): ${project.data.summary}`,
+		),
+	].join("\n");
 }
 
 export function getMarkdownMirrorPages(
 	projects: readonly MarkdownProjectEntry[],
 ): MarkdownMirrorPage[] {
-	const staticMarkdownPages = staticPages.map((page) => ({
-		...page,
-		markdownPath: routeToMarkdownPath(page.path),
-		markdown: pageMarkdown(page, staticMarkdownBodyByPath[page.path]),
-	}));
+	const staticMarkdownPages = staticPages.map((page) => {
+		const body =
+			page.path === "/r-and-d"
+				? [staticMarkdownBodyByPath[page.path].trim(), relatedResearchMarkdown(projects)]
+						.filter(Boolean)
+						.join("\n\n")
+				: staticMarkdownBodyByPath[page.path];
+
+		return {
+			...page,
+			markdownPath: routeToMarkdownPath(page.path),
+			markdown: pageMarkdown(page, body),
+		};
+	});
 	const projectMarkdownPages = projects.map((project) => {
 		const page = projectRoute(project);
 

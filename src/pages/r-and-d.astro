@@ -1,5 +1,7 @@
 ---
+import { getCollection } from "astro:content";
 import ServicePage from "@/components/ServicePage.astro";
+import { getProjectsByCapability, getProjectProvenanceLabel } from "@/projects";
 import { servicePages } from "@/site/pages";
 
 export const prerender = true;
@@ -9,6 +11,11 @@ const page = servicePages.find((service) => service.path === "/r-and-d");
 if (!page) {
 	throw new Error("Missing R&D page metadata");
 }
+
+const relatedProjects = getProjectsByCapability(
+	await getCollection("projects"),
+	"applied-r-and-d",
+);
 ---
 
 <ServicePage
@@ -39,4 +46,40 @@ if (!page) {
 		"Prototype code or demonstrators scoped to the research question.",
 		"Architecture sketches and implementation options for next-phase delivery.",
 		"Grant or partner-ready technical summaries and work-package input.",
-	]}/>
+	]}
+>
+	{
+		relatedProjects.length > 0 && (
+			<section slot="related-work" class="border-neutral-800 border-b">
+				<div class="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-24">
+					<div class="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+						<div>
+							<p class="eyebrow text-brand-accent">Related work</p>
+							<h2 class="mt-4 max-w-3xl text-balance font-semibold text-3xl text-white sm:text-5xl">
+								Evidence from applied R&D.
+							</h2>
+						</div>
+						<a class="font-medium text-neutral-300 text-sm hover:text-brand-accent" href="/work">
+							View all work <span aria-hidden="true">→</span>
+						</a>
+					</div>
+					<div class="mt-10 grid border-neutral-800 border-t lg:grid-cols-3">
+						{relatedProjects.map((project) => (
+							<a
+								class="border-neutral-800 border-b p-6 hover:bg-neutral-900/50 lg:border-r"
+								href={`/work/${project.data.slug}`}
+							>
+								<p class="font-mono text-neutral-500 text-xs">
+									{getProjectProvenanceLabel(project.data)}
+									{project.data.year && <span class="ml-3 tabular-nums">{project.data.year}</span>}
+								</p>
+								<h3 class="mt-4 text-balance font-semibold text-white text-xl">{project.data.title}</h3>
+								<p class="mt-4 text-pretty text-neutral-400 text-sm leading-6">{project.data.summary}</p>
+							</a>
+						))}
+					</div>
+				</div>
+			</section>
+		)
+	}
+</ServicePage>

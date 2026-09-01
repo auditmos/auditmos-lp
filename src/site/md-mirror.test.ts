@@ -11,7 +11,12 @@
 
 import { auditReports } from "@/audits/reports";
 import { MARKDOWN_MEDIA_TYPE, MARKDOWN_TOKENS_HEADER } from "./markdown-negotiation";
-import { getMarkdownMirrorPages, markdownResponse, renderLlmsTxt } from "./md-mirror";
+import {
+	getMarkdownMirrorPages,
+	type MarkdownProjectEntry,
+	markdownResponse,
+	renderLlmsTxt,
+} from "./md-mirror";
 import { staticPages } from "./pages";
 
 const sampleProjects = [
@@ -21,13 +26,29 @@ const sampleProjects = [
 			title: "Auditmos Website Rebuild",
 			slug: "auditmos-website-rebuild",
 			summary: "A static-first rebuild for a trust-focused company website.",
+			provenance: "client-work",
+			capabilities: ["software"],
 			client: { name: "Auditmos OÜ" },
 			stack: [],
 			featured: true,
 			links: [],
 		},
 	},
-] as const;
+] as const satisfies readonly MarkdownProjectEntry[];
+
+const internalProject = {
+	body: "The system worked; the market did not respond.",
+	data: {
+		title: "Measured Product Experiment",
+		slug: "measured-product-experiment",
+		summary: "An internal experiment with a measured outcome.",
+		provenance: "internal-r-and-d",
+		capabilities: ["software", "applied-r-and-d"],
+		stack: [],
+		featured: false,
+		links: [],
+	},
+} as const satisfies MarkdownProjectEntry;
 
 describe("getMarkdownMirrorPages", () => {
 	it("enumerates markdown URLs for every static page and project page", () => {
@@ -55,8 +76,28 @@ describe("getMarkdownMirrorPages", () => {
 			"## What the contact form collects",
 		);
 		expect(pages.find((page) => page.path === "/work/auditmos-website-rebuild")?.markdown).toBe(
-			"# Auditmos Website Rebuild\n\nAuditmos needed a concise public surface.\n",
+			"# Auditmos Website Rebuild\n\nProvenance: Client work\nClient: Auditmos OÜ\nCapabilities: Software\n\nAuditmos needed a concise public surface.\n",
 		);
+	});
+
+	it("renders internal provenance, capabilities and author in project markdown", () => {
+		const page = getMarkdownMirrorPages([...sampleProjects, internalProject]).find(
+			(candidate) => candidate.path === "/work/measured-product-experiment",
+		);
+
+		expect(page?.markdown).toContain("Origin: Internal R&D");
+		expect(page?.markdown).toContain("Capabilities: Software, Applied R&D");
+		expect(page?.markdown).toContain("Author: Tomasz Kowalczyk");
+	});
+
+	it("adds capability-matched related work to the R&D markdown twin", () => {
+		const page = getMarkdownMirrorPages([...sampleProjects, internalProject]).find(
+			(candidate) => candidate.path === "/r-and-d",
+		);
+
+		expect(page?.markdown).toContain("## Related work");
+		expect(page?.markdown).toContain("https://auditmos.com/work/measured-product-experiment");
+		expect(page?.markdown).not.toContain("https://auditmos.com/work/auditmos-website-rebuild");
 	});
 });
 

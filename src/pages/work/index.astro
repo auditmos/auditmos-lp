@@ -1,12 +1,21 @@
 ---
 import { getCollection } from "astro:content";
 import Layout from "@/layouts/Layout.astro";
-import { getClientDisplay, sortProjects } from "@/projects";
+import {
+	getClientDisplay,
+	getProjectProvenanceLabel,
+	PROJECT_CAPABILITY_OPTIONS,
+	sortProjects,
+} from "@/projects";
 import { projectsIndexPage } from "@/site/pages";
 
 export const prerender = true;
 
 const projects = sortProjects(await getCollection("projects"));
+const capabilityFilters = [{ value: "all", label: "All" }, ...PROJECT_CAPABILITY_OPTIONS] as const;
+const capabilityLabels = new Map(
+	PROJECT_CAPABILITY_OPTIONS.map((capability) => [capability.value, capability.label]),
+);
 ---
 
 <Layout
@@ -24,39 +33,67 @@ const projects = sortProjects(await getCollection("projects"));
 					</h1>
 				</div>
 				<p class="max-w-xl text-pretty text-lg text-neutral-300 leading-8">
-					Named work appears where permission exists. Confidential engagements are described
-					by sector, problem, and outcome—without dressing up what cannot be disclosed.
+					Client engagements and internal R&D are labelled explicitly. Confidential work is
+					described by sector, problem, and outcome—without dressing up what cannot be disclosed.
 				</p>
 			</div>
 		</section>
 
-		<section>
+		<section data-work-library>
 			<div class="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-24">
+				<fieldset class="mb-10">
+					<legend class="eyebrow mb-4 text-neutral-500">Filter by capability</legend>
+					<div class="flex flex-wrap gap-2">
+						{
+							capabilityFilters.map((filter, index) => (
+								<label class="cursor-pointer">
+									<input
+										class="peer sr-only"
+										type="radio"
+										name="work-capability"
+										value={filter.value}
+										checked={index === 0}
+									/>
+									<span class="inline-flex min-h-11 items-center border border-neutral-700 px-4 py-2 font-mono text-neutral-300 text-sm peer-checked:border-brand-accent peer-checked:bg-brand-accent peer-checked:text-neutral-950 peer-focus-visible:ring-2 peer-focus-visible:ring-brand-accent peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-neutral-950">
+										{filter.label}
+									</span>
+								</label>
+							))
+						}
+					</div>
+				</fieldset>
 				<div class="border-neutral-800 border-t">
 					{
 						projects.map((project, index) => (
-							<a
-								class="group grid gap-5 border-neutral-800 border-b py-8 hover:bg-neutral-900/50 sm:px-5 lg:grid-cols-[4rem_0.8fr_1.2fr_auto] lg:items-center"
-								href={`/work/${project.data.slug}`}
+							<article
+								class="border-neutral-800 border-b"
+								data-work-item
+								data-capabilities={project.data.capabilities.join(" ")}
 							>
-								<span class="font-mono text-neutral-600 text-xs tabular-nums">{String(index + 1).padStart(2, "0")}</span>
-								<div>
-									<p class="font-mono text-neutral-500 text-xs">
-										{getClientDisplay(project.data)}
-										{project.data.year && <span class="ml-3 tabular-nums">{project.data.year}</span>}
-									</p>
-									<h2 class="mt-3 text-balance font-semibold text-2xl text-white">{project.data.title}</h2>
-								</div>
-								<div>
-									<p class="max-w-xl text-pretty text-neutral-400 leading-7">{project.data.summary}</p>
-									{project.data.stack.length > 0 && (
+								<a
+									class="group grid gap-5 py-8 hover:bg-neutral-900/50 sm:px-5 lg:grid-cols-[4rem_0.8fr_1.2fr_auto] lg:items-center"
+									href={`/work/${project.data.slug}`}
+								>
+									<span class="font-mono text-neutral-600 text-xs tabular-nums">{String(index + 1).padStart(2, "0")}</span>
+									<div>
+										<div class="flex flex-wrap items-center gap-2 font-mono text-xs">
+											<span class="border border-neutral-700 px-2 py-1 text-neutral-300">{getProjectProvenanceLabel(project.data)}</span>
+											{project.data.year && <span class="text-neutral-500 tabular-nums">{project.data.year}</span>}
+										</div>
+										<p class="mt-3 font-mono text-neutral-500 text-xs">
+											{project.data.provenance === "internal-r-and-d" ? project.data.industry : getClientDisplay(project.data)}
+										</p>
+										<h2 class="mt-3 text-balance font-semibold text-2xl text-white">{project.data.title}</h2>
+									</div>
+									<div>
+										<p class="max-w-xl text-pretty text-neutral-400 leading-7">{project.data.summary}</p>
 										<ul class="mt-4 flex flex-wrap gap-x-4 gap-y-2 font-mono text-neutral-500 text-xs">
-											{project.data.stack.map((item) => <li>{item}</li>)}
+											{project.data.capabilities.map((capability) => <li>{capabilityLabels.get(capability)}</li>)}
 										</ul>
-									)}
-								</div>
-								<span class="text-brand-accent text-xl transition-transform duration-150 group-hover:translate-x-1" aria-hidden="true">→</span>
-							</a>
+									</div>
+									<span class="text-brand-accent text-xl transition-transform duration-150 group-hover:translate-x-1" aria-hidden="true">→</span>
+								</a>
+							</article>
 						))
 					}
 				</div>
@@ -64,3 +101,14 @@ const projects = sortProjects(await getCollection("projects"));
 		</section>
 	</main>
 </Layout>
+
+<style>
+	[data-work-library]:has(input[value="software"]:checked)
+		[data-work-item]:not([data-capabilities~="software"]),
+	[data-work-library]:has(input[value="security"]:checked)
+		[data-work-item]:not([data-capabilities~="security"]),
+	[data-work-library]:has(input[value="applied-r-and-d"]:checked)
+		[data-work-item]:not([data-capabilities~="applied-r-and-d"]) {
+		display: none;
+	}
+</style>

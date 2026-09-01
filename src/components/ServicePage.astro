@@ -108,6 +108,8 @@ const { page, headline, intro, bestFor, sections, deliverables } = Astro.props;
 			</div>
 		</section>
 
+		<slot name="related-work" />
+
 		<section>
 			<div class="mx-auto flex max-w-7xl flex-col gap-7 px-5 py-16 sm:px-8 sm:py-20 lg:flex-row lg:items-center lg:justify-between">
 				<h2 class="max-w-3xl text-balance font-semibold text-3xl text-white sm:text-5xl">Have a real problem in this territory?</h2>

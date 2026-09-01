@@ -1,15 +1,28 @@
-import { getClientDisplay, getFeaturedProjects, sortProjects } from ".";
+import {
+	getClientDisplay,
+	getFeaturedProjects,
+	getProjectContext,
+	getProjectProvenanceLabel,
+	getProjectsByCapability,
+	sortProjects,
+} from ".";
 import type { ProjectData } from "./schema";
 
 function project(overrides: Partial<ProjectData> = {}): { data: ProjectData } {
 	const slug = overrides.slug ?? "project";
+	const client =
+		overrides.provenance === "internal-r-and-d"
+			? overrides.client
+			: (overrides.client ?? { sector: "R&D" });
 
 	return {
 		data: {
 			title: overrides.title ?? "Project",
 			slug,
 			summary: overrides.summary ?? "Project summary.",
-			client: overrides.client ?? { sector: "R&D" },
+			provenance: overrides.provenance ?? "client-work",
+			capabilities: overrides.capabilities ?? ["software"],
+			client,
 			year: overrides.year,
 			stack: overrides.stack ?? [],
 			links: overrides.links ?? [],
@@ -25,6 +38,8 @@ describe("getClientDisplay", () => {
 			title: "R&D Prototype",
 			slug: "rd-prototype",
 			summary: "A prototype for validating a technical bet.",
+			provenance: "client-work",
+			capabilities: ["software", "applied-r-and-d"],
 			client: { name: "Example Labs" },
 			stack: [],
 			links: [],
@@ -36,6 +51,27 @@ describe("getClientDisplay", () => {
 
 	it("uses a sector descriptor for anonymised projects", () => {
 		expect(getClientDisplay(project({ client: { sector: "Banking" } }).data)).toBe("Banking");
+	});
+});
+
+describe("getProjectContext", () => {
+	it("describes internal R&D as its origin instead of a client", () => {
+		const context = getProjectContext(
+			project({ provenance: "internal-r-and-d", client: undefined }).data,
+		);
+
+		expect(context).toEqual({ label: "Origin", value: "Internal R&D" });
+	});
+});
+
+describe("getProjectProvenanceLabel", () => {
+	it("labels client and internal work explicitly", () => {
+		expect(getProjectProvenanceLabel(project().data)).toBe("Client work");
+		expect(
+			getProjectProvenanceLabel(
+				project({ provenance: "internal-r-and-d", client: undefined }).data,
+			),
+		).toBe("Internal R&D");
 	});
 });
 
@@ -74,5 +110,25 @@ describe("getFeaturedProjects", () => {
 		]);
 
 		expect(featured.map((entry) => entry.data.slug)).toEqual(["featured-first", "featured-second"]);
+	});
+});
+
+describe("getProjectsByCapability", () => {
+	it("returns an ordered, bounded related-work selection", () => {
+		const related = getProjectsByCapability(
+			[
+				project({ slug: "software-only", capabilities: ["software"], order: 1 }),
+				project({
+					slug: "r-and-d-second",
+					capabilities: ["software", "applied-r-and-d"],
+					order: 3,
+				}),
+				project({ slug: "r-and-d-first", capabilities: ["applied-r-and-d"], order: 2 }),
+			],
+			"applied-r-and-d",
+			1,
+		);
+
+		expect(related.map((entry) => entry.data.slug)).toEqual(["r-and-d-first"]);
 	});
 });

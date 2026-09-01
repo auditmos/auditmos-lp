@@ -4,7 +4,7 @@ import { renderWebMcpScript } from "@/agents/web-mcp";
 import { auditReports } from "@/audits/reports";
 import { site } from "@/brand/site";
 import { ossProjects } from "@/oss/projects";
-import { getClientDisplay, getFeaturedProjects } from "@/projects";
+import { getClientDisplay, getFeaturedProjects, getProjectProvenanceLabel } from "@/projects";
 import { homePage, servicePages } from "@/site/pages";
 import { getCollection } from "astro:content";
 
@@ -261,7 +261,10 @@ const testimonials: readonly Testimonial[] = [];
 								href={`/work/${project.data.slug}`}
 							>
 								<div class="flex items-center justify-between gap-4 font-mono text-neutral-500 text-xs">
-									<span>{getClientDisplay(project.data)}</span>
+									<div class="flex flex-wrap items-center gap-2">
+										<span class="border border-neutral-700 px-2 py-1 text-neutral-300">{getProjectProvenanceLabel(project.data)}</span>
+										<span>{project.data.provenance === "internal-r-and-d" ? project.data.industry : getClientDisplay(project.data)}</span>
+									</div>
 									{project.data.year && <span class="tabular-nums">{project.data.year}</span>}
 								</div>
 								<div class="mt-16">

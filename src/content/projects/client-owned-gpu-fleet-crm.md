@@ -4,6 +4,8 @@ slug: "client-owned-gpu-fleet-crm"
 summary: "A company manages GPU compute servers on behalf of more than 120 owners, each of whom owns at least six of them."
 client:
   sector: "Distributed GPU compute"
+capabilities:
+  - "software"
 industry: "Renewable energy"
 year: 2025
 stack:

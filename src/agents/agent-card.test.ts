@@ -21,6 +21,8 @@ const projects = [
 			title: "Auditmos Website Rebuild",
 			slug: "auditmos-website-rebuild",
 			summary: "A static-first rebuild for a trust-focused company website.",
+			provenance: "client-work",
+			capabilities: ["software"],
 			client: { name: "Auditmos OÜ" },
 			stack: [],
 			featured: true,

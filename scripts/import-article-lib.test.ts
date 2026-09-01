@@ -1,7 +1,8 @@
 /**
  * Assumptions for the article importer:
  * - The article is the source of truth for title, slug, summary and tags; the
- *   prompts only supply year, client and industry.
+ *   prompts only supply publication metadata such as year, provenance,
+ *   capabilities, client and industry.
  * - The emitted frontmatter must satisfy the real `projects` Zod schema,
  *   including its exactly-one-client-variant rule.
  * - The body loses its frontmatter and its H1, because the project page renders
@@ -18,6 +19,8 @@ import {
 	buildProjectMarkdown,
 	nextProjectOrder,
 	parseArticle,
+	parseProjectCapabilities,
+	parseProjectProvenance,
 	projectFilePath,
 	projectOrder,
 	resolveArticlePath,
@@ -111,6 +114,19 @@ describe("articleDefaults", () => {
 
 		expect(defaults.summary).toBe(
 			"A company manages GPU servers for more than 120 owners. The servers are not in a data centre.",
+		);
+	});
+
+	it("keeps a dotted domain at the start of a derived summary", () => {
+		const defaults = articleDefaults(
+			parseArticle(
+				'---\ntitle: "Experiment"\n---\n\n## TLDR\n\nwizytowka.link found local businesses without websites. The experiment ran for six months.\n',
+			),
+			2026,
+		);
+
+		expect(defaults.summary).toBe(
+			"wizytowka.link found local businesses without websites. The experiment ran for six months.",
 		);
 	});
 
@@ -216,12 +232,37 @@ describe("projectFilePath", () => {
 	});
 });
 
+describe("parseProjectCapabilities", () => {
+	it("accepts declared capabilities and removes duplicates", () => {
+		expect(parseProjectCapabilities("software, applied-r-and-d, software")).toEqual([
+			"software",
+			"applied-r-and-d",
+		]);
+	});
+
+	it.each(["", "software,marketing"])("rejects invalid capability input %j", (input) => {
+		expect(() => parseProjectCapabilities(input)).toThrow(ArticleImportError);
+	});
+});
+
+describe("parseProjectProvenance", () => {
+	it("defaults omitted provenance to client work", () => {
+		expect(parseProjectProvenance(undefined)).toBe("client-work");
+	});
+
+	it("accepts internal R&D and rejects unknown values", () => {
+		expect(parseProjectProvenance("internal-r-and-d")).toBe("internal-r-and-d");
+		expect(() => parseProjectProvenance("owned-product")).toThrow(ArticleImportError);
+	});
+});
+
 describe("buildProjectMarkdown", () => {
 	const source = parseArticle(ARTICLE);
 	const base = {
 		title: "Managing 720+ GPU servers",
 		slug: "client-owned-gpu-fleet-crm",
 		summary: "A company manages GPU servers for more than 120 owners.",
+		capabilities: ["software"] as const,
 		industry: "Distributed GPU compute",
 		year: 2026,
 		tags: ["TanStack Start", "Hono"],
@@ -246,6 +287,23 @@ describe("buildProjectMarkdown", () => {
 			order: 7,
 			links: [],
 		});
+	});
+
+	it("emits schema-valid internal R&D without a client", () => {
+		const markdown = buildProjectMarkdown(source, {
+			...base,
+			provenance: "internal-r-and-d",
+			capabilities: ["software", "applied-r-and-d"],
+		});
+		const frontmatter = frontmatterOf(markdown);
+		const parsed = projectDataSchema.safeParse(frontmatter);
+
+		expect(parsed.success).toBe(true);
+		expect(parsed.data).toMatchObject({
+			provenance: "internal-r-and-d",
+			capabilities: ["software", "applied-r-and-d"],
+		});
+		expect(frontmatter).not.toHaveProperty("client");
 	});
 
 	it("emits frontmatter the projects schema accepts for a named client with links", () => {
@@ -278,6 +336,7 @@ describe("buildProjectMarkdown", () => {
 			slug: "t",
 			summary: "S.",
 			client: { sector: "Sector" },
+			capabilities: ["software"],
 			year: 2026,
 			tags: [],
 		});
