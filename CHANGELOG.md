@@ -1,3 +1,10 @@
+# [1.35.0](https://github.com/auditmos/auditmos-lp/compare/v1.34.0...v1.35.0) (2026-09-01)
+
+
+### Features
+
+* **content:** publish internal R&D work ([0040b16](https://github.com/auditmos/auditmos-lp/commit/0040b165e08b873ca82cae62110d262e6ae649ac))
+
 # [1.34.0](https://github.com/auditmos/auditmos-lp/compare/v1.33.0...v1.34.0) (2026-09-01)
 
 
