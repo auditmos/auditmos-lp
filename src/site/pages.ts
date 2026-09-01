@@ -212,6 +212,7 @@ export const navigationItems = [
 	{ label: "Security", href: "/security-audits" },
 	{ label: "R&D", href: "/r-and-d" },
 	{ label: "Work", href: "/work" },
+	{ label: "Open source", href: "/open-source" },
 	{ label: "Partners", href: "/partners" },
 	{ label: "About", href: "/about" },
 ] as const;

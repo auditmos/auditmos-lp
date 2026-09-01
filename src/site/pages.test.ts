@@ -29,6 +29,10 @@ describe("phaseTwoPages", () => {
 		expect(navigationItems.length).toBeGreaterThan(0);
 		expect(navigationItems.every((item) => declaredRoutes.has(item.href))).toBe(true);
 	});
+
+	it("links to the open-source page from primary navigation", () => {
+		expect(navigationItems).toContainEqual({ label: "Open source", href: "/open-source" });
+	});
 });
 
 describe("servicePages", () => {
