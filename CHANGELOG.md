@@ -1,3 +1,10 @@
+# [1.33.0](https://github.com/auditmos/auditmos-lp/compare/v1.32.0...v1.33.0) (2026-09-01)
+
+
+### Features
+
+* **content:** curate open-source project list ([bf6fcc9](https://github.com/auditmos/auditmos-lp/commit/bf6fcc95e46418826045b93021503340f2f40c6e))
+
 # [1.32.0](https://github.com/auditmos/auditmos-lp/compare/v1.31.0...v1.32.0) (2026-08-25)
 
 
