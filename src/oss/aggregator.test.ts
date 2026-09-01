@@ -372,6 +372,16 @@ describe("fetchOssProjects", () => {
 });
 
 describe("OSS_REPOSITORIES", () => {
+	it("contains only the repositories shown in the open-source section", () => {
+		expect(OSS_REPOSITORIES).toEqual([
+			"auditmos/astro-on-cf",
+			"auditmos/saas-on-cf",
+			"auditmos/hono-on-cf",
+			"auditmos/tstack-on-cf",
+			"auditmos/tstack-on-cf-onchain",
+		]);
+	});
+
 	it("lists every repository as a distinct owner/repo path", () => {
 		for (const repository of OSS_REPOSITORIES) {
 			expect(repository).toMatch(/^[\w.-]+\/[\w.-]+$/);

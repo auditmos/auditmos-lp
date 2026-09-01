@@ -15,11 +15,9 @@
 export type RepositoryPath = `${string}/${string}`;
 
 export const OSS_REPOSITORIES = [
-	"auditmos/signmos",
-	"tkowalczyk/wizytowka-link",
-	"auditmos/saas-on-cf",
 	"auditmos/astro-on-cf",
+	"auditmos/saas-on-cf",
 	"auditmos/hono-on-cf",
+	"auditmos/tstack-on-cf",
 	"auditmos/tstack-on-cf-onchain",
-	"auditmos/landingos",
 ] as const satisfies readonly RepositoryPath[];

@@ -1,19 +1,11 @@
 [
   {
-    "fullName": "auditmos/signmos",
-    "description": "No-account e-signature pilot for PDF upload, signature/date fields, magic-link signing, change requests, final PDFs, and agent-ready lifecycle APIs.",
-    "url": "https://github.com/auditmos/signmos",
+    "fullName": "auditmos/tstack-on-cf",
+    "description": "Full-stack web app template — TanStack Start + Hono on Cloudflare Workers, Neon Postgres + Drizzle, shadcn/ui.",
+    "url": "https://github.com/auditmos/tstack-on-cf",
     "stars": 0,
     "language": "TypeScript",
-    "updatedAt": "2026-08-10T13:44:57Z"
-  },
-  {
-    "fullName": "auditmos/landingos",
-    "description": "Mobile PWA helping budget travelers on Poland → Milan-Bergamo (BGY) flights plan airport-to-Milan transit and coordinate via one temporary per-flight chat room. TanStack Start + Hono on Cloudflare Workers.",
-    "url": "https://github.com/auditmos/landingos",
-    "stars": 0,
-    "language": "TypeScript",
-    "updatedAt": "2026-08-10T08:47:39Z"
+    "updatedAt": "2026-08-28T14:43:04Z"
   },
   {
     "fullName": "auditmos/saas-on-cf",
@@ -21,7 +13,7 @@
     "url": "https://github.com/auditmos/saas-on-cf",
     "stars": 14,
     "language": "TypeScript",
-    "updatedAt": "2026-08-08T07:45:26Z"
+    "updatedAt": "2026-08-24T08:13:14Z"
   },
   {
     "fullName": "auditmos/hono-on-cf",
@@ -46,13 +38,5 @@
     "stars": 0,
     "language": "TypeScript",
     "updatedAt": "2026-08-08T05:24:27Z"
-  },
-  {
-    "fullName": "tkowalczyk/wizytowka-link",
-    "description": "Automatycznie tworzymy profesjonalną stronę dla Twojej firmy — z mapą, danymi kontaktowymi i optymalizacją pod wyszukiwarki.",
-    "url": "https://github.com/tkowalczyk/wizytowka-link",
-    "stars": 2,
-    "language": "TypeScript",
-    "updatedAt": "2026-07-20T09:15:32Z"
   }
 ]
