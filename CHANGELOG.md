@@ -1,3 +1,10 @@
+# [1.36.0](https://github.com/auditmos/auditmos-lp/compare/v1.35.0...v1.36.0) (2026-09-02)
+
+
+### Features
+
+* **theme:** add site-wide theme selector ([62cee8c](https://github.com/auditmos/auditmos-lp/commit/62cee8c9d7e26cd3fce77f9f46fe792d893a73f1))
+
 # [1.35.0](https://github.com/auditmos/auditmos-lp/compare/v1.34.0...v1.35.0) (2026-09-01)
 
 
