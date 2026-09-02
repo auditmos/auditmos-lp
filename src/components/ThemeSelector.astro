@@ -1,10 +1,20 @@
-<label class="sr-only" for="theme-select">Theme</label>
-<select
-	id="theme-select"
-	class="min-h-11 w-20 cursor-pointer border border-neutral-700 bg-neutral-950 px-2 font-mono text-neutral-300 text-xs sm:w-24 sm:px-3"
-	data-theme-select
->
-	<option value="system" selected>System</option>
-	<option value="light">Light</option>
-	<option value="dark">Dark</option>
-</select>
+<div class="relative inline-flex items-center">
+	<label class="sr-only" for="theme-select">Theme</label>
+	<select
+		id="theme-select"
+		class="min-h-11 cursor-pointer appearance-none border-0 bg-transparent py-2 pr-5 pl-1 font-mono text-neutral-400 text-xs hover:text-neutral-200 focus-visible:text-neutral-200"
+		data-theme-select
+	>
+		<option value="system" selected>◐ System</option>
+		<option value="light">☀ Light</option>
+		<option value="dark">☾ Dark</option>
+	</select>
+	<svg
+		class="pointer-events-none absolute right-0 size-3 text-neutral-500"
+		aria-hidden="true"
+		viewBox="0 0 12 12"
+		fill="none"
+	>
+		<path d="m2.5 4.5 3.5 3 3.5-3" stroke="currentColor" stroke-width="1.25"></path>
+	</svg>
+</div>

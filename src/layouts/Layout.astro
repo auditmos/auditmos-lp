@@ -76,26 +76,25 @@ const themeScript = renderThemeScript();
 				</a>
 
 				<div class="flex items-center gap-2 lg:gap-7">
-					<ThemeSelector />
 					<div class="hidden items-center gap-7 lg:flex">
 						<nav aria-label="Primary navigation">
-						<ul class="flex items-center gap-6 text-neutral-300 text-sm">
-							{
-								navigationItems.map((item) => (
-									<li>
-										<a
-											class:list={[
-												"py-2 hover:text-neutral-50",
-												path === item.href && "text-brand-ink",
-											]}
-											href={item.href}
-										>
-											{item.label}
-										</a>
-									</li>
-								))
-							}
-						</ul>
+							<ul class="flex items-center gap-6 text-neutral-300 text-sm">
+								{
+									navigationItems.map((item) => (
+										<li>
+											<a
+												class:list={[
+													"py-2 hover:text-neutral-50",
+													path === item.href && "text-brand-ink",
+												]}
+												href={item.href}
+											>
+												{item.label}
+											</a>
+										</li>
+									))
+								}
+							</ul>
 						</nav>
 						<a
 							class="corner-cut inline-flex items-center gap-2 bg-brand-accent px-4 py-2.5 font-semibold text-accent-contrast text-sm hover:bg-white"
@@ -106,40 +105,41 @@ const themeScript = renderThemeScript();
 					</div>
 
 					<details class="group relative lg:hidden">
-					<summary class="flex cursor-pointer list-none items-center gap-2 border border-neutral-700 px-3 py-2 text-sm text-neutral-50 marker:content-none">
-						Menu
-						<svg class="size-4" aria-hidden="true" viewBox="0 0 16 16" fill="none">
-							<path d="M2 5h12M2 11h12" stroke="currentColor" stroke-width="1.5" />
-						</svg>
-					</summary>
-					<nav
-						class="absolute top-12 right-0 w-64 border border-neutral-700 bg-neutral-950 p-2 shadow-xl"
-						aria-label="Mobile navigation"
-					>
-						<ul class="grid text-sm">
-						{
-							navigationItems.map((item) => (
-								<li>
-									<a
-										class:list={[
-											"block px-3 py-3 text-neutral-200 hover:bg-neutral-900 hover:text-neutral-50",
-											path === item.href && "text-brand-ink",
-										]}
-										href={item.href}
-									>
-										{item.label}
+						<summary class="flex cursor-pointer list-none items-center gap-2 border border-neutral-700 px-3 py-2 text-sm text-neutral-50 marker:content-none">
+							Menu
+							<svg class="size-4" aria-hidden="true" viewBox="0 0 16 16" fill="none">
+								<path d="M2 5h12M2 11h12" stroke="currentColor" stroke-width="1.5" />
+							</svg>
+						</summary>
+						<nav
+							class="absolute top-12 right-0 w-64 border border-neutral-700 bg-neutral-950 p-2 shadow-xl"
+							aria-label="Mobile navigation"
+						>
+							<ul class="grid text-sm">
+								{
+									navigationItems.map((item) => (
+										<li>
+											<a
+												class:list={[
+													"block px-3 py-3 text-neutral-200 hover:bg-neutral-900 hover:text-neutral-50",
+													path === item.href && "text-brand-ink",
+												]}
+												href={item.href}
+											>
+												{item.label}
+											</a>
+										</li>
+									))
+								}
+								<li class="mt-2 border-neutral-800 border-t pt-2">
+									<a class="corner-cut block bg-brand-accent px-3 py-3 font-semibold text-accent-contrast" href="/contact">
+										Start a conversation
 									</a>
 								</li>
-							))
-						}
-							<li class="mt-2 border-neutral-800 border-t pt-2">
-								<a class="corner-cut block bg-brand-accent px-3 py-3 font-semibold text-accent-contrast" href="/contact">
-									Start a conversation
-								</a>
-							</li>
-						</ul>
-					</nav>
+							</ul>
+						</nav>
 					</details>
+					<ThemeSelector />
 				</div>
 			</div>
 		</header>

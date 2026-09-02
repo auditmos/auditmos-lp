@@ -38,6 +38,7 @@ describe("static build browser scripts", () => {
 			const html = htmlFor(route);
 			const headEnd = html.indexOf("</head>");
 			const scriptStart = html.indexOf(themeScript);
+			const themeControl = html.indexOf('id="theme-select"');
 
 			expect({ route, theme: html.match(/<html[^>]+data-theme="([^"]+)"/)?.[1] }).toEqual({
 				route,
@@ -45,9 +46,15 @@ describe("static build browser scripts", () => {
 			});
 			expect(html).toMatch(/<label\b[^>]*\bfor="theme-select"/);
 			expect(html).toMatch(/<select\b[^>]*\bid="theme-select"/);
-			expect(html).toContain('<option value="system" selected>System</option>');
-			expect(html).toContain('<option value="light">Light</option>');
-			expect(html).toContain('<option value="dark">Dark</option>');
+			expect(html).toContain('<option value="system" selected>◐ System</option>');
+			expect(html).toContain('<option value="light">☀ Light</option>');
+			expect(html).toContain('<option value="dark">☾ Dark</option>');
+			expect({
+				route,
+				themeIsFinalHeaderUtility:
+					themeControl > html.indexOf('aria-label="Primary navigation"') &&
+					themeControl > html.indexOf('aria-label="Mobile navigation"'),
+			}).toEqual({ route, themeIsFinalHeaderUtility: true });
 			expect({ route, scriptRunsInHead: scriptStart >= 0 && scriptStart < headEnd }).toEqual({
 				route,
 				scriptRunsInHead: true,
