@@ -10,8 +10,8 @@ export const prerender = true;
 	<main>
 		<section class="border-neutral-800 border-b">
 			<div class="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-24 lg:py-28">
-				<p class="eyebrow text-brand-accent">Privacy</p>
-				<h1 class="mt-7 max-w-5xl text-balance font-semibold text-5xl text-white leading-[1.03] sm:text-7xl">
+				<p class="eyebrow text-brand-ink">Privacy</p>
+				<h1 class="mt-7 max-w-5xl text-balance font-semibold text-5xl text-neutral-50 leading-[1.03] sm:text-7xl">
 					How Auditmos handles site and contact form data.
 				</h1>
 				<p class="mt-8 max-w-3xl text-pretty text-lg text-neutral-300 leading-8">
@@ -32,8 +32,8 @@ export const prerender = true;
 				{
 					privacyPage.sections.map((section, index) => (
 						<article class="grid gap-5 border-neutral-800 border-b py-7 sm:grid-cols-[3rem_0.7fr_1.3fr]">
-							<span class="font-mono text-brand-accent text-xs tabular-nums">0{index + 1}</span>
-							<h2 class="text-balance font-semibold text-white text-xl">{section.heading}</h2>
+							<span class="font-mono text-brand-ink text-xs tabular-nums">0{index + 1}</span>
+							<h2 class="text-balance font-semibold text-neutral-50 text-xl">{section.heading}</h2>
 							<div class="grid gap-3 text-pretty text-neutral-400 leading-7">
 								{section.body.map((paragraph) => <p>{paragraph}</p>)}
 							</div>

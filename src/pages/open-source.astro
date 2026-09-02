@@ -20,8 +20,8 @@ const formatUpdated = (iso: string): string => updatedFormatter.format(new Date(
 		<section class="border-neutral-800 border-b">
 			<div class="mx-auto grid max-w-7xl gap-10 px-5 py-16 sm:px-8 sm:py-24 lg:grid-cols-[1.2fr_0.8fr] lg:items-end lg:py-28">
 				<div>
-					<p class="eyebrow text-brand-accent">Open source</p>
-					<h1 class="mt-7 max-w-5xl text-balance font-semibold text-5xl text-white leading-[1.03] sm:text-7xl">
+					<p class="eyebrow text-brand-ink">Open source</p>
+					<h1 class="mt-7 max-w-5xl text-balance font-semibold text-5xl text-neutral-50 leading-[1.03] sm:text-7xl">
 						Work you can inspect, use, and challenge.
 					</h1>
 				</div>
@@ -40,7 +40,7 @@ const formatUpdated = (iso: string): string => updatedFormatter.format(new Date(
 						<div class="border border-neutral-800 bg-neutral-900/40 p-8 text-center">
 							<p class="text-lg text-neutral-300 leading-8">
 								Watch our work on{" "}
-								<a class="text-brand-accent hover:text-white" href="https://github.com/auditmos">
+								<a class="text-brand-ink hover:text-neutral-50" href="https://github.com/auditmos">
 									github.com/auditmos
 								</a>
 								.
@@ -55,7 +55,7 @@ const formatUpdated = (iso: string): string => updatedFormatter.format(new Date(
 										href={project.url}
 										rel="noopener"
 									>
-										<div><h2 class="text-balance font-semibold text-white text-xl">{project.fullName}</h2>
+										<div><h2 class="text-balance font-semibold text-neutral-50 text-xl">{project.fullName}</h2>
 										{project.description && (
 											<p class="mt-3 text-pretty text-neutral-400 leading-7">{project.description}</p>
 										)}
@@ -80,7 +80,7 @@ const formatUpdated = (iso: string): string => updatedFormatter.format(new Date(
 						<p class="text-pretty text-neutral-400 text-sm">
 							{projects.length} public repositories, every one of them listed above.
 						</p>
-						<a class="font-semibold text-brand-accent hover:text-white" href="https://github.com/auditmos">
+						<a class="font-semibold text-brand-ink hover:text-neutral-50" href="https://github.com/auditmos">
 							Browse github.com/auditmos <span aria-hidden="true">↗</span>
 						</a>
 					</div>

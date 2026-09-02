@@ -54,12 +54,12 @@ const relatedProjects = getProjectsByCapability(
 				<div class="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-24">
 					<div class="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
 						<div>
-							<p class="eyebrow text-brand-accent">Related work</p>
-							<h2 class="mt-4 max-w-3xl text-balance font-semibold text-3xl text-white sm:text-5xl">
+							<p class="eyebrow text-brand-ink">Related work</p>
+							<h2 class="mt-4 max-w-3xl text-balance font-semibold text-3xl text-neutral-50 sm:text-5xl">
 								Evidence from applied R&D.
 							</h2>
 						</div>
-						<a class="font-medium text-neutral-300 text-sm hover:text-brand-accent" href="/work">
+						<a class="font-medium text-neutral-300 text-sm hover:text-brand-ink" href="/work">
 							View all work <span aria-hidden="true">→</span>
 						</a>
 					</div>
@@ -73,7 +73,7 @@ const relatedProjects = getProjectsByCapability(
 									{getProjectProvenanceLabel(project.data)}
 									{project.data.year && <span class="ml-3 tabular-nums">{project.data.year}</span>}
 								</p>
-								<h3 class="mt-4 text-balance font-semibold text-white text-xl">{project.data.title}</h3>
+								<h3 class="mt-4 text-balance font-semibold text-neutral-50 text-xl">{project.data.title}</h3>
 								<p class="mt-4 text-pretty text-neutral-400 text-sm leading-6">{project.data.summary}</p>
 							</a>
 						))}

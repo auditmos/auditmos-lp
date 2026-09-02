@@ -35,20 +35,20 @@ const capabilityLabels = new Map(
 		<section class="border-neutral-800 border-b">
 			<div class="mx-auto grid max-w-7xl lg:grid-cols-[1.35fr_0.65fr]">
 				<div class="px-5 py-16 sm:px-8 sm:py-24 lg:border-neutral-800 lg:border-r lg:py-28">
-					<a class="font-mono text-neutral-500 text-xs hover:text-brand-accent" href="/work">← Selected work</a>
-					<h1 class="mt-8 max-w-5xl text-balance font-semibold text-5xl text-white leading-[1.03] sm:text-7xl">
+					<a class="font-mono text-neutral-500 text-xs hover:text-brand-ink" href="/work">← Selected work</a>
+					<h1 class="mt-8 max-w-5xl text-balance font-semibold text-5xl text-neutral-50 leading-[1.03] sm:text-7xl">
 						{project.data.title}
 					</h1>
 					<p class="mt-8 max-w-3xl text-pretty text-lg text-neutral-300 leading-8 sm:text-xl">{project.data.summary}</p>
 				</div>
 
 				<aside class="bg-neutral-900/40 p-5 sm:p-8 lg:flex lg:flex-col lg:justify-end lg:py-12">
-					<p class="eyebrow text-brand-accent">Project context</p>
+					<p class="eyebrow text-brand-ink">Project context</p>
 					<dl class="mt-6 border-neutral-800 border-t text-sm">
 						<div class="grid grid-cols-[6rem_1fr] border-neutral-800 border-b py-4">
 							<dt class="text-neutral-500">{projectContext.label}</dt>
 							<dd class="text-neutral-200">
-								{projectContext.url ? <a class="hover:text-brand-accent" href={projectContext.url}>{projectContext.value}</a> : projectContext.value}
+								{projectContext.url ? <a class="hover:text-brand-ink" href={projectContext.url}>{projectContext.value}</a> : projectContext.value}
 							</dd>
 						</div>
 						{project.data.provenance === "internal-r-and-d" && (
@@ -72,7 +72,7 @@ const capabilityLabels = new Map(
 					</dl>
 					<ul class="mt-6 flex flex-wrap gap-2" aria-label="Capabilities">
 						{project.data.capabilities.map((capability) => (
-							<li class="border border-brand-accent px-2.5 py-1 font-mono text-brand-accent text-xs">
+							<li class="border border-brand-ink px-2.5 py-1 font-mono text-brand-ink text-xs">
 								{capabilityLabels.get(capability)}
 							</li>
 						))}
@@ -93,12 +93,12 @@ const capabilityLabels = new Map(
 				</article>
 				<aside class="lg:sticky lg:top-28 lg:self-start">
 					<p class="eyebrow text-neutral-500">Have a similar challenge?</p>
-					<a class="mt-4 inline-flex items-center gap-2 font-semibold text-brand-accent hover:text-white" href="/contact">
+					<a class="mt-4 inline-flex items-center gap-2 font-semibold text-brand-ink hover:text-neutral-50" href="/contact">
 						Discuss it with Auditmos <span aria-hidden="true">↗</span>
 					</a>
 					{project.data.links.length > 0 && (
 						<div class="mt-8 border-neutral-800 border-t pt-6">
-							{project.data.links.map((link) => <a class="block text-neutral-400 text-sm hover:text-brand-accent" href={link.url}>{link.label} ↗</a>)}
+							{project.data.links.map((link) => <a class="block text-neutral-400 text-sm hover:text-brand-ink" href={link.url}>{link.label} ↗</a>)}
 						</div>
 					)}
 				</aside>

@@ -99,10 +99,10 @@ const testimonials: readonly Testimonial[] = [];
 		<section class="relative overflow-hidden border-neutral-800 border-b">
 			<div class="mx-auto grid max-w-7xl lg:grid-cols-[1.5fr_0.5fr]">
 				<div class="px-5 py-16 sm:px-8 sm:py-24 lg:py-32">
-					<p class="eyebrow text-brand-accent">
+					<p class="eyebrow text-brand-ink">
 						Independent technical practice · Tallinn, EU
 					</p>
-					<h1 class="mt-7 max-w-5xl text-balance font-semibold text-5xl text-white leading-[1.02] sm:text-7xl lg:text-8xl">
+					<h1 class="mt-7 max-w-5xl text-balance font-semibold text-5xl text-neutral-50 leading-[1.02] sm:text-7xl lg:text-8xl">
 						Don’t take our word for it. Read the audits.
 					</h1>
 					<p class="mt-8 max-w-2xl text-pretty text-lg text-neutral-300 leading-8 sm:text-xl">
@@ -112,14 +112,14 @@ const testimonials: readonly Testimonial[] = [];
 					</p>
 					<div class="mt-10 flex flex-col gap-3 sm:flex-row">
 						<a
-							class="corner-cut inline-flex items-center justify-center gap-2 bg-brand-accent px-5 py-3.5 font-semibold text-neutral-950 hover:bg-white"
+							class="corner-cut inline-flex items-center justify-center gap-2 bg-brand-accent px-5 py-3.5 font-semibold text-accent-contrast hover:bg-white"
 							href={site.auditsRepoUrl}
 							rel="noopener"
 						>
 							Read the audits <span aria-hidden="true">↗</span>
 						</a>
 						<a
-							class="inline-flex items-center justify-center border border-neutral-700 px-5 py-3.5 font-semibold text-white hover:border-neutral-500 hover:bg-neutral-900"
+							class="inline-flex items-center justify-center border border-neutral-700 px-5 py-3.5 font-semibold text-neutral-50 hover:border-neutral-500 hover:bg-neutral-900"
 							href="/work"
 						>
 							See what we’ve shipped
@@ -137,8 +137,8 @@ const testimonials: readonly Testimonial[] = [];
 						</span>
 					</div>
 					<div class="py-10 lg:py-0">
-						<p class="font-mono text-brand-accent text-7xl leading-none sm:text-8xl">A/</p>
-						<p class="mt-6 max-w-xs text-balance font-medium text-2xl text-white leading-snug">
+						<p class="font-mono text-brand-ink text-7xl leading-none sm:text-8xl">A/</p>
+						<p class="mt-6 max-w-xs text-balance font-medium text-2xl text-neutral-50 leading-snug">
 							Built as if it will be audited.
 						</p>
 						<div class="bg-hatch mt-6 h-2 w-28" aria-hidden="true"></div>
@@ -165,7 +165,7 @@ const testimonials: readonly Testimonial[] = [];
 							href={item.href}
 							rel={item.external ? "noopener" : undefined}
 						>
-							<span class="font-mono text-4xl text-white tabular-nums sm:text-5xl">{item.value}</span>
+							<span class="font-mono text-4xl text-neutral-50 tabular-nums sm:text-5xl">{item.value}</span>
 							<span class="text-pretty text-neutral-400 text-sm leading-6 group-hover:text-neutral-300">
 								{item.label}
 								{item.external && <span aria-hidden="true"> ↗</span>}
@@ -180,8 +180,8 @@ const testimonials: readonly Testimonial[] = [];
 			<div class="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-24">
 				<div class="grid gap-8 lg:grid-cols-[0.55fr_1.45fr] lg:gap-16">
 					<div>
-						<p class="eyebrow text-brand-accent">How we work</p>
-						<h2 class="mt-4 max-w-sm text-balance font-semibold text-3xl text-white leading-tight sm:text-4xl">
+						<p class="eyebrow text-brand-ink">How we work</p>
+						<h2 class="mt-4 max-w-sm text-balance font-semibold text-3xl text-neutral-50 leading-tight sm:text-4xl">
 							Everything inspectable.
 						</h2>
 						<p class="mt-5 max-w-sm text-pretty text-neutral-400 leading-7">
@@ -193,8 +193,8 @@ const testimonials: readonly Testimonial[] = [];
 						{
 							workingPrinciples.map((principle) => (
 								<article class="grid gap-4 border-neutral-800 border-b py-7 sm:grid-cols-[3rem_0.75fr_1.25fr] sm:px-4">
-									<span class="font-mono text-brand-accent text-xs">{principle.number}</span>
-									<h3 class="text-balance font-semibold text-white text-xl">{principle.name}</h3>
+									<span class="font-mono text-brand-ink text-xs">{principle.number}</span>
+									<h3 class="text-balance font-semibold text-neutral-50 text-xl">{principle.name}</h3>
 									<p class="max-w-lg text-pretty text-neutral-400 leading-7">{principle.detail}</p>
 								</article>
 							))
@@ -208,8 +208,8 @@ const testimonials: readonly Testimonial[] = [];
 			<div class="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-24">
 				<div class="grid gap-8 lg:grid-cols-[0.55fr_1.45fr] lg:gap-16">
 					<div>
-						<p class="eyebrow text-brand-accent">What I take on</p>
-						<h2 class="mt-4 max-w-sm text-balance font-semibold text-3xl text-white leading-tight sm:text-4xl">
+						<p class="eyebrow text-brand-ink">What I take on</p>
+						<h2 class="mt-4 max-w-sm text-balance font-semibold text-3xl text-neutral-50 leading-tight sm:text-4xl">
 							Three ways in. One standard.
 						</h2>
 					</div>
@@ -225,10 +225,10 @@ const testimonials: readonly Testimonial[] = [];
 										class="group grid gap-4 border-neutral-800 border-b py-7 hover:bg-neutral-900/50 sm:grid-cols-[3rem_0.75fr_1.25fr_auto] sm:items-center sm:px-4"
 										href={service.path}
 									>
-										<span class="font-mono text-brand-accent text-xs">{detail.number}</span>
-										<h3 class="text-balance font-semibold text-white text-xl sm:text-2xl">{detail.name}</h3>
+										<span class="font-mono text-brand-ink text-xs">{detail.number}</span>
+										<h3 class="text-balance font-semibold text-neutral-50 text-xl sm:text-2xl">{detail.name}</h3>
 										<p class="max-w-lg text-pretty text-neutral-400 leading-7">{detail.promise}</p>
-										<span class="text-brand-accent text-xl transition-transform duration-150 group-hover:translate-x-1" aria-hidden="true">→</span>
+										<span class="text-brand-ink text-xl transition-transform duration-150 group-hover:translate-x-1" aria-hidden="true">→</span>
 									</a>
 								);
 							})
@@ -242,10 +242,10 @@ const testimonials: readonly Testimonial[] = [];
 			<div class="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-24">
 				<div class="flex flex-col gap-5 border-neutral-800 border-b pb-8 sm:flex-row sm:items-end sm:justify-between">
 					<div>
-						<p class="eyebrow text-brand-accent">Receipts</p>
-						<h2 class="mt-4 text-balance font-semibold text-3xl text-white sm:text-4xl">Selected work</h2>
+						<p class="eyebrow text-brand-ink">Receipts</p>
+						<h2 class="mt-4 text-balance font-semibold text-3xl text-neutral-50 sm:text-4xl">Selected work</h2>
 					</div>
-					<a class="font-medium text-neutral-300 text-sm hover:text-brand-accent" href="/work">
+					<a class="font-medium text-neutral-300 text-sm hover:text-brand-ink" href="/work">
 						View all projects <span aria-hidden="true">→</span>
 					</a>
 				</div>
@@ -268,12 +268,12 @@ const testimonials: readonly Testimonial[] = [];
 									{project.data.year && <span class="tabular-nums">{project.data.year}</span>}
 								</div>
 								<div class="mt-16">
-									<h3 class="max-w-lg text-balance font-semibold text-2xl text-white sm:text-3xl">
+									<h3 class="max-w-lg text-balance font-semibold text-2xl text-neutral-50 sm:text-3xl">
 										{project.data.title}
 									</h3>
 									<p class="mt-4 max-w-xl text-pretty text-neutral-400 leading-7">{project.data.summary}</p>
 								</div>
-								<span class="mt-8 text-brand-accent transition-transform duration-150 group-hover:translate-x-1" aria-hidden="true">Read case study →</span>
+								<span class="mt-8 text-brand-ink transition-transform duration-150 group-hover:translate-x-1" aria-hidden="true">Read case study →</span>
 							</a>
 						))
 					}
@@ -285,7 +285,7 @@ const testimonials: readonly Testimonial[] = [];
 			testimonials.length > 0 && (
 				<section class="border-neutral-800 border-b">
 					<div class="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-24">
-						<p class="eyebrow text-brand-accent">In their words</p>
+						<p class="eyebrow text-brand-ink">In their words</p>
 						<div class="mt-8 grid gap-8 md:grid-cols-2">
 							{testimonials.map((testimonial) => (
 								<figure class="border-neutral-800 border-l-2 pl-6">
@@ -306,11 +306,11 @@ const testimonials: readonly Testimonial[] = [];
 		<section class="border-neutral-800 border-b">
 			<div class="mx-auto grid max-w-7xl gap-10 px-5 py-16 sm:px-8 sm:py-24 lg:grid-cols-[0.55fr_1.45fr] lg:gap-16">
 				<div>
-					<p class="eyebrow text-brand-accent">Who you’re dealing with</p>
-					<p class="mt-6 font-mono text-7xl text-brand-accent leading-none">TK</p>
+					<p class="eyebrow text-brand-ink">Who you’re dealing with</p>
+					<p class="mt-6 font-mono text-7xl text-brand-ink leading-none">TK</p>
 				</div>
 				<div>
-					<h2 class="max-w-2xl text-balance font-semibold text-3xl text-white leading-tight sm:text-4xl">
+					<h2 class="max-w-2xl text-balance font-semibold text-3xl text-neutral-50 leading-tight sm:text-4xl">
 						{site.founder.name}
 					</h2>
 					<p class="mt-6 max-w-2xl text-pretty text-lg text-neutral-300 leading-8">
@@ -321,14 +321,14 @@ const testimonials: readonly Testimonial[] = [];
 					</p>
 					<div class="mt-7 flex flex-wrap items-center gap-x-8 gap-y-3">
 						<a
-							class="inline-flex items-center gap-2 border-brand-accent border-b pb-1 font-semibold text-brand-accent hover:text-white"
+							class="inline-flex items-center gap-2 border-brand-ink border-b pb-1 font-semibold text-brand-ink hover:text-neutral-50"
 							href={site.founder.linkedInUrl}
 							rel="noopener"
 						>
 							Connect on LinkedIn <span aria-hidden="true">↗</span>
 						</a>
 						<a
-							class="inline-flex items-center gap-2 border-brand-accent border-b pb-1 font-semibold text-brand-accent hover:text-white"
+							class="inline-flex items-center gap-2 border-brand-ink border-b pb-1 font-semibold text-brand-ink hover:text-neutral-50"
 							href={site.founder.xUrl}
 							rel="noopener"
 						>
@@ -342,8 +342,8 @@ const testimonials: readonly Testimonial[] = [];
 		<section class="border-neutral-800 border-b bg-neutral-900/30">
 			<div class="mx-auto flex max-w-7xl flex-col gap-7 px-5 py-14 sm:px-8 sm:py-16 lg:flex-row lg:items-center lg:justify-between">
 				<div>
-					<p class="eyebrow text-brand-accent">For agencies</p>
-					<h2 class="mt-4 max-w-2xl text-balance font-semibold text-2xl text-white sm:text-3xl">
+					<p class="eyebrow text-brand-ink">For agencies</p>
+					<h2 class="mt-4 max-w-2xl text-balance font-semibold text-2xl text-neutral-50 sm:text-3xl">
 						The senior your client never worries about.
 					</h2>
 					<p class="mt-4 max-w-2xl text-pretty text-neutral-400 leading-7">
@@ -351,7 +351,7 @@ const testimonials: readonly Testimonial[] = [];
 					</p>
 				</div>
 				<a
-					class="inline-flex items-center gap-2 self-start font-semibold text-brand-accent hover:text-white lg:self-center"
+					class="inline-flex items-center gap-2 self-start font-semibold text-brand-ink hover:text-neutral-50 lg:self-center"
 					href="/partners"
 				>
 					How partnering works <span aria-hidden="true">→</span>
@@ -362,8 +362,8 @@ const testimonials: readonly Testimonial[] = [];
 		<section>
 			<div class="mx-auto grid max-w-7xl gap-10 px-5 py-16 sm:px-8 sm:py-24 lg:grid-cols-[1fr_1.2fr] lg:items-end">
 				<div>
-					<p class="eyebrow text-brand-accent">A useful first conversation</p>
-					<h2 class="mt-5 max-w-3xl text-balance font-semibold text-4xl text-white leading-tight sm:text-6xl">
+					<p class="eyebrow text-brand-ink">A useful first conversation</p>
+					<h2 class="mt-5 max-w-3xl text-balance font-semibold text-4xl text-neutral-50 leading-tight sm:text-6xl">
 						Tell us what can’t go wrong.
 					</h2>
 				</div>
@@ -373,7 +373,7 @@ const testimonials: readonly Testimonial[] = [];
 						approach it — and you can read the receipts before we ever talk.
 					</p>
 					<a
-						class="mt-7 inline-flex items-center gap-2 border-brand-accent border-b pb-1 font-semibold text-brand-accent hover:text-white"
+						class="mt-7 inline-flex items-center gap-2 border-brand-ink border-b pb-1 font-semibold text-brand-ink hover:text-neutral-50"
 						href="/contact"
 					>
 						Start a conversation <span aria-hidden="true">↗</span>

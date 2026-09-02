@@ -71,8 +71,8 @@ const testimonials: readonly Testimonial[] = [];
 		<section class="border-neutral-800 border-b">
 			<div class="mx-auto grid max-w-7xl gap-10 px-5 py-16 sm:px-8 sm:py-24 lg:grid-cols-[1.3fr_0.7fr] lg:items-end lg:py-28">
 				<div>
-					<p class="eyebrow text-brand-accent">For agencies &amp; consultancies</p>
-					<h1 class="mt-7 max-w-5xl text-balance font-semibold text-5xl text-white leading-[1.03] sm:text-7xl">
+					<p class="eyebrow text-brand-ink">For agencies &amp; consultancies</p>
+					<h1 class="mt-7 max-w-5xl text-balance font-semibold text-5xl text-neutral-50 leading-[1.03] sm:text-7xl">
 						Put Auditmos in front of your client. Keep your name on the work.
 					</h1>
 				</div>
@@ -86,8 +86,8 @@ const testimonials: readonly Testimonial[] = [];
 		<section class="border-neutral-800 border-b">
 			<div class="mx-auto grid max-w-7xl gap-12 px-5 py-16 sm:px-8 sm:py-24 lg:grid-cols-[0.6fr_1.4fr] lg:gap-20">
 				<div>
-					<p class="eyebrow text-brand-accent">The deal</p>
-					<h2 class="mt-4 max-w-md text-balance font-semibold text-3xl text-white sm:text-4xl">
+					<p class="eyebrow text-brand-ink">The deal</p>
+					<h2 class="mt-4 max-w-md text-balance font-semibold text-3xl text-neutral-50 sm:text-4xl">
 						Five terms, stated up front.
 					</h2>
 				</div>
@@ -95,8 +95,8 @@ const testimonials: readonly Testimonial[] = [];
 					{
 						dealTerms.map((term) => (
 							<article class="grid gap-4 border-neutral-800 border-b py-7 sm:grid-cols-[3rem_0.7fr_1.3fr] sm:px-4">
-								<span class="font-mono text-brand-accent text-xs">{term.number}</span>
-								<h3 class="text-balance font-semibold text-white text-xl">{term.name}</h3>
+								<span class="font-mono text-brand-ink text-xs">{term.number}</span>
+								<h3 class="text-balance font-semibold text-neutral-50 text-xl">{term.name}</h3>
 								<p class="max-w-xl text-pretty text-neutral-400 leading-7">{term.detail}</p>
 							</article>
 						))
@@ -109,12 +109,12 @@ const testimonials: readonly Testimonial[] = [];
 			<div class="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-24">
 				<div class="flex flex-col gap-5 border-neutral-800 border-b pb-8 sm:flex-row sm:items-end sm:justify-between">
 					<div>
-						<p class="eyebrow text-brand-accent">Engagement shapes</p>
-						<h2 class="mt-4 text-balance font-semibold text-3xl text-white sm:text-4xl">
+						<p class="eyebrow text-brand-ink">Engagement shapes</p>
+						<h2 class="mt-4 text-balance font-semibold text-3xl text-neutral-50 sm:text-4xl">
 							Four ways agencies use Auditmos.
 						</h2>
 					</div>
-					<a class="font-medium text-neutral-300 text-sm hover:text-brand-accent" href={site.auditsRepoUrl} rel="noopener">
+					<a class="font-medium text-neutral-300 text-sm hover:text-brand-ink" href={site.auditsRepoUrl} rel="noopener">
 						Read the public audit reports <span aria-hidden="true">↗</span>
 					</a>
 				</div>
@@ -129,7 +129,7 @@ const testimonials: readonly Testimonial[] = [];
 									index > 1 && "sm:border-t",
 								]}
 							>
-								<h3 class="text-balance font-semibold text-white text-xl sm:text-2xl">{shape.name}</h3>
+								<h3 class="text-balance font-semibold text-neutral-50 text-xl sm:text-2xl">{shape.name}</h3>
 								<p class="mt-4 max-w-xl text-pretty text-neutral-400 leading-7">{shape.detail}</p>
 							</article>
 						))
@@ -142,7 +142,7 @@ const testimonials: readonly Testimonial[] = [];
 			testimonials.length > 0 && (
 				<section class="border-neutral-800 border-b">
 					<div class="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-24">
-						<p class="eyebrow text-brand-accent">From agency partners</p>
+						<p class="eyebrow text-brand-ink">From agency partners</p>
 						<div class="mt-8 grid gap-8 md:grid-cols-2">
 							{testimonials.map((testimonial) => (
 								<figure class="border-neutral-800 border-l-2 pl-6">
@@ -162,10 +162,10 @@ const testimonials: readonly Testimonial[] = [];
 
 		<section>
 			<div class="mx-auto flex max-w-7xl flex-col gap-7 px-5 py-16 sm:px-8 sm:py-20 lg:flex-row lg:items-center lg:justify-between">
-				<h2 class="max-w-3xl text-balance font-semibold text-3xl text-white sm:text-5xl">
+				<h2 class="max-w-3xl text-balance font-semibold text-3xl text-neutral-50 sm:text-5xl">
 					Tell us about the client work you can't risk.
 				</h2>
-				<a class="inline-flex items-center gap-2 font-semibold text-brand-accent hover:text-white" href="/contact">
+				<a class="inline-flex items-center gap-2 font-semibold text-brand-ink hover:text-neutral-50" href="/contact">
 					Start a conversation <span aria-hidden="true">→</span>
 				</a>
 			</div>

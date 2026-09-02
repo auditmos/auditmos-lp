@@ -40,7 +40,7 @@
 	font-size: 1.875rem;
 	font-weight: 600;
 	line-height: 1.2;
-	color: #fff;
+	color: var(--color-neutral-50);
 	text-wrap: balance;
 }
 
@@ -49,7 +49,7 @@
 	font-size: 1.25rem;
 	font-weight: 600;
 	line-height: 1.35;
-	color: #fff;
+	color: var(--color-neutral-50);
 	text-wrap: balance;
 }
 
@@ -73,13 +73,13 @@
 }
 
 .prose a:hover {
-	color: #fff;
+	color: var(--color-neutral-50);
 	text-decoration-color: currentColor;
 }
 
 .prose strong {
 	font-weight: 600;
-	color: #fff;
+	color: var(--color-neutral-50);
 }
 
 .prose em {
@@ -184,7 +184,7 @@
 }
 
 .prose th {
-	color: #fff;
+	color: var(--color-neutral-50);
 	font-weight: 600;
 	border-bottom-color: var(--color-neutral-700);
 }

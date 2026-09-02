@@ -27,8 +27,8 @@ const capabilityLabels = new Map(
 		<section class="border-neutral-800 border-b">
 			<div class="mx-auto grid max-w-7xl gap-10 px-5 py-16 sm:px-8 sm:py-24 lg:grid-cols-[1.25fr_0.75fr] lg:items-end lg:py-28">
 				<div>
-					<p class="eyebrow text-brand-accent">Selected work</p>
-					<h1 class="mt-7 max-w-5xl text-balance font-semibold text-5xl text-white leading-[1.03] sm:text-7xl">
+					<p class="eyebrow text-brand-ink">Selected work</p>
+					<h1 class="mt-7 max-w-5xl text-balance font-semibold text-5xl text-neutral-50 leading-[1.03] sm:text-7xl">
 						Work shown with enough context to judge the fit.
 					</h1>
 				</div>
@@ -54,7 +54,7 @@ const capabilityLabels = new Map(
 										value={filter.value}
 										checked={index === 0}
 									/>
-									<span class="inline-flex min-h-11 items-center border border-neutral-700 px-4 py-2 font-mono text-neutral-300 text-sm peer-checked:border-brand-accent peer-checked:bg-brand-accent peer-checked:text-neutral-950 peer-focus-visible:ring-2 peer-focus-visible:ring-brand-accent peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-neutral-950">
+									<span class="inline-flex min-h-11 items-center border border-neutral-700 px-4 py-2 font-mono text-neutral-300 text-sm peer-checked:border-brand-ink peer-checked:bg-brand-accent peer-checked:text-accent-contrast peer-focus-visible:ring-2 peer-focus-visible:ring-brand-ink peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-neutral-950">
 										{filter.label}
 									</span>
 								</label>
@@ -83,7 +83,7 @@ const capabilityLabels = new Map(
 										<p class="mt-3 font-mono text-neutral-500 text-xs">
 											{project.data.provenance === "internal-r-and-d" ? project.data.industry : getClientDisplay(project.data)}
 										</p>
-										<h2 class="mt-3 text-balance font-semibold text-2xl text-white">{project.data.title}</h2>
+										<h2 class="mt-3 text-balance font-semibold text-2xl text-neutral-50">{project.data.title}</h2>
 									</div>
 									<div>
 										<p class="max-w-xl text-pretty text-neutral-400 leading-7">{project.data.summary}</p>
@@ -91,7 +91,7 @@ const capabilityLabels = new Map(
 											{project.data.capabilities.map((capability) => <li>{capabilityLabels.get(capability)}</li>)}
 										</ul>
 									</div>
-									<span class="text-brand-accent text-xl transition-transform duration-150 group-hover:translate-x-1" aria-hidden="true">→</span>
+									<span class="text-brand-ink text-xl transition-transform duration-150 group-hover:translate-x-1" aria-hidden="true">→</span>
 								</a>
 							</article>
 						))

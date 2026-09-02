@@ -33,26 +33,47 @@
 	src: url("../assets/fonts/ibm-plex-mono-latin-400-normal.woff2") format("woff2");
 }
 
+/*
+ * Native controls and `light-dark()` follow the OS until a stored override is
+ * restored by the small head script. Explicit choices win without duplicating
+ * a second palette or maintaining Tailwind dark variants across every page.
+ */
+:root {
+	color-scheme: light dark;
+}
+
+html[data-theme="light"] {
+	color-scheme: light;
+}
+
+html[data-theme="dark"] {
+	color-scheme: dark;
+}
+
 @theme {
 	--color-brand-accent: #04d9ff;
+	/* Cyan stays bright for fills and motifs; text/focus darkens on light surfaces. */
+	--color-brand-ink: light-dark(#00788c, #04d9ff);
+	--color-accent-contrast: oklch(0.148 0.01 220);
+	--color-success-text: light-dark(#166534, var(--color-emerald-100));
+	--color-error-text: light-dark(#991b1b, var(--color-red-100));
 
 	/*
-	 * Neutral ramp re-tinted toward the brand hue (oklch h≈220, the hue of
-	 * #04d9ff) so the dark theme reads as "Auditmos blue-black" instead of
-	 * Tailwind's stock grays. Lightness tracks the default neutral scale, so
-	 * existing contrast relationships are preserved.
+	 * Each semantic step keeps the current blue-black value in dark mode and
+	 * selects its light counterpart in light mode. Existing utility classes
+	 * therefore theme centrally without a page-by-page dark-variant matrix.
 	 */
-	--color-neutral-50: oklch(0.985 0.005 220);
-	--color-neutral-100: oklch(0.97 0.006 220);
-	--color-neutral-200: oklch(0.922 0.008 220);
-	--color-neutral-300: oklch(0.87 0.01 220);
-	--color-neutral-400: oklch(0.708 0.012 220);
-	--color-neutral-500: oklch(0.556 0.014 220);
-	--color-neutral-600: oklch(0.439 0.015 220);
-	--color-neutral-700: oklch(0.371 0.015 220);
-	--color-neutral-800: oklch(0.269 0.014 220);
-	--color-neutral-900: oklch(0.205 0.012 220);
-	--color-neutral-950: oklch(0.148 0.01 220);
+	--color-neutral-50: light-dark(#132226, #fff);
+	--color-neutral-100: light-dark(#1c2c31, oklch(0.97 0.006 220));
+	--color-neutral-200: light-dark(#26383d, oklch(0.922 0.008 220));
+	--color-neutral-300: light-dark(#34484d, oklch(0.87 0.01 220));
+	--color-neutral-400: light-dark(#43585e, oklch(0.708 0.012 220));
+	--color-neutral-500: light-dark(#536a70, oklch(0.556 0.014 220));
+	--color-neutral-600: light-dark(#60767d, oklch(0.439 0.015 220));
+	--color-neutral-700: light-dark(#728a91, oklch(0.371 0.015 220));
+	--color-neutral-800: light-dark(#c9d8dc, oklch(0.269 0.014 220));
+	--color-neutral-900: light-dark(#edf4f6, oklch(0.205 0.012 220));
+	--color-neutral-950: light-dark(#f8fbfc, oklch(0.148 0.01 220));
 
 	--font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
 		sans-serif;
@@ -73,9 +94,10 @@
 	a:focus-visible,
 	button:focus-visible,
 	summary:focus-visible,
+	select:focus-visible,
 	input:focus-visible,
 	textarea:focus-visible {
-		outline: 2px solid var(--color-brand-accent);
+		outline: 2px solid var(--color-brand-ink);
 		outline-offset: 4px;
 	}
 
@@ -86,6 +108,17 @@
 			color 150ms,
 			background-color 150ms,
 			border-color 150ms;
+	}
+}
+
+/* The transparent cyan wordmark becomes the brand's black-on-light treatment. */
+html[data-theme="light"] .theme-logo {
+	filter: brightness(0);
+}
+
+@media (prefers-color-scheme: light) {
+	html[data-theme="system"] .theme-logo {
+		filter: brightness(0);
 	}
 }
 
@@ -172,5 +205,5 @@
 
 ::selection {
 	background: var(--color-brand-accent);
-	color: var(--color-neutral-950);
+	color: var(--color-accent-contrast);
 }
