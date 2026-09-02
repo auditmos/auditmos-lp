@@ -1,3 +1,10 @@
+## [1.36.1](https://github.com/auditmos/auditmos-lp/compare/v1.36.0...v1.36.1) (2026-09-02)
+
+
+### Bug Fixes
+
+* **theme:** refine selector placement and affordance ([1ebc164](https://github.com/auditmos/auditmos-lp/commit/1ebc1648cf1630513601929fe7e582e5effd1f97))
+
 # [1.36.0](https://github.com/auditmos/auditmos-lp/compare/v1.35.0...v1.36.0) (2026-09-02)
 
 
