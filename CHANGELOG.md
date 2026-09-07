@@ -1,3 +1,10 @@
+## [1.37.4](https://github.com/auditmos/auditmos-lp/compare/v1.37.3...v1.37.4) (2026-09-07)
+
+
+### Bug Fixes
+
+* **services:** move "Strong fit when" out of the hero ([ed07d35](https://github.com/auditmos/auditmos-lp/commit/ed07d35ac3e68a1edaea5c879b31cdd4e4ce047b))
+
 ## [1.37.3](https://github.com/auditmos/auditmos-lp/compare/v1.37.2...v1.37.3) (2026-09-07)
 
 
