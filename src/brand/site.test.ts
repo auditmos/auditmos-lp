@@ -7,7 +7,35 @@
  *   branch protection, or live staging reachability; those are external checks.
  */
 
-import { brand, legalEntity, logoAssets, navigationItems, organizationJsonLd, site } from "./site";
+import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import {
+	brand,
+	legalEntity,
+	logoAssets,
+	navigationItems,
+	OG_IMAGE_VERSION,
+	organizationJsonLd,
+	site,
+} from "./site";
+
+describe("Open Graph image version", () => {
+	it("matches the bytes of the image it is meant to bust the cache for", () => {
+		// The constant exists because prerendering runs in workerd and cannot
+		// read the file. That makes it the kind of value that rots silently: a
+		// regenerated card ships under the old URL, every platform serves its
+		// cached copy, and nothing anywhere fails. Hence this test — it is the
+		// only thing connecting the number to the file.
+		const image = readFileSync(resolve(import.meta.dirname, "..", "..", "public", "og.png"));
+		const digest = createHash("sha256").update(image).digest("hex").slice(0, 12);
+
+		expect({ constant: OG_IMAGE_VERSION, ofFile: digest }).toEqual({
+			constant: digest,
+			ofFile: digest,
+		});
+	});
+});
 
 describe("site identity", () => {
 	it("declares the Auditmos brand tokens", () => {

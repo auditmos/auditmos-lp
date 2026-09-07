@@ -31,6 +31,22 @@ export const logoAssets = {
 	iconWhite: "/src/assets/logos/auditmos-icon-white.svg",
 } as const;
 
+/**
+ * First 12 hex of `sha256(public/og.png)`, appended to the `og:image` URL.
+ *
+ * Social platforms cache a scraped image against its URL — LinkedIn for about
+ * a week — so regenerating `og.png` in place leaves every share showing the
+ * previous card until that expires, and X retired the validator that used to
+ * force a refetch. A URL that changes with the bytes makes the next scrape a
+ * cache miss on its own.
+ *
+ * Not derived at runtime: prerendering runs in workerd, which has no `fs`. It
+ * is a written constant with `site.test.ts` asserting it against the real file,
+ * so regenerating the image without bumping this fails the build rather than
+ * silently shipping a stale card URL.
+ */
+export const OG_IMAGE_VERSION = "d00f178cc9b1";
+
 export const legalEntity = {
 	name: "Auditmos OÜ",
 	registration: "17025406",

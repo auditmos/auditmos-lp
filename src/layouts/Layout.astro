@@ -2,6 +2,7 @@
 import {
 	legalEntity,
 	navigationItems,
+	OG_IMAGE_VERSION,
 	organizationJsonLd,
 	site,
 } from "@/brand/site";
@@ -28,7 +29,8 @@ const {
 // at the edge, after this response leaves the Worker. Emitting one here too would
 // load a second beacon and double-count every pageview (#39).
 const canonicalUrl = new URL(path, `${site.url}/`).toString();
-const ogImageUrl = new URL("/og.png", `${site.url}/`).toString();
+// `?v=` is the cache key social platforms scrape against — see OG_IMAGE_VERSION.
+const ogImageUrl = new URL(`/og.png?v=${OG_IMAGE_VERSION}`, `${site.url}/`).toString();
 const extraSchemas = Array.isArray(schema) ? schema : [schema];
 const jsonLdItems = [organizationJsonLd, ...extraSchemas];
 const footerServiceLinks = navigationItems.slice(0, 3);
