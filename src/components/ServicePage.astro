@@ -22,44 +22,56 @@ const { page, headline, intro, bestFor, sections, deliverables } = Astro.props;
 <Layout title={page.title} description={page.description} path={page.path} schema={page.jsonLd}>
 	<main>
 		<section class="border-neutral-800 border-b">
-			<div class="mx-auto grid max-w-7xl lg:grid-cols-[1.3fr_0.7fr]">
-				<div class="px-5 py-16 sm:px-8 sm:py-24 lg:border-neutral-800 lg:border-r lg:py-28">
-					<p class="eyebrow text-brand-ink">Expertise / {page.jsonLd.name}</p>
-					<h1 class="mt-7 max-w-5xl text-balance font-semibold text-5xl text-neutral-50 leading-[1.03] sm:text-7xl">
-						{headline}
-					</h1>
-					<p class="mt-8 max-w-3xl text-pretty text-lg text-neutral-300 leading-8 sm:text-xl">{intro}</p>
-					<div class="mt-10 flex flex-col gap-3 sm:flex-row">
-						<a
-							class="corner-cut inline-flex items-center justify-center gap-2 bg-brand-accent px-5 py-3.5 font-semibold text-accent-contrast hover:bg-white"
-							href="/contact"
-						>
-							Discuss your project <span aria-hidden="true">↗</span>
-						</a>
-						<a
-							class="inline-flex items-center justify-center border border-neutral-700 px-5 py-3.5 font-semibold text-neutral-50 hover:border-neutral-500 hover:bg-neutral-900"
-							href="/work"
-						>
-							View related work
-						</a>
-					</div>
+			<div class="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-24 lg:py-28">
+				<p class="eyebrow text-brand-ink">Expertise / {page.jsonLd.name}</p>
+				<h1 class="mt-7 max-w-5xl text-balance font-semibold text-5xl text-neutral-50 leading-[1.03] sm:text-7xl">
+					{headline}
+				</h1>
+				<p class="mt-8 max-w-3xl text-pretty text-lg text-neutral-300 leading-8 sm:text-xl">{intro}</p>
+				<div class="mt-10 flex flex-col gap-3 sm:flex-row">
+					<a
+						class="corner-cut inline-flex items-center justify-center gap-2 bg-brand-accent px-5 py-3.5 font-semibold text-accent-contrast hover:bg-white"
+						href="/contact"
+					>
+						Discuss your project <span aria-hidden="true">↗</span>
+					</a>
+					<a
+						class="inline-flex items-center justify-center border border-neutral-700 px-5 py-3.5 font-semibold text-neutral-50 hover:border-neutral-500 hover:bg-neutral-900"
+						href="/work"
+					>
+						View related work
+					</a>
 				</div>
+			</div>
+		</section>
 
-				<aside class="relative bg-neutral-900/40 p-5 sm:p-8 lg:flex lg:flex-col lg:justify-end lg:py-12">
-					<span class="crosshair -top-[5.5px] -left-[5.5px] hidden lg:block" aria-hidden="true"></span>
-					<span class="crosshair -bottom-[5.5px] -left-[5.5px] hidden lg:block" aria-hidden="true"></span>
+		{/*
+			"Strong fit when" was a sidebar in the hero, at the same visual weight
+			as the headline. It answers "is this for me" — worth reading, and the
+			one question a service page exists to settle — but beside an h1 it
+			read as a second headline and made the first screen two competing
+			columns. Same fault as the homepage hero aside, same fix: give it the
+			full width and the page's own section rhythm, third-person-plural
+			rail on the left, list on the right, matching "What you leave with".
+		*/}
+		<section class="border-neutral-800 border-b bg-neutral-900/30">
+			<div class="mx-auto grid max-w-7xl gap-10 px-5 py-16 sm:px-8 sm:py-24 lg:grid-cols-[0.75fr_1.25fr] lg:gap-20">
+				<div>
 					<p class="eyebrow text-brand-ink">Strong fit when</p>
-					<ul class="mt-6 border-neutral-800 border-t">
-						{
-							bestFor.map((item, index) => (
-								<li class="grid grid-cols-[2rem_1fr] gap-3 border-neutral-800 border-b py-5 text-pretty text-neutral-300 text-sm leading-6">
-									<span class="font-mono text-neutral-600 tabular-nums">0{index + 1}</span>
-									{item}
-								</li>
-							))
-						}
-					</ul>
-				</aside>
+					<h2 class="mt-4 max-w-lg text-balance font-semibold text-3xl text-neutral-50 sm:text-5xl">
+						Who this is for.
+					</h2>
+				</div>
+				<ul class="border-neutral-800 border-t">
+					{
+						bestFor.map((item, index) => (
+							<li class="grid grid-cols-[3rem_1fr] gap-4 border-neutral-800 border-b py-5 text-pretty text-neutral-300 leading-7">
+								<span class="font-mono text-brand-ink text-xs tabular-nums">0{index + 1}</span>
+								{item}
+							</li>
+						))
+					}
+				</ul>
 			</div>
 		</section>
 
