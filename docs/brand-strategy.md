@@ -4,6 +4,8 @@
 **Method:** Negacz framework (business strategy → brand strategy → positioning → assets → proofs → consistency), decisions taken in structured Q&A on 2026-07-16.
 **Supersedes:** parts of `prd-website-rebuild.md` where they conflict (see § 8).
 
+**Update 2026-09-07:** § 3, § 4, § 7 and § 8 reconciled against what actually shipped. Two contradictions inside this document were removed rather than carried forward: § 7's copy rule mandating "audit-grade delivery" verbatim (§ 4 records the owner rejecting that phrase), and § 7's first-person copy rule (the site moved to practice voice in `412777f`). The homepage section list in § 7 now describes the shipped page — it had been prescribing the structure the 2026-09-07 simplification removed, and a later pass reading it would have restored both the deleted section and the rejected phrase.
+
 ---
 
 ## 1. Business strategy
@@ -24,7 +26,7 @@
 
 > For software agencies and technical leaders who cannot afford a delivery failure in front of their client, **Auditmos is the safe pair of hands**: senior software delivery that survives handover, production, and scrutiny — run by an engineer who audits systems for a living.
 
-**The word to own:** *safe pair of hands* (the association), carried by the brand mechanism of **public receipts** — the hero claim *"Don't take my word for it. Read the audits."* (Chosen 2026-07-16; the earlier candidate "audit-grade delivery" was rejected by the owner.)
+**The word to own:** *safe pair of hands* (the association), carried by the brand mechanism of **public receipts** — *"Don't take our word for it. Read the audits."* (Chosen 2026-07-16; the earlier candidate "audit-grade delivery" was rejected by the owner. Wording and placement have since been revised twice — see § 4.)
 
 The receipts mechanism resolves the name tension: *Auditmos* stops meaning "an audit company" and starts meaning "the practice whose work you can inspect before hiring" — 24 audit reports public on GitHub since 2021. Per the fame × uniqueness test, publishing audit reports in public is owned by almost nobody in the dev-services space, and it is verifiable in one click.
 
@@ -43,7 +45,7 @@ The receipts mechanism resolves the name tension: *Auditmos* stops meaning "an a
 **Tone of voice (a recognition asset in itself):**
 
 - Plain-spoken senior engineer. Specifics over adjectives — every adjective should be replaceable by a number or an artifact, or it gets cut.
-- First person singular ("I") where the founder speaks (founder section, content, /partners); "Auditmos" for company facts (legal, services, case studies).
+- Practice voice ("Auditmos"/"we") across the site; the founder bio is third person. *Revised 2026-08-05 in `412777f`, superseding the original first-person-singular rule* — "I" on a page a CTO reads as a company page felt smaller than the work, and the founder section carries the human without the whole site speaking as one person. First person stays where Tomasz genuinely speaks: LinkedIn content under his name.
 - No marketing superlatives, no "passionate," no "cutting-edge." Dry confidence, mild understatement, concrete failure-mode talk (the way engineers actually assess risk).
 
 **Brand level goal (Negacz's 4 levels):** today between level 1–2 (salesperson explains everything from zero / neutral). Target: level 3 within ~12 months — a warm prospect arrives already knowing "Tomasz / Auditmos = the safe hands, audit-grade guy" from repeated LinkedIn touchpoints.
@@ -55,7 +57,7 @@ Assets pass the test: **fame × uniqueness** (how many people connect it with Au
 | Asset | What it is | Status |
 |---|---|---|
 | Name | *Auditmos*, reframed by the public-receipts mechanism | Exists; reframed via copy |
-| Phrase | **"Don't take my word for it. Read the audits."** — hero claim; short form "read the audits" | Adopted 2026-07-16 (replaces rejected "audit-grade delivery") |
+| Phrase | **"Don't take our word for it. Read the audits."** — hero proof line, directly under the headline; short form "read the audits" on the CTA | Adopted 2026-07-16 (replaces rejected "audit-grade delivery"); "my" → "our" with the 2026-08-05 voice change; moved from H1 to proof line 2026-09-07 |
 | Receipts | github.com/auditmos/audits — 24 public reports, linked from hero, services, /partners | Exists; now load-bearing |
 | Face | Tomasz — photo on site, name on content, consistent presence | Founder sections live; photo still pending |
 | Color | `#04d9ff` cyan on dark | Exists; keep, but it is not distinctive alone |
@@ -67,6 +69,8 @@ Assets pass the test: **fame × uniqueness** (how many people connect it with Au
 
 - The dark-tech-with-accent aesthetic is a sea of sameness (the video's white-on-black critique). The cheapest real differentiator is the *human* (photo, voice) plus the audit-report visual language — not a palette change. Full visual rebrand is explicitly out of scope for now.
 - Rule from the video: these assets don't need to please the owner; they need to be memorable and consistent. Changing the phrase, format, or face treatment resets the clock to zero.
+- **Why the phrase left the H1 (2026-09-07).** It rebuts a trust objection the visitor has not formed yet, because they do not yet know what is being claimed. Measured against the PRD's own 60-second criterion the page failed: "software development", "security audits" and "applied R&D" appeared nowhere above the fold, and the services section sat fourth. The headline now states the offer and the phrase sits immediately beneath it, verbatim and linked to the reports — same first screen, same wording, one slot down. The words were not changed; only what they are asked to do.
+- **One phrase, not two (2026-09-07).** "Built as if it will be audited" had been running in parallel — the hero aside, the OG card headline, a service promise, the markdown twin. Two candidate phrases halve each other, so it was retired everywhere and the OG card rebuilt. Watch for it creeping back: it reads well, which is exactly why it kept getting written.
 
 ## 5. Proof assets
 
@@ -100,17 +104,17 @@ Diagnosis confirmed by owner (all four): interchangeable · wrong audience · cl
 
 ### Homepage, section by section
 
-1. **Hero** — safe-hands promise in the new voice. Candidate directions (pick/iterate with real copy):
-   - "Built like it's going to be audited. Because it is."
-   - "Senior software delivery that won't become your next risk."
-   - Subhead names the human: "Auditmos is the independent practice of Tomasz Kowalczyk — senior software delivery, security audits, and applied R&D from Tallinn, for teams and agencies across the EU."
+*Describes the page as shipped after the 2026-09-07 simplification. The original eight-section spec is kept in § 8 with the reason each item changed.*
+
+1. **Hero** — the offer, then the proof. H1 states what is sold ("Senior software delivery that survives the handover."); the subhead names the three service lines and the ICP's fear; the recognition phrase follows as a linked proof line. Two CTAs: `/contact` primary, the audits repo secondary. **No aside** — a second display-size element beside the H1 gives the first screen two focal points and no answer.
 2. **Proof strip** (directly under hero) — 3–4 real numbers (§ 5). No numbers, no strip.
-3. **Audit-grade delivery** — the named standard as 3–4 concrete, checkable practices (what handover contains, what gets tested, what the client can inspect). This replaces the abstract "Three capabilities. One standard of evidence."
-4. **Services, reordered** — software development first (lead offer), security audits second (framed as "the reason the delivery is audit-grade"), applied R&D third.
-5. **Selected work** — keep, but each card gains an outcome number or client-voice line.
-6. **Founder section** — photo, one paragraph in first person, LinkedIn link. This is the single biggest "not interchangeable / my voice" fix.
-7. **Partners teaser** — one honest paragraph for agency visitors → `/partners`.
-8. **Contact CTA** — keep shape, rewrite into the new voice.
+3. **Services** — software development first (lead offer), security audits second, applied R&D third. Carries the standfirst "Most contractors ask you to trust them. We'd rather you check." Third on the page, not fourth: this is the section a first-time visitor came for.
+4. **Selected work** — two cards, chosen for breadth rather than recency. One card in a two-up grid reads as an empty shelf.
+5. **Founder section** — photo, one paragraph, LinkedIn link. Still the single biggest "not interchangeable" fix.
+6. **Partners teaser** — one honest paragraph for agency visitors → `/partners`.
+7. **Contact CTA** — keep shape.
+
+**Retired: the "audit-grade delivery" section.** It existed to make that phrase appear a third time; the owner rejected the phrase (§ 4), and what shipped in its slot was a generic four-item principles list whose every claim was already made elsewhere on the page. It also duplicated the services section's exact markup, so the two read as one undifferentiated wall. Its one non-duplicated line moved to the services standfirst. **Do not reinstate it** — if the delivery standard needs stating, it belongs inside the service rows, not as a second numbered list above them.
 
 ### `/partners` (new page)
 
@@ -118,24 +122,37 @@ Speaks to the agency owner's actual fear, in first person: your client stays you
 
 ### Copy rules for the rewrite
 
-- First person for founder-voice sections; no "we" that pretends to be a team.
+- Practice voice throughout; the founder bio is third person (§ 3, revised 2026-08-05).
 - Every adjective replaceable by a number or artifact, or cut.
-- "Audit-grade delivery" appears verbatim — hero area, services, /partners (asset repetition).
+- **"Don't take our word for it. Read the audits."** appears verbatim — hero proof line, and the short form "read the audits" on CTAs (asset repetition). It is the only recognition phrase; do not introduce a second (§ 4).
+- No eyebrow or heading that makes a claim with no proof beside it. "A useful first conversation" and "Receipts" over case studies were both cut on those grounds.
 
 ## 8. Superseded / updated decisions
 
 | Old decision (PRD / discovery) | New decision |
 |---|---|
-| About is company-only; no bios, no photos, no individuals | Hybrid: founder section with name, face, first-person paragraph; content under Tomasz's name |
-| Homepage = hero + 3 equal service teasers | Dev-led hierarchy; audits reframed as credibility engine; "audit-grade delivery" section |
+| About is company-only; no bios, no photos, no individuals | Hybrid: founder section with name, face, third-person paragraph; content under Tomasz's name |
+| Homepage = hero + 3 equal service teasers | Dev-led hierarchy; audits reframed as credibility engine |
 | No new pages beyond v1 list | `/partners` page added (agency ICP) |
-| Copy direction "evidence, not claims" (CISO-flavored) | "Safe pair of hands" / audit-grade (agency + CTO flavored); proof-adjacent claims |
+| Copy direction "evidence, not claims" (CISO-flavored) | "Safe pair of hands" (agency + CTO flavored); proof-adjacent claims |
+
+Later revisions to *this* document's own § 7 spec:
+
+| Original § 7 decision (2026-07-16) | Revised | Why |
+|---|---|---|
+| First person for founder-voice sections | Practice voice; founder bio third person | 2026-08-05 (`412777f`) — see § 3 |
+| Hero leads with the recognition phrase | Hero leads with the offer; phrase is the proof line beneath | 2026-09-07 — the page failed the PRD's 60-second "understand what Auditmos does" criterion; no service line appeared above the fold |
+| An "audit-grade delivery" section, third | Section retired; services move third | 2026-09-07 — its purpose was repeating a phrase the owner rejected (§ 4); shipped content was a duplicate-claims list in identical markup to services |
+| "Audit-grade delivery" appears verbatim in hero, services, /partners | Never use it | Contradicted § 4 from the day it was written; the phrase is absent from `src/` and should stay absent |
+| Hero subhead names Tallinn | Location lives in the footer, `/contact` and `/about` vendor table only | 2026-09-07 — entity verification does not need hero space; JSON-LD carries it site-wide regardless |
 
 Everything else in the PRD (architecture, MD-mirror, contact endpoint, static-first, no CMS, no blog *pipeline*) stands. The LinkedIn content plan (§ 6) lives off-site and does not reintroduce a blog into v1.
 
 ## 9. Open inputs
 
 Resolved 2026-07-16: proof numbers (§ 5), artifact links, hero direction ("Read the audits"), Web3 framing (receipts-not-identity), Antra treatment (numbers in hero, name in case study). The LP rewrite shipped against this spec.
+
+Resolved 2026-09-07: homepage hierarchy (offer above the fold, services third), the competing-phrase cleanup, and the OG card rebuilt to match the hero.
 
 Still open:
 
