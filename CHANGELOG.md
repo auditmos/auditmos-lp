@@ -1,3 +1,10 @@
+## [1.37.3](https://github.com/auditmos/auditmos-lp/compare/v1.37.2...v1.37.3) (2026-09-07)
+
+
+### Bug Fixes
+
+* **seo:** version the og:image URL so social caches miss ([0b8fe17](https://github.com/auditmos/auditmos-lp/commit/0b8fe17aa4428fe361d14c4d7e064e398d49fe3a))
+
 ## [1.37.2](https://github.com/auditmos/auditmos-lp/compare/v1.37.1...v1.37.2) (2026-09-07)
 
 
