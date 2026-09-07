@@ -1,3 +1,12 @@
+# [1.37.0](https://github.com/auditmos/auditmos-lp/compare/v1.36.1...v1.37.0) (2026-09-07)
+
+
+### Features
+
+* **brand:** retire the competing recognition phrase ([db86a57](https://github.com/auditmos/auditmos-lp/commit/db86a572a7d729b2b8b5c2cd3dc1735e4b20556e))
+* **content:** feature the CCTV GPU engine on the homepage ([8a9883b](https://github.com/auditmos/auditmos-lp/commit/8a9883b651c575c6b0bfc3e1e9e7a97b9ef8a9cf))
+* **home:** lead with the offer instead of the proof ([1d8baac](https://github.com/auditmos/auditmos-lp/commit/1d8baace7e869a9b0998cb8f156630c2518a69f3))
+
 ## [1.36.1](https://github.com/auditmos/auditmos-lp/compare/v1.36.0...v1.36.1) (2026-09-02)
 
 
