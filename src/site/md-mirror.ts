@@ -25,9 +25,9 @@ type StaticPagePath = (typeof staticPages)[number]["path"];
 
 const staticMarkdownBodyByPath = {
 	"/": `
-Don't take our word for it. Read the audits.
+Senior software delivery that survives the handover.
 
-Auditmos is an independent technical practice. Since ${auditReports.earliestYear} it has published ${auditReports.count} audit reports for anyone to read — and builds software the same way it audits it: assuming someone will inspect the work later.
+Software development, security audits, and applied R&D for teams that can't afford a delivery failure in front of their client. Don't take our word for it. Read the audits — all ${auditReports.count}, public since ${auditReports.earliestYear}: https://github.com/auditmos/audits
 
 ## Proof
 

@@ -40,33 +40,6 @@ const proofItems = [
 	},
 ] as const;
 
-const workingPrinciples = [
-	{
-		number: "01",
-		name: "Public receipts",
-		detail:
-			"The audit reports are on GitHub — actual PDFs with findings, not logos on a slide. Judge the standard before we ever talk.",
-	},
-	{
-		number: "02",
-		name: "Built to be read",
-		detail:
-			"Code, architecture notes, and tradeoffs written for the next engineer who opens the repo — or the next auditor.",
-	},
-	{
-		number: "03",
-		name: "Handover is the deliverable",
-		detail:
-			"Documentation, tests, and deployment notes ship with the work. It still runs after we leave — that's the point.",
-	},
-	{
-		number: "04",
-		name: "One name on the work",
-		detail:
-			"No bench, no juniors behind the curtain. The person you brief is the person who builds — and signs the work.",
-	},
-] as const;
-
 const serviceDetails = [
 	{
 		number: "01",
@@ -96,57 +69,38 @@ const testimonials: readonly Testimonial[] = [];
 
 <Layout title={homePage.title} description={homePage.description} path={homePage.path}>
 	<main>
-		<section class="relative overflow-hidden border-neutral-800 border-b">
-			<div class="mx-auto grid max-w-7xl lg:grid-cols-[1.5fr_0.5fr]">
-				<div class="px-5 py-16 sm:px-8 sm:py-24 lg:py-32">
-					<p class="eyebrow text-brand-ink">
-						Independent technical practice · Tallinn, EU
-					</p>
-					<h1 class="mt-7 max-w-5xl text-balance font-semibold text-5xl text-neutral-50 leading-[1.02] sm:text-7xl lg:text-8xl">
-						Don’t take our word for it. Read the audits.
-					</h1>
-					<p class="mt-8 max-w-2xl text-pretty text-lg text-neutral-300 leading-8 sm:text-xl">
-						Auditmos is an independent technical practice. Since {auditReports.earliestYear} we’ve
-						published {auditReports.count} audit reports for anyone to read — and we build software the
-						same way we audit it: assuming another auditor will look at it later.
-					</p>
-					<div class="mt-10 flex flex-col gap-3 sm:flex-row">
-						<a
-							class="corner-cut inline-flex items-center justify-center gap-2 bg-brand-accent px-5 py-3.5 font-semibold text-accent-contrast hover:bg-white"
-							href={site.auditsRepoUrl}
-							rel="noopener"
-						>
-							Read the audits <span aria-hidden="true">↗</span>
-						</a>
-						<a
-							class="inline-flex items-center justify-center border border-neutral-700 px-5 py-3.5 font-semibold text-neutral-50 hover:border-neutral-500 hover:bg-neutral-900"
-							href="/work"
-						>
-							See what we’ve shipped
-						</a>
-					</div>
+		<section class="border-neutral-800 border-b">
+			<div class="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-24 lg:py-32">
+				<p class="eyebrow text-brand-ink">Independent technical practice</p>
+				<h1 class="mt-7 max-w-5xl text-balance font-semibold text-5xl text-neutral-50 leading-[1.02] sm:text-7xl lg:text-8xl">
+					Senior software delivery that survives the handover.
+				</h1>
+				<p class="mt-8 max-w-2xl text-pretty text-lg text-neutral-300 leading-8 sm:text-xl">
+					Software development, security audits, and applied R&D for teams that can’t afford a
+					delivery failure in front of their client.
+				</p>
+				<p class="mt-6 max-w-2xl text-pretty text-neutral-400 leading-7">
+					Don’t take our word for it. Read the audits. <a
+						class="border-brand-ink border-b text-brand-ink hover:text-neutral-50"
+						href={site.auditsRepoUrl}
+						rel="noopener"
+					>All {auditReports.count}, public since {auditReports.earliestYear} <span aria-hidden="true">↗</span></a>
+				</p>
+				<div class="mt-10 flex flex-col gap-3 sm:flex-row">
+					<a
+						class="corner-cut inline-flex items-center justify-center gap-2 bg-brand-accent px-5 py-3.5 font-semibold text-accent-contrast hover:bg-white"
+						href="/contact"
+					>
+						Start a conversation <span aria-hidden="true">↗</span>
+					</a>
+					<a
+						class="inline-flex items-center justify-center gap-2 border border-neutral-700 px-5 py-3.5 font-semibold text-neutral-50 hover:border-neutral-500 hover:bg-neutral-900"
+						href={site.auditsRepoUrl}
+						rel="noopener"
+					>
+						Read the audits <span aria-hidden="true">↗</span>
+					</a>
 				</div>
-
-				<aside class="bg-blueprint relative flex min-h-80 flex-col justify-between bg-neutral-900/40 p-5 sm:p-8 lg:min-h-0 lg:border-neutral-800 lg:border-l lg:py-12">
-					<span class="crosshair -top-[5.5px] -left-[5.5px] hidden lg:block" aria-hidden="true"></span>
-					<span class="crosshair -bottom-[5.5px] -left-[5.5px] hidden lg:block" aria-hidden="true"></span>
-					<div class="flex items-start justify-between border-neutral-800 border-b pb-6">
-						<p class="font-mono text-neutral-500 text-xs uppercase">Auditmos / since 2021</p>
-						<span class="flex size-3 items-center justify-center" aria-hidden="true">
-							<span class="size-2 rounded-full bg-brand-accent"></span>
-						</span>
-					</div>
-					<div class="py-10 lg:py-0">
-						<p class="font-mono text-brand-ink text-7xl leading-none sm:text-8xl">A/</p>
-						<p class="mt-6 max-w-xs text-balance font-medium text-2xl text-neutral-50 leading-snug">
-							Built as if it will be audited.
-						</p>
-						<div class="bg-hatch mt-6 h-2 w-28" aria-hidden="true"></div>
-					</div>
-					<p class="border-neutral-800 border-t pt-6 text-pretty text-neutral-400 text-sm leading-6">
-						Senior, independent, accountable — one name on every deliverable.
-					</p>
-				</aside>
 			</div>
 		</section>
 
@@ -180,38 +134,13 @@ const testimonials: readonly Testimonial[] = [];
 			<div class="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-24">
 				<div class="grid gap-8 lg:grid-cols-[0.55fr_1.45fr] lg:gap-16">
 					<div>
-						<p class="eyebrow text-brand-ink">How we work</p>
+						<p class="eyebrow text-brand-ink">What we take on</p>
 						<h2 class="mt-4 max-w-sm text-balance font-semibold text-3xl text-neutral-50 leading-tight sm:text-4xl">
-							Everything inspectable.
+							Three ways in. One standard.
 						</h2>
 						<p class="mt-5 max-w-sm text-pretty text-neutral-400 leading-7">
 							Most contractors ask you to trust them. We’d rather you check.
 						</p>
-					</div>
-
-					<div class="border-neutral-800 border-t">
-						{
-							workingPrinciples.map((principle) => (
-								<article class="grid gap-4 border-neutral-800 border-b py-7 sm:grid-cols-[3rem_0.75fr_1.25fr] sm:px-4">
-									<span class="font-mono text-brand-ink text-xs">{principle.number}</span>
-									<h3 class="text-balance font-semibold text-neutral-50 text-xl">{principle.name}</h3>
-									<p class="max-w-lg text-pretty text-neutral-400 leading-7">{principle.detail}</p>
-								</article>
-							))
-						}
-					</div>
-				</div>
-			</div>
-		</section>
-
-		<section class="border-neutral-800 border-b">
-			<div class="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-24">
-				<div class="grid gap-8 lg:grid-cols-[0.55fr_1.45fr] lg:gap-16">
-					<div>
-						<p class="eyebrow text-brand-ink">What I take on</p>
-						<h2 class="mt-4 max-w-sm text-balance font-semibold text-3xl text-neutral-50 leading-tight sm:text-4xl">
-							Three ways in. One standard.
-						</h2>
 					</div>
 
 					<div class="border-neutral-800 border-t">
@@ -242,8 +171,7 @@ const testimonials: readonly Testimonial[] = [];
 			<div class="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-24">
 				<div class="flex flex-col gap-5 border-neutral-800 border-b pb-8 sm:flex-row sm:items-end sm:justify-between">
 					<div>
-						<p class="eyebrow text-brand-ink">Receipts</p>
-						<h2 class="mt-4 text-balance font-semibold text-3xl text-neutral-50 sm:text-4xl">Selected work</h2>
+						<h2 class="text-balance font-semibold text-3xl text-neutral-50 sm:text-4xl">Selected work</h2>
 					</div>
 					<a class="font-medium text-neutral-300 text-sm hover:text-brand-ink" href="/work">
 						View all projects <span aria-hidden="true">→</span>
@@ -314,10 +242,9 @@ const testimonials: readonly Testimonial[] = [];
 						{site.founder.name}
 					</h2>
 					<p class="mt-6 max-w-2xl text-pretty text-lg text-neutral-300 leading-8">
-						Auditmos is run by {site.founder.name} — auditor of systems teams can’t afford to
-						get wrong, architect of a 3,000+ GPU compute network spanning nine European
-						countries, and builder of two products. Every project gets built to that standard —
-						with exactly one name on the work.
+						Auditmos is run by {site.founder.name}, who audits the systems teams can’t afford to
+						get wrong. The person you brief is the person who builds — and there is exactly one
+						name on the work.
 					</p>
 					<div class="mt-7 flex flex-wrap items-center gap-x-8 gap-y-3">
 						<a
@@ -362,8 +289,7 @@ const testimonials: readonly Testimonial[] = [];
 		<section>
 			<div class="mx-auto grid max-w-7xl gap-10 px-5 py-16 sm:px-8 sm:py-24 lg:grid-cols-[1fr_1.2fr] lg:items-end">
 				<div>
-					<p class="eyebrow text-brand-ink">A useful first conversation</p>
-					<h2 class="mt-5 max-w-3xl text-balance font-semibold text-4xl text-neutral-50 leading-tight sm:text-6xl">
+					<h2 class="max-w-3xl text-balance font-semibold text-4xl text-neutral-50 leading-tight sm:text-6xl">
 						Tell us what can’t go wrong.
 					</h2>
 				</div>
