@@ -38,7 +38,7 @@ Software development, security audits, and applied R&D for teams that can't affo
 
 ## Services
 
-- Software development — senior delivery built as if it will be audited, because the author knows exactly what an auditor finds.
+- Software development — senior delivery, documented and tested for whoever opens the repo next, including an auditor.
 - Security audits — findings with impact, reproduction, and remediation, written to the same standard as the public reports.
 - R&D services — technical validation, prototypes, feasibility studies, and grant work that turn uncertain bets into evidence.
 

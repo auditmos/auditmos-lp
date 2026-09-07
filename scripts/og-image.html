@@ -3,10 +3,14 @@
 	Source template for public/og.png (the site-wide Open Graph image).
 
 	Regenerate after changing the brand look (flags spelled with [dashes]
-	because HTML comments cannot contain double hyphens):
-		agent-browser set viewport 1200 630 1
+	because HTML comments cannot contain double hyphens). Set the viewport
+	AFTER open — opening resets it, and viewport-first silently yields a
+	1280x577 capture that contradicts the og:image:width/height meta:
 		agent-browser [dash dash]allow-file-access open file://$PWD/scripts/og-image.html
+		agent-browser set viewport 1200 630 1
 		agent-browser screenshot $PWD/public/og.png
+
+	Verify the result is 1200x630 before committing: file public/og.png
 
 	The design mirrors the homepage hero: Space Grotesk headline, IBM Plex
 	Mono labels, blueprint dots, crosshair marks, and the hatch tape — all
@@ -88,9 +92,12 @@
 
 			h1 {
 				margin-top: 22px;
-				font-size: 84px;
+				/* Three lines at 84px would overrun the left column and collide
+				   with the A/ panel — the headline gained a line when it moved
+				   from the standard claim to the offer. */
+				font-size: 64px;
 				font-weight: 600;
-				line-height: 1.04;
+				line-height: 1.06;
 				color: #fff;
 			}
 
@@ -222,8 +229,8 @@
 				<img src="../src/assets/logos/auditmos-full-logo-transparent.svg" alt="" />
 			</div>
 			<div>
-				<p class="eyebrow">// Independent technical practice · Tallinn, EU</p>
-				<h1>Built as if it<br />will be audited.</h1>
+				<p class="eyebrow">// Independent technical practice</p>
+				<h1>Senior software<br />delivery that survives<br />the handover.</h1>
 				<span class="cta">Read the audits ↗</span>
 			</div>
 			<div class="meta">
