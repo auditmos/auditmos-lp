@@ -16,7 +16,7 @@ stack:
   - "OSNet"
   - "Qwen2.5-VL"
   - "PyTorch"
-featured: false
+featured: true
 order: 2
 ---
 
