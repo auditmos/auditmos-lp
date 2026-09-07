@@ -1,3 +1,10 @@
+## [1.37.2](https://github.com/auditmos/auditmos-lp/compare/v1.37.1...v1.37.2) (2026-09-07)
+
+
+### Bug Fixes
+
+* **ci:** seed .dev.vars in the scheduled workflows too ([48cec71](https://github.com/auditmos/auditmos-lp/commit/48cec71e77d4260a425f9c7fe9480ccbb03fd522))
+
 ## [1.37.1](https://github.com/auditmos/auditmos-lp/compare/v1.37.0...v1.37.1) (2026-09-07)
 
 
