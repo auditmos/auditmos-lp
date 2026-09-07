@@ -50,9 +50,13 @@ export const OAUTH_AUTHORIZATION_SERVER_PATHS = [
  * The path is derived, not chosen. §3.1 forms a resource's metadata URL by
  * inserting `/.well-known/oauth-protected-resource` between the host and the
  * *path* of the resource identifier — so a resource of `<site>/mcp` publishes
- * at `/.well-known/oauth-protected-resource/mcp`. The bare well-known path
- * would be correct only if the whole site were the protected resource, and a
- * client that derives the URL by the book would find nothing there.
+ * at `/.well-known/oauth-protected-resource/mcp`. This is the document a
+ * client that derives the URL by the book will find, and the one
+ * `WWW-Authenticate` names.
+ *
+ * The bare well-known path describes the origin, not this resource, so it gets
+ * its own document rather than a redirect to this one — see
+ * {@link buildOriginProtectedResourceMetadata}.
  */
 export const OAUTH_PROTECTED_RESOURCE_PATH = `/.well-known/oauth-protected-resource${MCP_ENDPOINT_PATH}`;
 
@@ -358,4 +362,56 @@ export function buildProtectedResourceMetadata(): unknown {
 		bearer_methods_supported: ["header"],
 		resource_documentation: authDocumentationUrl(),
 	};
+}
+
+/**
+ * The same facts, keyed to the origin rather than to `/mcp`.
+ *
+ * The document above is the correct one and stays the one `WWW-Authenticate`
+ * points at. But a caller that asks the *bare* well-known path is asking about
+ * the origin, and answering with a `/mcp`-scoped document is a non-sequitur —
+ * which is what a redirect there did. Readiness scanners check exactly that,
+ * and a strict client would be right to reject the mismatch too.
+ *
+ * So the bare path gets its own document naming the origin. The site is public
+ * and only `/mcp` needs a credential, so this is the looser of the two claims;
+ * it is published because discovery from the bare path is common, not because
+ * the whole origin is gated.
+ *
+ * It cannot mislead a client into an unusable token: `/token` mints `aud` from
+ * `tokenAudience()` no matter which resource was requested, so discovery from
+ * either document converges on the same credential.
+ *
+ * Served by the Worker, not prerendered — `dist/` cannot hold both a file and a
+ * directory called `oauth-protected-resource`, and the derived `/mcp` path
+ * needs the directory. See `src/worker.ts`.
+ */
+export function buildOriginProtectedResourceMetadata(): unknown {
+	return {
+		resource: deployedOrigin(),
+		resource_name: "Auditmos",
+		authorization_servers: [deployedOrigin()],
+		scopes_supported: [OAUTH_SCOPE],
+		bearer_methods_supported: ["header"],
+		resource_documentation: authDocumentationUrl(),
+	};
+}
+
+/** Where {@link buildOriginProtectedResourceMetadata} is served. */
+export const OAUTH_ORIGIN_PROTECTED_RESOURCE_PATH = "/.well-known/oauth-protected-resource";
+
+/**
+ * The bare-path document, or `undefined` when the request is for something
+ * else — the shape `src/worker.ts` composes its request-level rules from.
+ */
+export function originProtectedResourceResponse(request: Request): Response | undefined {
+	if (new URL(request.url).pathname !== OAUTH_ORIGIN_PROTECTED_RESOURCE_PATH) return undefined;
+
+	return new Response(`${JSON.stringify(buildOriginProtectedResourceMetadata(), null, 2)}\n`, {
+		status: 200,
+		headers: {
+			"Content-Type": "application/json; charset=utf-8",
+			"Access-Control-Allow-Origin": "*",
+		},
+	});
 }

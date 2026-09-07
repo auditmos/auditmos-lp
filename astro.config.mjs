@@ -35,16 +35,13 @@ export default defineConfig({
 	redirects: {
 		"/sitemap-index.xml": { status: 301, destination: "/sitemap.xml" },
 		"/sitemap-0.xml": { status: 301, destination: "/sitemap.xml" },
-		// RFC 9728 §3.1 puts the protected-resource metadata for `<site>/mcp` at
-		// `/.well-known/oauth-protected-resource/mcp`, which is where the document
-		// is generated. MCP clients and the readiness scanners ask for the bare
-		// path instead, and the build output cannot hold a file and a directory
-		// of the same name — so the bare path redirects to the derived one and
-		// both audiences reach the same document.
-		"/.well-known/oauth-protected-resource": {
-			status: 302,
-			destination: "/.well-known/oauth-protected-resource/mcp",
-		},
+		// The bare `/.well-known/oauth-protected-resource` used to 302 here to the
+		// derived `/mcp` document. It no longer does: a caller asking the bare
+		// path is asking about the origin, and a redirect answered that with a
+		// document whose `resource` is `<site>/mcp` — a mismatch strict clients
+		// and the readiness scanners reject. The Worker now serves an
+		// origin-scoped document there instead (`src/worker.ts`), so both paths
+		// answer their own question. Reinstating a redirect here would shadow it.
 	},
 	// The `/projects` → `/work` rename is redirected from `public/_redirects`
 	// instead: a dynamic destination declared here is resolved to the file

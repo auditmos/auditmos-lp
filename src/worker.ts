@@ -12,6 +12,7 @@
  */
 
 import astro from "@astrojs/cloudflare/entrypoints/server";
+import { originProtectedResourceResponse } from "./oauth/server";
 import { canonicalRedirect } from "./site/canonical-url";
 import { withMarkdownNegotiation } from "./site/markdown-negotiation";
 import { withSecurityHeaders } from "./site/security-headers";
@@ -27,6 +28,12 @@ export default {
 			// Before negotiation, so a trailing-slash URL never serves a document —
 			// in either representation — from a non-canonical path.
 			canonicalRedirect(request) ??
+				// The bare RFC 9728 path. It lives here rather than in `src/pages/`
+				// because the build cannot hold both a file and a directory named
+				// `oauth-protected-resource`, and the derived `/mcp` document needs
+				// the directory. `run_worker_first` must claim the path, or the
+				// asset server answers 404 before this runs.
+				originProtectedResourceResponse(request) ??
 				(await withMarkdownNegotiation(request, env.ASSETS, () =>
 					astro.fetch(request, env, context),
 				)),

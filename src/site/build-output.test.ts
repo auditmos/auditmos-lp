@@ -17,6 +17,7 @@ import { AI_CATALOG_PATH, SERVER_CARD_PATHS } from "@/mcp/server-card";
 import {
 	AUTH_DOC_PATH,
 	OAUTH_AUTHORIZATION_SERVER_PATHS,
+	OAUTH_ORIGIN_PROTECTED_RESOURCE_PATH,
 	OAUTH_PROTECTED_RESOURCE_PATH,
 } from "@/oauth/server";
 import { buildRunCount } from "./build-once";
@@ -195,6 +196,33 @@ describe("static build output", () => {
 		expect(workerEntrySource()).toContain("max-age=3600");
 	});
 
+	it("routes the bare OAuth protected-resource path to the Worker", () => {
+		// This document is the one exception to "every metadata document is a
+		// prerendered asset": `dist/` cannot hold both a file and a directory
+		// named `oauth-protected-resource`, and the derived `/mcp` document needs
+		// the directory. So the Worker serves it — and only reaches the request if
+		// `run_worker_first` claims the path first. Drop the pattern and the asset
+		// server 404s it, silently, with every unit test still green.
+		const patterns = deployedAssetsConfig().run_worker_first ?? [];
+
+		expect({
+			path: OAUTH_ORIGIN_PROTECTED_RESOURCE_PATH,
+			claimed: claimsPath(patterns, OAUTH_ORIGIN_PROTECTED_RESOURCE_PATH),
+		}).toEqual({ path: OAUTH_ORIGIN_PROTECTED_RESOURCE_PATH, claimed: true });
+
+		expect(workerEntrySource()).toContain("originProtectedResourceResponse");
+	});
+
+	it("leaves the bare OAuth path unredirected", () => {
+		// A redirect here answers a question about the origin with a document
+		// about `/mcp`; strict clients and the readiness scanner reject the
+		// mismatch. `_redirects` is applied by the asset server, but reinstating
+		// the rule would shadow the Worker document on any path the Worker misses.
+		expect(
+			redirectRules().filter(([from]) => from === OAUTH_ORIGIN_PROTECTED_RESOURCE_PATH),
+		).toEqual([]);
+	});
+
 	it("bundles the security header layer into the deployed Worker entry", () => {
 		// `_headers` stops at the asset server, so the routes the Worker renders
 		// itself — /api/contact, /mcp, both OAuth endpoints — would ship bare
@@ -320,17 +348,21 @@ describe("static build output", () => {
 		});
 	});
 
-	it("answers the bare protected-resource path by sending clients to the derived one", () => {
-		// Two audiences, one document. A client that derives the URL by RFC 9728
-		// §3.1 asks for `…/oauth-protected-resource/mcp`; MCP clients and the
-		// readiness scanners ask for the bare path. The derived path holds the
-		// file — a file and a directory cannot share a name in the build output —
-		// so the bare path redirects to it rather than 404ing.
-		expect(redirectRules()).toContainEqual([
-			"/.well-known/oauth-protected-resource",
-			OAUTH_PROTECTED_RESOURCE_PATH,
-			"302",
-		]);
+	it("answers the bare protected-resource path with its own document, not a redirect", () => {
+		// Two audiences, two documents — which is the correction. A client that
+		// derives the URL by RFC 9728 §3.1 asks for `…/oauth-protected-resource/mcp`
+		// and gets the `/mcp` resource; MCP clients and the readiness scanners ask
+		// the bare path and are asking about the *origin*. Redirecting the second
+		// to the first answered that with a `resource` of `<site>/mcp`, which the
+		// scanner rejects as a mismatch and a strict client would too.
+		//
+		// The derived path holds the prerendered file — a file and a directory
+		// cannot share a name in the build output — so the bare document is served
+		// by the Worker instead. Asserted above in "routes the bare OAuth
+		// protected-resource path to the Worker".
+		expect(
+			redirectRules().filter(([from]) => from === OAUTH_ORIGIN_PROTECTED_RESOURCE_PATH),
+		).toEqual([]);
 	});
 
 	it("names /mcp as the protected resource, with this site as its issuer", () => {

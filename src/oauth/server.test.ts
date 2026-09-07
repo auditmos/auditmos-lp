@@ -12,18 +12,22 @@
  */
 
 import { site } from "@/brand/site";
+import { MCP_ENDPOINT_PATH } from "@/mcp/server";
 import {
 	ACCESS_TOKEN_TTL_SECONDS,
 	buildAuthorizationServerMetadata,
+	buildOriginProtectedResourceMetadata,
 	buildProtectedResourceMetadata,
 	createOAuthDependencies,
 	handleOAuthRegister,
 	handleOAuthToken,
+	OAUTH_ORIGIN_PROTECTED_RESOURCE_PATH,
 	OAUTH_PROTECTED_RESOURCE_PATH,
 	OAUTH_REGISTER_PATH,
 	OAUTH_SCOPE,
 	OAUTH_TOKEN_PATH,
 	type OAuthDependencies,
+	originProtectedResourceResponse,
 	verifyAccessToken,
 } from "./server";
 
@@ -352,6 +356,54 @@ describe("createOAuthDependencies", () => {
 		expect(dependencies.signingKey).toBe("from-env");
 		expect(Number.isInteger(dependencies.now())).toBe(true);
 		expect(dependencies.now()).toBeGreaterThan(1_700_000_000);
+	});
+});
+
+describe("origin-scoped protected resource metadata", () => {
+	afterEach(() => {
+		vi.unstubAllEnvs();
+	});
+
+	it("names the origin, not the /mcp resource", () => {
+		// The whole point of this second document. A caller asking the bare
+		// well-known path is asking about the origin; answering with the
+		// `/mcp`-scoped `resource` is the mismatch that made a redirect here
+		// fail, and it is the assertion that stops someone "simplifying" the two
+		// builders back into one.
+		expect(buildOriginProtectedResourceMetadata()).toMatchObject({
+			resource: site.url,
+			authorization_servers: [site.url],
+			scopes_supported: [OAUTH_SCOPE],
+		});
+		expect(buildProtectedResourceMetadata()).toMatchObject({
+			resource: `${site.url}${MCP_ENDPOINT_PATH}`,
+		});
+	});
+
+	it("derives the resource from the deployed host like every other document", () => {
+		vi.stubEnv("CLOUDFLARE_ENV", "staging");
+
+		expect(buildOriginProtectedResourceMetadata()).toMatchObject({
+			resource: "https://staging.auditmos.com",
+			authorization_servers: ["https://staging.auditmos.com"],
+		});
+	});
+
+	it("answers only the bare well-known path", async () => {
+		const response = originProtectedResourceResponse(
+			new Request(`${site.url}${OAUTH_ORIGIN_PROTECTED_RESOURCE_PATH}`),
+		);
+
+		expect(response?.status).toBe(200);
+		expect(response?.headers.get("Content-Type")).toBe("application/json; charset=utf-8");
+		expect(await response?.json()).toMatchObject({ resource: site.url });
+
+		// The derived path is a prerendered asset. If this handler claimed it too,
+		// the Worker would shadow the document `WWW-Authenticate` points at.
+		expect(
+			originProtectedResourceResponse(new Request(`${site.url}${OAUTH_PROTECTED_RESOURCE_PATH}`)),
+		).toBeUndefined();
+		expect(originProtectedResourceResponse(new Request(`${site.url}/`))).toBeUndefined();
 	});
 });
 

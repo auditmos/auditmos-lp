@@ -29,6 +29,9 @@
 		// why project pages were the only ones behaving correctly. Issue #38.
 		"run_worker_first": [
 			"/",
+			// Not a page: the Worker serves the origin-scoped RFC 9728 document
+			// here (see src/worker.ts). Without this the asset server 404s first.
+			"/.well-known/oauth-protected-resource",
 			"/about",
 			"/about/",
 			"/contact",
