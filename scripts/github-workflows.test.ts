@@ -72,3 +72,42 @@ describe("security-gates.yml", () => {
 		expect(gatesWorkflow).toMatch(/bump the `id` in the `_mta-sts` TXT record/i);
 	});
 });
+
+describe("every workflow that typechecks", () => {
+	// `wrangler types` runs from the `prepare` script during `pnpm install` and
+	// types `Env` from wrangler.jsonc plus `.dev.vars`. A job that typechecks
+	// without seeding that file gets an `Env` missing every runtime-only secret,
+	// so `src/pages/mcp.ts` and both OAuth routes fail on `OAUTH_SIGNING_KEY` —
+	// in CI only, while `pnpm types` passes on any machine that has a
+	// `.dev.vars`. That is how compat-date, deps-update and security-gates ran
+	// red on every schedule from 2026-08-31 to 2026-09-07 without anyone
+	// noticing: the failures were on cron, not on push.
+	const typechecking = ["ci.yml", "compat-date.yml", "deps-update.yml", "security-gates.yml"];
+
+	/**
+	 * Split on top-level `jobs:` keys. The rule is per job, not per file:
+	 * security-gates.yml installs in two jobs and only one of them typechecks,
+	 * so a whole-file check reports the wrong answer in both directions.
+	 */
+	const jobsIn = (source: string): string[] => source.split(/\n {2}(?=[a-z][\w-]*:\n)/).slice(1);
+
+	it.each(
+		typechecking,
+	)("%s seeds .dev.vars before installing, in every job that typechecks", (name) => {
+		const offenders = jobsIn(workflow(name))
+			.filter((job) => /pnpm (run )?types/.test(job))
+			.filter((job) => {
+				const seed = job.indexOf("cp .dev.vars.example .dev.vars");
+				const install = job.indexOf("pnpm install");
+
+				// Order matters, not just presence: seeding after install is too
+				// late, because `prepare` has already generated the types.
+				return seed === -1 || seed > install;
+			});
+
+		expect({ name, unseededTypecheckingJobs: offenders.length }).toEqual({
+			name,
+			unseededTypecheckingJobs: 0,
+		});
+	});
+});
