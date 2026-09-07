@@ -1,3 +1,10 @@
+## [1.37.1](https://github.com/auditmos/auditmos-lp/compare/v1.37.0...v1.37.1) (2026-09-07)
+
+
+### Bug Fixes
+
+* **oauth:** give the bare protected-resource path its own document ([7203854](https://github.com/auditmos/auditmos-lp/commit/720385461fc5e7d41dac372eb75c9b19bfe6747e))
+
 # [1.37.0](https://github.com/auditmos/auditmos-lp/compare/v1.36.1...v1.37.0) (2026-09-07)
 
 
