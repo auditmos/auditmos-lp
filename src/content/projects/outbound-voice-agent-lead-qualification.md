@@ -17,8 +17,8 @@ stack:
   - "ElevenLabs"
   - "Claude"
   - "PostgreSQL"
-featured: false
-order: 5
+featured: true
+order: 0
 ---
 
 ## TLDR
