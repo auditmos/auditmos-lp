@@ -294,6 +294,27 @@ function projectBody(body: string): string {
 	return `${body.replace(/^\s+/, "").replace(LEADING_H1, "").trim()}\n`;
 }
 
+const UNQUOTED_SCALAR = /^([A-Za-z_][\w-]*):[ \t]+(.*\S)[ \t]*$/;
+
+/**
+ * Quote `key: value: with a colon` — valid to the human who typed the headline,
+ * a nested mapping to YAML. Applied only after a parse has already failed, and
+ * only to lines whose value cannot be anything but a plain scalar: anything
+ * already quoted, or opening a flow collection, block scalar, anchor, alias or
+ * comment, is left exactly as written so a real syntax error still surfaces.
+ */
+function requoteColonScalars(yamlText: string): string {
+	return yamlText
+		.split("\n")
+		.map((line) => {
+			const match = UNQUOTED_SCALAR.exec(line);
+			const value = match?.[2];
+			if (!value || !value.includes(":") || /^["'[{|>&*#]/.test(value)) return line;
+			return `${match[1]}: "${value.replace(/(["\\])/g, "\\$1")}"`;
+		})
+		.join("\n");
+}
+
 export function parseArticle(raw: string): ArticleSource {
 	const match = FRONTMATTER_BLOCK.exec(raw);
 
@@ -307,8 +328,13 @@ export function parseArticle(raw: string): ArticleSource {
 	try {
 		parsed = parseYaml(yamlText);
 	} catch (error) {
-		const detail = error instanceof Error ? error.message : String(error);
-		throw new ArticleImportError(`Article frontmatter is not valid YAML: ${detail}`);
+		try {
+			parsed = parseYaml(requoteColonScalars(yamlText));
+		} catch {
+			// Report the original failure: it describes what the author actually wrote.
+			const detail = error instanceof Error ? error.message : String(error);
+			throw new ArticleImportError(`Article frontmatter is not valid YAML: ${detail}`);
+		}
 	}
 
 	const frontmatter =

@@ -86,6 +86,25 @@ describe("parseArticle", () => {
 			ArticleImportError,
 		);
 	});
+
+	// Authoring tools emit `title: Thing: subtitle` unquoted, which YAML reads as a
+	// nested mapping and rejects. The colon is the single most likely character in a
+	// headline, so recover instead of failing the import.
+	it.each([
+		["title", "Outbound voice agent: a calling bot built in 7 weeks"],
+		["summary", "One thing: another thing"],
+	])("recovers an unquoted %s whose value contains a colon", (key, value) => {
+		const source = parseArticle(`---\n${key}: ${value}\nyear: 2026\n---\n\nBody.\n`);
+
+		expect(source.frontmatter[key]).toBe(value);
+		expect(source.frontmatter.year).toBe(2026);
+	});
+
+	it("leaves a genuinely broken frontmatter failing", () => {
+		expect(() => parseArticle("---\ntitle: 'unterminated: quote\n---\n\nBody.\n")).toThrow(
+			ArticleImportError,
+		);
+	});
 });
 
 describe("articleDefaults", () => {
