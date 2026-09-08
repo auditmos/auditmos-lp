@@ -1,3 +1,16 @@
+# [1.38.0](https://github.com/auditmos/auditmos-lp/compare/v1.37.4...v1.38.0) (2026-09-08)
+
+
+### Bug Fixes
+
+* **scripts:** recover an unquoted colon in article frontmatter ([7b537f6](https://github.com/auditmos/auditmos-lp/commit/7b537f6355e267e3ac50a25b8e67db96c0cefef6))
+
+
+### Features
+
+* **work:** add outbound voice agent case study ([c8aa813](https://github.com/auditmos/auditmos-lp/commit/c8aa8131589fc6db2b7c5bc6c31dba24a2a69cad))
+* **work:** feature the outbound voice agent case study ([e4c7fd5](https://github.com/auditmos/auditmos-lp/commit/e4c7fd508933f78505c951747c9280a8f8f5945d))
+
 ## [1.37.4](https://github.com/auditmos/auditmos-lp/compare/v1.37.3...v1.37.4) (2026-09-07)
 
 
