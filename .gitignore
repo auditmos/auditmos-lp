@@ -45,5 +45,8 @@ coverage/
 # Codex local state
 .codex/
 
+# pnpm local store
+.pnpm-store
+
 # Biome fixture staging (test-time only; cleaned up in try/finally)
 src/.biome-fixture-staging-*
