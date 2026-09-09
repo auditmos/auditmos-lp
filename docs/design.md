@@ -1,6 +1,6 @@
 # Auditmos design manual
 
-**Owner:** Tomasz Kowalczyk · **Issued:** 2026-09-09 · **Scope:** websites, case studies, reports, and interactive tools. Remotion and video are excluded.
+**Owner:** Tomasz Kowalczyk · **Issued:** 2026-09-09 · **Scope:** websites, case studies, reports, interactive tools, and video. Video appearance is covered in § 16.
 
 Create work that a technical buyer can inspect, understand, and trust. Auditmos should feel like a named senior practice with unusually clear evidence: precise typography, cyan used with restraint, authentic human presence, and the useful structure of an engineering report.
 
@@ -386,6 +386,7 @@ Use this checklist on the actual output. Record each applicable item as verified
 - [ ] **Reflow/motion:** inspect narrow 320px layout, representative tablet/desktop, 200% text enlargement and zoom/reflow; local evidence scrolling only when justified; reduced motion preserves a complete static experience.
 - [ ] **Export/print:** when applicable, inspect actual-size pages, font embedding/fallbacks, grayscale meaning, page breaks, repeated table headers, captions and working references.
 - [ ] **Website integration:** when code changes, preserve shared layout, provenance, markdown/discovery and project performance constraints; run the required `pnpm types`, `pnpm test`, `pnpm lint`, and `pnpm knip`. Measure numeric performance criteria under the specified conditions rather than estimating them.
+- [ ] **Video:** apply § 16; inspect typography, composition and overlays at playback size, plus motion and reading time.
 - [ ] **Handoff:** enumerate verified and unverified criteria. State any missing evidence/assets or real-environment checks; do not call an artifact verified because its source compiles.
 
 Reference method: [Vercel's design.md](https://vercel.com/design.md) informed the depth of instruction and review, not Auditmos's aesthetics or restrictions. Auditmos's palette, font roles, visible theme control, restrained report motifs, official assets, and human presence remain its own.
@@ -407,3 +408,53 @@ This table records the original documentation task. The subsequent owner-authori
 The original documentation task did not test browser accessibility, responsive rendering, printed artifacts, downstream client evidence, or application code. The generated-work checklist in § 14 applies to subsequent implementation.
 
 **Subsequent website rollout:** the header, footer, and regenerated OG artwork use the tagline-free wordmark; OG artwork uses the official icon. `/design.md` is a prerendered, byte-for-byte publication of this document, listed in `/llms.txt`, with an explicit Markdown response type. No second editable copy is maintained. The production URL becomes available after deployment; local preparation is not evidence of production availability. Print output and private client evidence remain unverified.
+
+## 16. Video appearance — Default
+
+Apply the Auditmos identity in § 3–6 to moving slides. The following defaults define its visual adaptation to video.
+
+### Color and surfaces
+
+Use the dark or light palette from § 4 with the same hierarchy: canvas `neutral-950`, subordinate surface `neutral-900`, headings `neutral-50`, body `neutral-300`, supporting text `neutral-400`, rules `neutral-800`. Cyan `#04d9ff` identifies selective emphasis; use `brand-ink` for readable accent text, especially on light backgrounds. Code may retain a dark surface with light text in either variant.
+
+Prefer a flat canvas and generous whitespace. Use square corners or a small 4px radius on utility surfaces. A single accent rule may anchor a title. Blueprint dots, hatch and crosshairs follow § 6's restraint; do not place a permanent grid, glow or gradient behind every slide.
+
+### Typography
+
+Preserve § 5's font roles: Space Grotesk for headings and dominant statements, system sans for explanatory text, IBM Plex Mono for code and references. Use actual font weights and glyphs for the content language, including Latin Extended for Polish. Set quotations in normal display type rather than synthesizing italics.
+
+Starting sizes below are output pixels for 1920 × 1080 landscape or 1080 × 1920 portrait. Scale proportionally for other resolutions.
+
+| Role | Landscape | Portrait | Leading / weight |
+|---|---|---|---|
+| Opening title | 80–96px | 68–80px | 1.1 / 700 display |
+| Statement, quote or list item | 48–56px | 44–52px | 1.3 / 700 display |
+| Supporting prose | 36–40px | 36–40px | 1.4 / 400 body |
+| Label, attribution or source | 24–28px | 28–32px | 1.4 / 400 mono |
+| Code | 28–32px | 30–34px | 1.6 / 400 mono |
+| Captions, when present | 36–42px | 40–48px | 1.25 / 500 body |
+
+### Composition
+
+Give every slide one dominant subject. Align related elements to a common left edge and use § 6's spacing rhythm. At the reference resolutions, start with 170px horizontal and 120px vertical margins in landscape; in portrait, 120px horizontal, 240px top and 220px bottom. Reserve additional space for destination controls and any captions or authorship. These are composition defaults, not guaranteed platform-safe regions.
+
+Reflow portrait content into a single column. Keep text, captions and portrait in separate regions. Simplify or split crowded content before reducing type. Check legibility at mobile playback size.
+
+| Slide | Treatment |
+|---|---|
+| Title | At most three headline lines and two subordinate lines; optional single accent rule. |
+| Quote or statement | One short idea; attribution below when applicable. No oversized decorative quotation mark competing with the text. |
+| List | Up to five landscape or three portrait items, at most two lines each. Number only when sequence is meaningful. |
+| Code | A focused excerpt in a quiet dark panel; emphasize discussed lines. Omit decorative desktop window controls. |
+| Screenshot | Preserve proportions and readable context. Crop deliberately; highlights must stay aligned with the visible subject. |
+| Ending | One takeaway with an optional relevant action or source; retain the opening's hierarchy. |
+
+### Brand elements and overlays
+
+Use the official wordmark and clear space from § 3, optionally on the opening or ending. Avoid a large repeated logo on every slide. An optional presenter portrait keeps its authentic colors and rectangular crop, without a glow or accent ring. Place a subordinate readable name beside it; use text identity if the portrait is unavailable.
+
+Captions, when present, use at most two lines with a contrasting solid or sufficiently opaque backing. Keep them clear of the main content and presenter. Sources remain readable and close to the claim they qualify.
+
+### Motion
+
+Keep movement quiet and purposeful: a 0.4-second crossfade between slides and a 0.4-second fade-in with at most 20px upward travel at the reference resolution, easing out without bounce. No flashing, decorative zoom or continuous movement behind reading text. Reveal list items sequentially and leave earlier items visible. Allow at least 3 seconds of stable reading time after the final item appears. A static view must show the complete composition.
