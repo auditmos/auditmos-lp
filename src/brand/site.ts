@@ -23,9 +23,7 @@ export const brand = {
 } as const;
 
 export const logoAssets = {
-	fullLogoBlack: "/src/assets/logos/auditmos-full-logo-black.svg",
-	fullLogoTransparent: "/src/assets/logos/auditmos-full-logo-transparent.svg",
-	fullLogoWhite: "/src/assets/logos/auditmos-full-logo-white.svg",
+	wordmarkCyan: "/src/assets/logos/auditmos-wordmark-cyan-transparent.svg",
 	iconBlack: "/src/assets/logos/auditmos-icon-black.svg",
 	iconTransparent: "/src/assets/logos/auditmos-icon-transparent.svg",
 	iconWhite: "/src/assets/logos/auditmos-icon-white.svg",
@@ -45,7 +43,7 @@ export const logoAssets = {
  * so regenerating the image without bumping this fails the build rather than
  * silently shipping a stale card URL.
  */
-export const OG_IMAGE_VERSION = "d00f178cc9b1";
+export const OG_IMAGE_VERSION = "5faba9e50d91";
 
 export const legalEntity = {
 	name: "Auditmos OÜ",

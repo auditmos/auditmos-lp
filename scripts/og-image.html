@@ -69,7 +69,7 @@
 				padding: 56px 60px 76px;
 			}
 
-			/* The logo SVG viewBox carries large transparent padding — crop it. */
+			/* Align the visible wordmark; its normalized canvas includes clear space. */
 			.logo {
 				position: relative;
 				height: 96px;
@@ -78,8 +78,8 @@
 			.logo img {
 				position: absolute;
 				top: 50%;
-				left: -78px;
-				width: 450px;
+				left: -15px;
+				width: 330px;
 				transform: translateY(-50%);
 			}
 
@@ -93,7 +93,7 @@
 			h1 {
 				margin-top: 22px;
 				/* Three lines at 84px would overrun the left column and collide
-				   with the A/ panel — the headline gained a line when it moved
+				   with the icon panel — the headline gained a line when it moved
 				   from the standard claim to the offer. */
 				font-size: 64px;
 				font-weight: 600;
@@ -162,10 +162,9 @@
 			}
 
 			.mark {
-				font-family: var(--mono);
-				font-size: 150px;
-				line-height: 1;
-				color: var(--accent);
+				display: block;
+				width: 240px;
+				height: 240px;
 			}
 
 			.mark-hatch {
@@ -226,7 +225,7 @@
 	<body>
 		<main>
 			<div class="logo">
-				<img src="../src/assets/logos/auditmos-full-logo-transparent.svg" alt="" />
+				<img src="../src/assets/logos/auditmos-wordmark-cyan-transparent.svg" width="738" height="134" alt="Auditmos" />
 			</div>
 			<div>
 				<p class="eyebrow">// Independent technical practice</p>
@@ -247,7 +246,7 @@
 				<span class="dot"></span>
 			</div>
 			<div>
-				<p class="mark">A/</p>
+				<img class="mark" src="../src/assets/logos/auditmos-icon-transparent.svg" width="200" height="200" alt="" />
 				<div class="hatch mark-hatch"></div>
 			</div>
 			<div></div>

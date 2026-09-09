@@ -327,7 +327,11 @@ export function renderLlmsTxt(pages: readonly MarkdownMirrorPage[]): string {
 		"",
 		// Prose, not its own `##` section: llmstxt.org reserves H2 blocks for
 		// link lists, so free-form detail belongs above the first one.
-		`Every page below is available as markdown two ways: the \`.md\` URL listed here, or content negotiation on the page's own URL — \`curl ${site.url}/about -H "Accept: ${MARKDOWN_MEDIA_TYPE}"\`. Both return the same document; HTML stays the default for anything that does not ask. Negotiated responses carry an estimated token count in \`${MARKDOWN_TOKENS_HEADER}\`, so you can budget context before reading.`,
+		`Every entry in Pages is available as markdown two ways: the \`.md\` URL listed here, or content negotiation on the page's own URL — \`curl ${site.url}/about -H "Accept: ${MARKDOWN_MEDIA_TYPE}"\`. Both return the same document; HTML stays the default for anything that does not ask. Negotiated responses carry an estimated token count in \`${MARKDOWN_TOKENS_HEADER}\`, so you can budget context before reading.`,
+		"",
+		"## Design guidance",
+		"",
+		`- [Design manual](${site.url}/design.md): Auditmos brand rules, assets, composition, and verification checklist; standalone markdown.`,
 		"",
 		"## Pages",
 		"",

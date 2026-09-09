@@ -9,7 +9,8 @@ import {
 import { renderThemeScript } from "@/brand/theme";
 import ThemeSelector from "@/components/ThemeSelector.astro";
 import "@/styles/globals.css";
-import fullLogoUrl from "@/assets/logos/auditmos-full-logo-transparent.svg?url";
+// Keep this shared asset cached separately instead of inlining it twice per page.
+import wordmarkUrl from "@/assets/logos/auditmos-wordmark-cyan-transparent.svg?no-inline";
 import iconUrl from "@/assets/logos/auditmos-icon-transparent.svg?url";
 
 interface Props {
@@ -72,12 +73,12 @@ const themeScript = renderThemeScript();
 			Skip to content
 		</a>
 		<header class="sticky top-0 z-40 border-neutral-800 border-b bg-neutral-950/95">
-			<div class="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 sm:px-8">
-				<a class="inline-flex items-center" href="/" aria-label={`${site.name} home`}>
-					<img class="theme-logo h-auto w-36" src={fullLogoUrl} alt="Auditmos" />
+			<div class="mx-auto flex min-h-20 max-w-7xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-5 py-3 sm:h-20 sm:flex-nowrap sm:px-8 sm:py-0">
+				<a class="inline-flex min-h-11 w-40 shrink-0 items-center" href="/" aria-label={`${site.name} home`}>
+					<img class="theme-logo -ml-2 h-auto w-40 shrink-0" src={wordmarkUrl} width="738" height="134" alt="Auditmos" />
 				</a>
 
-				<div class="flex items-center gap-2 lg:gap-7">
+				<div class="ml-auto flex items-center gap-2 lg:gap-7">
 					<div class="hidden items-center gap-7 lg:flex">
 						<nav aria-label="Primary navigation">
 							<ul class="flex items-center gap-6 text-neutral-300 text-sm">
@@ -152,7 +153,7 @@ const themeScript = renderThemeScript();
 		<footer class="border-neutral-800 border-t bg-neutral-900/40">
 			<div class="mx-auto grid max-w-7xl gap-10 px-5 py-12 sm:px-8 lg:grid-cols-[1.4fr_0.8fr_0.8fr] lg:py-16">
 				<div>
-					<img class="theme-logo h-auto w-36" src={fullLogoUrl} alt="Auditmos" />
+					<img class="theme-logo -ml-2 h-auto w-40 shrink-0" src={wordmarkUrl} width="738" height="134" alt="Auditmos" />
 					<p class="mt-5 max-w-md text-pretty text-neutral-400 text-sm leading-6">
 						An independent technical practice — senior software delivery, security audits with
 						public reports, and applied R&D.

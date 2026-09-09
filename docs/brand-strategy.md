@@ -4,6 +4,8 @@
 **Method:** Negacz framework (business strategy → brand strategy → positioning → assets → proofs → consistency), decisions taken in structured Q&A on 2026-07-16.
 **Supersedes:** parts of `prd-website-rebuild.md` where they conflict (see § 8).
 
+**Design update 2026-09-09:** owner-approved interview decisions are recorded in § 4–5; § 9 records resolved choices and remaining asset work. `docs/design.md` supplies the working manual and separately labeled operational defaults.
+
 **Update 2026-09-07:** § 3, § 4, § 7 and § 8 reconciled against what actually shipped. Two contradictions inside this document were removed rather than carried forward: § 7's copy rule mandating "audit-grade delivery" verbatim (§ 4 records the owner rejecting that phrase), and § 7's first-person copy rule (the site moved to practice voice in `412777f`). The homepage section list in § 7 now describes the shipped page — it had been prescribing the structure the 2026-09-07 simplification removed, and a later pass reading it would have restored both the deleted section and the rejected phrase.
 
 ---
@@ -59,9 +61,9 @@ Assets pass the test: **fame × uniqueness** (how many people connect it with Au
 | Name | *Auditmos*, reframed by the public-receipts mechanism | Exists; reframed via copy |
 | Phrase | **"Don't take our word for it. Read the audits."** — hero proof line, directly under the headline; short form "read the audits" on the CTA | Adopted 2026-07-16 (replaces rejected "audit-grade delivery"); "my" → "our" with the 2026-08-05 voice change; moved from H1 to proof line 2026-09-07 |
 | Receipts | github.com/auditmos/audits — 24 public reports, linked from hero, services, /partners | Exists; now load-bearing |
-| Face | Tomasz — photo on site, name on content, consistent presence | Founder sections live; photo still pending |
+| Face | Tomasz — photo on site, name on content, consistent presence | Natural-color portrait supplied and approved 2026-09-09; homepage integration prepared locally, deployment pending |
 | Color | `#04d9ff` cyan on dark | Exists; keep, but it is not distinctive alone |
-| Visual signature | "Engineering audit report" language: mono labels, figure/ref numbers, a recurring verification-stamp motif on proof elements | Partially exists (mono labels); push further |
+| Visual signature | Restrained engineering-report language: useful mono labels and references, selective motifs, evidence labels with explicit scope (§ 5) | Restraint and evidence-label direction approved 2026-09-09 |
 | Content format | One recurring, named teardown-style format (e.g. anonymized "what I found in the system I inherited" posts) in Polish on LinkedIn | New — name and cadence TBD with first posts |
 | Tone | As defined in § 3 | Adopt everywhere at once |
 
@@ -71,6 +73,33 @@ Assets pass the test: **fame × uniqueness** (how many people connect it with Au
 - Rule from the video: these assets don't need to please the owner; they need to be memorable and consistent. Changing the phrase, format, or face treatment resets the clock to zero.
 - **Why the phrase left the H1 (2026-09-07).** It rebuts a trust objection the visitor has not formed yet, because they do not yet know what is being claimed. Measured against the PRD's own 60-second criterion the page failed: "software development", "security audits" and "applied R&D" appeared nowhere above the fold, and the services section sat fourth. The headline now states the offer and the phrase sits immediately beneath it, verbatim and linked to the reports — same first screen, same wording, one slot down. The words were not changed; only what they are asked to do.
 - **One phrase, not two (2026-09-07).** "Built as if it will be audited" had been running in parallel — the hero aside, the OG card headline, a service promise, the markdown twin. Two candidate phrases halve each other, so it was retired everywhere and the OG card rebuilt. Watch for it creeping back: it reads well, which is exactly why it kept getting written.
+
+### Visual signature and cross-format use
+
+**Approved 2026-09-09, design-manual interview (Q1 A, Q3 A).**
+
+- **Restrained signature:** slash labels provide useful orientation; clipped corners identify primary actions; thin hatch bands mark major boundaries. Blueprint grids and crosshairs are reserved for selected covers or technical figures. Do not stack all motifs by default. These treatments support the content rather than becoming mandatory decoration in every section.
+- **Shared identity, format-specific composition:** websites, case studies, reports, and interactive tools share logo rules, type families, cyan, voice, and evidence standards. Website openings can be spacious; printable reports are light-first; case studies prioritize sustained reading; tools use compact layouts with controls and results prominent. Do not copy the website's marketing-page composition into every format.
+- These decisions guide new work; they do not request a redesign of existing pages. Detailed logo geometry and reusable layout specifications are proposed defaults in the design manual. Remotion and video are outside this design-manual scope.
+
+### Typography, themes, and explanatory imagery
+
+**Approved 2026-09-09, design-manual interview (Q7 A, Q8 A, Q9 A).**
+
+- **Typography:** Space Grotesk for headings, system sans-serif for body text, IBM Plex Mono for labels, references, code, and selected numbers. These roles are reusable brand decisions; size scales adapt to the format. The current site's exact font stacks and vendored faces remain the implementation reference.
+- **Themes and color:** the website retains system-default light/dark behavior and a visible user override. Promotional artwork uses dark treatments; printable reports are light-first. Cyan identifies actions and selective emphasis; darker teal provides readable accent text on light surfaces. Semantic colors communicate actual states, not an unsupported positive or negative judgment. Exact current tokens belong in the design manual; their presence in CSS does not prove that every existing foreground/background combination passes contrast requirements.
+- **Imagery:** real screenshots, explicitly redacted where necessary; diagrams grounded in the described system; consistent functional icons. Clearly labeled schematic UI examples are allowed, but must never masquerade as shipped products. No decorative stock or AI imagery. The approved founder portrait follows the natural-color rules below.
+
+### Logo assets and founder photography
+
+**Approved 2026-09-09, design-manual interview (Q4 A, Q5 A, Q6 A, with owner amendments).**
+
+- **Legacy tagline exception:** existing consumers may retain supplied full-logo artwork intact until migrated; its embedded "Secure your space" is an asset exception, not a second copy phrase to repeat. New work uses the tagline-free wordmark prepared in the branding repository on 2026-09-09. Do not crop lettering out of legacy exports or redraw the logo.
+- **Asset source:** the owner's local branding repository is `/Users/tkow/Documents/Code/Auditmos/branding`, corresponding to `https://github.com/auditmos/branding`. Both `logo/` and `full-logo/` contain existing lockups; do not assume `logo/` is tagline-free. Existing vendored website assets are not the complete branding library.
+- **Replacement direction (Q10 A, approved 2026-09-09):** a clean, tagline-free wordmark. Where context is needed, set "Software delivery · Security audits · Applied R&D" nearby as separate text, never embedded into the logo. "Don't take our word for it. Read the audits." remains the recognition phrase in proof-oriented copy. No replacement slogan is needed. **Asset follow-up delivered 2026-09-09:** `branding/wordmark/` contains cyan/black/white transparent, cyan-on-black and black-on-white SVG/PNG/vector-PDF variants preserving the original eight lettering paths; see its `README.md` and `preview.png`. The wordmark variants are tracked in branding commit `586548d`. The subsequent owner-authorized rollout vendors the cyan transparent SVG into the website header/footer and OG artwork.
+- **Official marks only:** retire the typeset "A/" from new work and replace its existing use in a later implementation task with the official icon. The owner's explicit reference is [icon/auditmos-icon-black.png](https://github.com/auditmos/branding/blob/main/icon/auditmos-icon-black.png). Inspected at repository commit `cf997ccaa091b6959d058d0116b3f0ea31de96dd`: this is a cyan icon on an opaque black square, not a black-colored icon. The repository also supplies SVG and transparent/white-background variants; use the actual artwork and appropriate background treatment, never infer appearance from a filename alone. Slash labels remain approved and are not substitute logos.
+- **Founder portrait:** natural color, understated presentation, simple background, natural skin tones, consistent crop; no cyan tint, dramatic effects, or synthetic replacement. The owner supplied `tk_sm.jpg` in the interview (640 × 640 portrait, light background, dark shirt, arms crossed) as the approved reference. Preserve its authentic appearance; do not imply that a future shoot is required. On 2026-09-09, at the owner's request, an unchanged copy was stored in the branding repository as `photography/tomasz-kowalczyk.jpg`, with usage notes in `photography/README.md`. The portrait and usage notes are published in branding commit `0ad4530`; the homepage now uses a vendored copy at `src/assets/photography/tomasz-kowalczyk.jpg`, replacing the "TK" placeholder in the next deployment.
+- **Scope history:** the original design-manual task documented these decisions without editing artwork. A subsequent owner-requested asset task prepared the new wordmark variants above. The owner subsequently authorized website/OG asset replacement and publication of the design manual at `/design.md`; both are prepared locally for the next deployment. The owner then authorized replacing the homepage's "TK" placeholder with the approved portrait; this is prepared locally.
 
 ## 5. Proof assets
 
@@ -87,6 +116,12 @@ Every claim on the site must sit adjacent to its proof. Available proof classes 
 **Web3 flavor decision (2026-07-16):** receipts, not identity — the reports and a few client names are shown proudly, framed as "security audits"; the site does not read as a crypto shop.
 
 **Placement rule:** no proof, no claim. If a section can't be backed yet, it ships weaker-but-true rather than strong-but-hollow.
+
+### Evidence labels and verification stamps
+
+**Approved 2026-09-09, design-manual interview (Q2 A).** A stamp is a specific evidence label, not a generic seal of approval. Use treatments such as "Public report · [reference]" or "Tested · [scope/date]", linked to supporting evidence. "Verified" requires a named check, its scope, the responsible party, and the date. Publication alone does not establish that a system passed testing, and a stamp must not imply certification or a broader review than the evidence supports.
+
+**Private evidence (Q11 A, approved 2026-09-09):** specific claims may rely on non-public evidence when a retained source substantiates them and publication permission exists. State the basis and confidentiality limitation beside the claim. "Reference available on request" is allowed only when that arrangement actually exists. Private evidence receives no public-verification stamp. Anonymization does not substitute for permission or substantiation.
 
 ## 6. Channel plan (the 95/5 rule)
 
@@ -118,7 +153,7 @@ Diagnosis confirmed by owner (all four): interchangeable · wrong audience · cl
 
 ### `/partners` (new page)
 
-Speaks to the agency owner's actual fear, in first person: your client stays your client (non-compete stance, stated plainly); white-label vs named collaboration modes; how handover and communication work; an agency-owner quote. Add to the MD-mirror + `/llms.txt` surfaces per the site convention.
+Speaks to the agency owner's actual fear, using practice voice (§ 3): your client stays your client (non-compete stance, stated plainly); white-label vs named collaboration modes; how handover and communication work; an agency-owner quote. Add to the MD-mirror + `/llms.txt` surfaces per the site convention.
 
 ### Copy rules for the rewrite
 
@@ -154,8 +189,18 @@ Resolved 2026-07-16: proof numbers (§ 5), artifact links, hero direction ("Read
 
 Resolved 2026-09-07: homepage hierarchy (offer above the fold, services third), the competing-phrase cleanup, and the OG card rebuilt to match the hero.
 
+Resolved 2026-09-09 (design-manual interview, first batch): restrained visual signature and format-specific composition (§ 4); specific, evidence-backed verification labels (§ 5).
+
+Resolved 2026-09-09 (second batch): legacy tagline exception with replacement artwork requested; official icon replaces the typeset "A/"; natural-color founder portrait supplied and approved (§ 4).
+
+Resolved 2026-09-09 (third batch): reusable font roles; adaptive themes with visible website override; evidence-led imagery and clearly labeled schematic examples (§ 4). Local branding-repository location supplied; replacement treatment for the legacy tagline requested.
+
+Resolved 2026-09-09 (final batch): clean wordmark with an optional separate service descriptor (§ 4), and qualified private evidence (§ 5). All eleven interview questions are answered. [The design manual](./design.md) translates those decisions into instructions, records current implementation tokens, and identifies proposed operational defaults separately from owner-approved brand rules.
+
 Still open:
 
-1. **Founder photo** — the homepage founder section currently uses a "TK" monogram; swap in a real photo when available.
+1. **Founder photo integration** — the portrait is supplied and approved (§ 4); durable asset storage is prepared locally in `branding/photography/`. The homepage's "TK" monogram is replaced locally with the approved portrait. The branding files are published; website deployment is tracked separately.
 2. **Testimonials** — 2–3 named quotes from agency owners/clients; sections on `/` and `/partners` are wired and render automatically once quotes are added.
 3. **LinkedIn content format** — name and cadence for the recurring Polish teardown format (§ 6).
+4. **Operational defaults** — logo geometry, layout scales, accessible interaction, and truthful chart conventions are proposed defaults in `docs/design.md`, not separately ratified brand decisions. Use them as starting specifications and verify the actual output; do not treat current CSS as blanket proof of usability or accessibility.
+5. **Brand rollout** — tagline-free wordmark assets are now prepared locally in `branding/wordmark/`. Website header/footer and OG consumers are migrated locally, including the official icon in place of typeset "A/". The branding assets are committed and published; website deployment is tracked separately.

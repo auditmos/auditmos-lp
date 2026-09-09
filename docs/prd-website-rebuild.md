@@ -210,6 +210,7 @@ Every project explicitly declares one or more `capabilities`: `software`, `secur
 | `/api/resend-webhook` | Worker (POST only) | Resend delivery-event sink (signature-verified) |
 | `/<path>.md` | Prerendered | Markdown twin of every URL above (except `/api/contact`) |
 | `/llms.txt` | Prerendered | Index for AI agents |
+| `/design.md` | Prerendered | Standalone design manual, sourced directly from `docs/design.md`, with `text/markdown; charset=utf-8` and public CORS headers; listed in `/llms.txt`. No HTML twin or request-time rendering. Owner-authorized 2026-09-09. |
 | `/sitemap.xml` | Prerendered | Search engine sitemap |
 | `/robots.txt` | Static | Crawler directives |
 

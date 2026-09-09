@@ -66,8 +66,10 @@ describe("site identity", () => {
 		expect(navigationItems.map((item) => item.label)).toContain("Security");
 	});
 
-	it("exposes vendored SVG logo lockups and icons", () => {
-		expect(logoAssets.fullLogoWhite).toBe("/src/assets/logos/auditmos-full-logo-white.svg");
+	it("exposes the tagline-free SVG wordmark and official icons", () => {
+		expect(logoAssets.wordmarkCyan).toBe(
+			"/src/assets/logos/auditmos-wordmark-cyan-transparent.svg",
+		);
 		expect(logoAssets.iconTransparent).toBe("/src/assets/logos/auditmos-icon-transparent.svg");
 	});
 });

@@ -1,5 +1,6 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import founderPortraitUrl from "@/assets/photography/tomasz-kowalczyk.jpg?url";
 import { renderWebMcpScript } from "@/agents/web-mcp";
 import { auditReports } from "@/audits/reports";
 import { site } from "@/brand/site";
@@ -235,7 +236,15 @@ const testimonials: readonly Testimonial[] = [];
 			<div class="mx-auto grid max-w-7xl gap-10 px-5 py-16 sm:px-8 sm:py-24 lg:grid-cols-[0.55fr_1.45fr] lg:gap-16">
 				<div>
 					<p class="eyebrow text-brand-ink">Who you’re dealing with</p>
-					<p class="mt-6 font-mono text-7xl text-brand-ink leading-none">TK</p>
+					<img
+						class="mt-6 h-auto w-full max-w-80"
+						src={founderPortraitUrl}
+						width="640"
+						height="640"
+						alt={site.founder.name}
+						loading="lazy"
+						decoding="async"
+					/>
 				</div>
 				<div>
 					<h2 class="max-w-2xl text-balance font-semibold text-3xl text-neutral-50 leading-tight sm:text-4xl">
