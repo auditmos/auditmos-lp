@@ -1,3 +1,10 @@
+# [1.39.0](https://github.com/auditmos/auditmos-lp/compare/v1.38.0...v1.39.0) (2026-09-09)
+
+
+### Features
+
+* **brand:** publish design manual and adopt approved brand assets ([97d46e5](https://github.com/auditmos/auditmos-lp/commit/97d46e53a6479cf7af58076d5a5044e508ffadec))
+
 # [1.38.0](https://github.com/auditmos/auditmos-lp/compare/v1.37.4...v1.38.0) (2026-09-08)
 
 
