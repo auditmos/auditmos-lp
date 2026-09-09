@@ -1,18 +1,18 @@
 # Auditmos design manual
 
-**Owner:** Tomasz Kowalczyk · **Issued:** 2026-09-09 · **Scope:** websites, case studies, reports, interactive tools, and video. Video appearance is covered in § 16.
+**Owner:** Tomasz Kowalczyk · **Issued:** 2026-09-09 · **Scope:** websites, case studies, reports, interactive tools, and video. Video appearance is covered in § 15.
 
 Create work that a technical buyer can inspect, understand, and trust. Auditmos should feel like a named senior practice with unusually clear evidence: precise typography, cyan used with restraint, authentic human presence, and the useful structure of an engineering report.
 
 ## 1. Read this before creating anything
 
-This is a self-contained working manual. Its business authority is [brand-strategy.md](https://github.com/auditmos/auditmos-lp/blob/main/docs/brand-strategy.md), including the owner's eleven design-interview decisions. The strategy overrides older PRD requirements where it explicitly supersedes them. The website PRD's historical references to company-only presentation, first-person founder sections, equal service prominence, and the rejected phrase "audit-grade delivery" do not restore those directions.
+This is a self-contained working manual: everything needed to produce Auditmos work is in this document. Where an older internal requirement appears to conflict with it, this manual governs.
 
 Three labels distinguish the instructions below:
 
 | Label | Meaning | How to use it |
 |---|---|---|
-| **Approved** | Owner-approved strategy or interview decision | Preserve it; do not silently replace it with a generator's preferred aesthetic. |
+| **Approved** | Owner-approved brand decision | Preserve it; do not silently replace it with a generator's preferred aesthetic. |
 | **Existing** | Observed asset, token, or implementation pattern | Reuse where suitable. Existing code is not proof that every use is accessible or a permanent brand rule. |
 | **Default** | Proposed operational specification derived for this manual | Use as the starting point without another interview. Adjust for a demonstrated content or accessibility need; do not describe it as separately owner-approved. |
 
@@ -39,7 +39,7 @@ Before composing, establish the reader, the decision or action, the delivery for
 | "The pilot completed the tested workflow; production rollout remains pending." | "Production-proven automation." | Preserves the actual stage and scope. |
 | "Software delivery · Security audits · Applied R&D" as separate context | Another tagline embedded in the logo | States the offer without competing with the recognition phrase. |
 
-Do not copy business counts, client statistics, prices, dates of operation, or repository totals from this manual. Retrieve them from the current source of the specific claim. The historical proof table in the strategy is not a live data feed.
+Do not copy business counts, client statistics, prices, dates of operation, or repository totals from this manual. Retrieve them from the current source of the specific claim. A figure quoted in any document, this one included, is a snapshot rather than a live data feed.
 
 ## 3. Logos, authorship, and asset handling
 
@@ -255,7 +255,7 @@ Align peer chart labels, plot starts/ends, and value columns with shared tracks.
 
 For the planned Agent Coverage reporting described in [prd-agent-coverage.md](https://github.com/auditmos/auditmos-lp/blob/main/docs/prd-agent-coverage.md), preserve its specific evidence distinctions: aggregate-only public data, separate verified/claimed tiers, and file-level coverage for whole-page fetches. A fetch does not establish line-level reading or comprehension. Present the classifier's method, period, and limits alongside its vocabulary; do not turn a product-specific "verified" tier into a general seal of approval. This is guidance for that planned surface, not a claim it ships today.
 
-**Testimonials:** use only approved real wording and permitted attribution: person, role/organization as allowed, and relevant engagement context. Do not invent, combine speakers, or silently rewrite a quote. Mark meaningful omissions; label a paraphrase as a paraphrase rather than putting it in quotation marks. Named testimonials are the strategy's intended proof class; absent approved quotes, omit the section. Do not generate names or publish placeholder praise. An anonymous quote needs a specific owner decision before it becomes a new testimonial convention.
+**Testimonials:** use only approved real wording and permitted attribution: person, role/organization as allowed, and relevant engagement context. Do not invent, combine speakers, or silently rewrite a quote. Mark meaningful omissions; label a paraphrase as a paraphrase rather than putting it in quotation marks. Named testimonials are the intended proof class; absent approved quotes, omit the section. Do not generate names or publish placeholder praise. An anonymous quote needs a specific owner decision before it becomes a new testimonial convention.
 
 ## 8. Screenshots, diagrams, and icons
 
@@ -330,6 +330,8 @@ Example using existing website utilities; no new component API is implied:
 
 Preserve static-first rendering, semantic HTML, page markdown twins, and `/llms.txt` coverage. Do not convert readable content into a canvas or image to obtain a visual effect. Introducing a page also requires its existing routing/discovery conventions; refer to `AGENTS.md`. Interactive tools may require JavaScript for their task, but a brand manual does not authorize new endpoints, bindings, or deployment.
 
+This manual is published verbatim at `/design.md`, served from `docs/design.md` and listed in `/llms.txt`. Edit that source document; no second editable copy is maintained.
+
 The footer on every website page identifies **Auditmos OÜ · Reg 17025406 · VAT EE102758111 · Narva mnt 13-27, 10151 Tallinn, Estonia**, plus the privacy/contact links. Use the shared `legalEntity` source in code. Legal identifiers belong in verification/contact surfaces, not automatically in a hero. Reports use an appropriate issuer/colophon rather than repeating the full website footer on every page.
 
 ## 11. Anti-patterns to reject
@@ -345,22 +347,20 @@ The footer on every website page identifies **Auditmos OÜ · Reg 17025406 · VA
 
 ## 12. Comparison with representative existing work
 
-**Review basis:** source inspection of the pages/components/styles below, visual inspection of `public/og.png`, the supplied portrait, and branding PNG variants. This is a documentation compatibility check, not a rendered website or accessibility audit. No page or artwork was redesigned during the original documentation task. The subsequent wordmark asset task is recorded in § 3 and § 13.
-
 | Representative surface | Consistent with this manual | Difference and intended handling |
 |---|---|---|
-| Homepage, `src/pages/index.astro` | Offer-first single hero; proof links; dev-led service order; founder; two featured slots adapt to availability | The owner-authorized rollout replaces "TK" with the approved natural-color portrait. Some metric links point to `/work` generally; new claims should use precise evidence where available. Do not reinstate the removed aside or principles section. |
+| Homepage, `src/pages/index.astro` | Offer-first single hero; proof links; dev-led service order; founder; two featured slots adapt to availability | The founder section uses the approved natural-color portrait, not a typeset "TK" placeholder. Some metric links point to `/work` generally; new claims should use precise evidence where available. Do not reinstate the removed aside or principles section. |
 | Service pages, `ServicePage.astro` | Single opening offer followed by suitability, detail, and deliverables | Existing numbered rows are implementation patterns, not a mandate to number every list. Preserve useful hierarchy; do not add report decorations automatically. |
 | Work index and GPU fleet case study | Explicit provenance, filters, authored problem/intervention detail and comparisons | A title/context split can serve a case study without authorizing a competing marketing hero. Private figures need the retained-source/permission basis; this review did not verify underlying client records. |
 | Case-study prose | Clear H2/H3 hierarchy, lists, code, tables | Bright `brand-accent` links/inline code bypass light-mode `brand-ink`. Table cells are universally left-aligned. For new work use accessible accent text and numeric column alignment; existing CSS fixes are separate work. |
 | `/partners` and `/about` | Agency-specific terms, founder identity, entity verification; absent testimonials stay hidden | Do not copy generic operating-principle claims as proof. A new named quote requires actual approved source material. |
 | Contact form and shared shell | Visible labels, feedback regions, native theme select, skip link | Check clipped-button focus, low-emphasis text, navigation selection cues, and all submit states in a browser. "Message sent" does not establish downstream email delivery. No runtime pass is claimed here. |
-| OG artwork, `public/og.png` | Cyan/dark, approved offer, font family, recognizable signature | The owner-authorized rollout replaces typeset "A/" with the official transparent icon and the legacy lockup with the tagline-free wordmark. The selected-cover grid/crosshairs are allowed; their density is not a page-wide default. |
+| OG artwork, `public/og.png` | Cyan/dark, approved offer, font family, recognizable signature | The artwork uses the official transparent icon and the tagline-free wordmark; neither the typeset "A/" nor the legacy lockup belongs there. The selected-cover grid/crosshairs are allowed; their density is not a page-wide default. |
 | Future printable reports and tools | Approved common identity with format-specific density | No shipped template was reviewed. The light report and compact tool recipes are proposed defaults, not descriptions of existing implementations. |
 
 ## 13. Remaining dependencies and decisions
 
-All eleven owner interview choices are resolved. No further general brand judgment prevents using this manual. The following constraints remain explicit:
+No open brand decision prevents using this manual. The following constraints remain explicit:
 
 | Item | Status | Consequence / safe fallback |
 |---|---|---|
@@ -369,7 +369,7 @@ All eleven owner interview choices are resolved. No further general brand judgme
 | Existing OG's "A/" replacement | Implemented using the official transparent SVG | Confirm the served OG image after each artwork deployment. |
 | Testimonials and confidential claims | Need real material/permission per artifact | Omit unsupported content. The manual does not grant client publication permission. |
 | Numeric logo/type/layout defaults | Proposed; not independently ratified or tested across renderers | Start here, inspect final output and revise for legibility. Do not describe them as established historical brand measurements. |
-| Named Polish content format/cadence | Still open in brand strategy | Does not block websites, reports, case studies, or tools; do not invent a recurring branded series name. |
+| Named Polish content format/cadence | Undecided | Does not block websites, reports, case studies, or tools; do not invent a recurring branded series name. |
 
 ## 14. Verification checklist for generated work
 
@@ -386,30 +386,12 @@ Use this checklist on the actual output. Record each applicable item as verified
 - [ ] **Reflow/motion:** inspect narrow 320px layout, representative tablet/desktop, 200% text enlargement and zoom/reflow; local evidence scrolling only when justified; reduced motion preserves a complete static experience.
 - [ ] **Export/print:** when applicable, inspect actual-size pages, font embedding/fallbacks, grayscale meaning, page breaks, repeated table headers, captions and working references.
 - [ ] **Website integration:** when code changes, preserve shared layout, provenance, markdown/discovery and project performance constraints; run the required `pnpm types`, `pnpm test`, `pnpm lint`, and `pnpm knip`. Measure numeric performance criteria under the specified conditions rather than estimating them.
-- [ ] **Video:** apply § 16; inspect typography, composition and overlays at playback size, plus motion and reading time.
+- [ ] **Video:** apply § 15; inspect typography, composition and overlays at playback size, plus motion and reading time.
 - [ ] **Handoff:** enumerate verified and unverified criteria. State any missing evidence/assets or real-environment checks; do not call an artifact verified because its source compiles.
 
 Reference method: [Vercel's design.md](https://vercel.com/design.md) informed the depth of instruction and review, not Auditmos's aesthetics or restrictions. Auditmos's palette, font roles, visible theme control, restrained report motifs, official assets, and human presence remain its own.
 
-## 15. Verification of this manual — 2026-09-09
-
-This table records the original documentation task. The subsequent owner-authorized website rollout is recorded below.
-
-| Requested criterion | Status | Evidence |
-|---|---|---|
-| Establish approved decisions, implementation patterns, and gaps before drafting | Verified | Strategy/PRD, assets, styles, shell/components and representative page source inspected; distinctions preserved in § 1 and § 12. |
-| Interview the owner and record accepted decisions in the strategy | Verified | Q1–Q11 answered; decisions recorded in strategy § 4–5 and resolved-input history in § 9. |
-| Self-contained universal and website guidance with exact existing tokens | Verified | § 2–10; all 19 color/font declarations mechanically compared with `globals.css`, with no differences. |
-| Asset references, examples, anti-patterns and verification checklist | Verified | § 3, § 6–11 and § 14; 20 explicit website file/directory references checked, plus both documents' relative Markdown links. |
-| Compare representative pages and explain intentional differences | Verified | Source/artwork comparison in § 12; no claim of a rendered browser audit. |
-| Keep pending decisions/assets explicit and avoid volatile business figures | Verified | § 13; dynamic evidence points to its source; synthetic example explicitly labeled. |
-| Documentation-only scope; no dependency install, website change, endpoint or deployment | Verified | Working-tree review: only `docs/brand-strategy.md` and new `docs/design.md` changed for this task. |
-
-The original documentation task did not test browser accessibility, responsive rendering, printed artifacts, downstream client evidence, or application code. The generated-work checklist in § 14 applies to subsequent implementation.
-
-**Subsequent website rollout:** the header, footer, and regenerated OG artwork use the tagline-free wordmark; OG artwork uses the official icon. `/design.md` is a prerendered, byte-for-byte publication of this document, listed in `/llms.txt`, with an explicit Markdown response type. No second editable copy is maintained. The production URL becomes available after deployment; local preparation is not evidence of production availability. Print output and private client evidence remain unverified.
-
-## 16. Video appearance — Default
+## 15. Video appearance — Default
 
 Apply the Auditmos identity in § 3–6 to moving slides. The following defaults define its visual adaptation to video.
 
