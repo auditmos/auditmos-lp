@@ -190,12 +190,29 @@ Use an 8px spacing rhythm with 4px adjustments: 4/8 within tight groups, 12/16 b
 
 | Format | Opening and structure | Evidence and ending |
 |---|---|---|
-| Website landing page | Offer → audience/context → linked recognition phrase → primary contact action and secondary audits action | Proof strip, dev-led services, selected work, founder, agency context, contact. Preserve the current homepage's approved order. |
+| Corporate homepage | Offer → audience/context → linked recognition phrase → primary contact action and secondary audits action | Proof strip, dev-led services, selected work, founder, agency context, contact. Preserve the current homepage's approved order. |
+| Project or product landing page | Purpose and use case → real example → useful next action | Relevant outputs, documentation or release history. Include company services, founder content or contact actions only when they serve this page’s purpose. |
 | Case study | Specific project title, concise outcome/context, client or internal provenance | Problem → intervention → evidence → limits → relevant next step. Use actual content, not empty mandatory sections. |
 | Report | Quiet identity, title, date/version/scope, central finding | Findings with references, methods and caveats, actionable next steps. Separate observed result from recommendation; light-first print pages. |
 | Interactive tool | Short purpose statement, working controls, result | Model assumptions, source/time basis, validation and useful export/reset where relevant. Do not delay the tool below a marketing hero. |
 
 For print, start with A4 and 18–22mm margins, repeating table headers, page numbers, and kept-together figure/caption pairs. Preserve searchable text and working references. For client-owned or white-label deliverables, the engagement's authorship agreement governs visible branding; never add Auditmos branding to a client's artifact merely because this manual was used.
+
+### Simplifying an opening — Default
+
+Distinguish a page explaining a tool from the tool’s working interface. The explanatory page may use the marketing H1 scale in § 5; the working interface gives its controls and result priority. The corporate homepage sequence above is specific to that surface, not a required set of sections for every Auditmos project.
+
+For a project landing page, start with an optional short orientation label, one concise headline, one sentence covering purpose and use, and one primary action. Add a second action only for a distinct reader need. This is a starting composition, not a word-count rule for every format. A presentation opening or report cover does not need a website button.
+
+When an opening feels crowded, first remove repeated claims, secondary messages and competing actions; then move supporting detail later. Preserve the type hierarchy and selected brand motifs. A large, short headline can be calmer than several small information blocks. Reducing information density does not require flattening all type sizes or removing the primary action’s clipped corner.
+
+### Detail, variants and provenance — Default
+
+When several artifacts are variants of the same result, start with one selected variant and an obvious way to switch. Show variants together when comparison is the reader’s task. Keep the result’s identity, essential context and primary action visible; supporting copy, technical parameters and additional downloads may sit behind clearly labeled disclosure controls. Never hide limitations needed to interpret a result.
+
+Adapt this sequence to the medium: selection and disclosure on the web, successive slides and optional appendix slides in a presentation, main findings and referenced appendices in a report. Do not simulate interactive controls in a static export.
+
+For derived or versioned work, make the relationship **source → version → result** traceable. Where publication is permitted, provide the source’s readable name and a way to inspect it. Identify the selected version and preserve its association with its own inputs and outputs; do not silently show current inputs beside an older result. On the web, use stable links to specific versions where relevant. Apply § 7’s source and confidentiality rules; internal paths and implementation metadata are not required public labels.
 
 ### Motif specification
 
@@ -301,7 +318,7 @@ These paths and conventions apply to `auditmos-lp`; other artifacts inherit the 
 | Surface | Source | Reuse guidance |
 |---|---|---|
 | Shared shell | `src/layouts/Layout.astro` | Metadata, header, navigation, skip link, footer and theme assets. Do not clone the shell per page. |
-| Theme | `src/components/ThemeSelector.astro`, `src/brand/theme.ts` | Native select; `auditmos-theme` storage key; `data-theme="system|light|dark"`; `color-scheme` and `light-dark()`. |
+| Theme | `src/components/ThemeSelector.astro`, `src/brand/theme.ts` | Native select; `auditmos-theme` storage key; `data-theme="system\|light\|dark"`; `color-scheme` and `light-dark()`. |
 | Global foundation | `src/styles/globals.css` | Exact brand/font tokens and motif utilities. `@source "../**/*.astro"` constrains utility discovery. |
 | Long-form content | `src/styles/prose.css`, `src/pages/work/[slug].astro` | Import prose styles from the rendering page. They are not part of the global homepage budget. |
 | Service structure | `src/components/ServicePage.astro` | Offer first; suitability and deliverables have distinct sections. Avoid restoring the retired hero sidebar. |
@@ -310,6 +327,20 @@ These paths and conventions apply to `auditmos-lp`; other artifacts inherit the 
 | Inquiry form | `src/pages/contact.astro` | Native labels, anti-spam integration and explicit feedback. Reuse behavior deliberately; inspect states rather than copying every class. |
 
 Existing layout foundation: `max-w-7xl` = 80rem; horizontal padding `px-5` = 1.25rem, `sm:px-8` = 2rem. Typical section padding is 4rem rising to 6rem; the homepage hero reaches 8rem on large screens. Breakpoints are `sm: 40rem`, `md: 48rem`, `lg: 64rem`. These are website patterns, not universal report geometry. Long-form prose currently caps at `max-w-3xl` = 48rem; judge its actual character measure with the selected body font.
+
+### Portable website shell — Default
+
+Use this recipe when building another Auditmos website without access to the components above. It defines appearance and behavior independently of Astro or Tailwind. Reuse the shared implementation within an existing site; do not create a separate shell for each page. These screen dimensions are starting values in CSS pixels at a 16px root, not slide or print measurements.
+
+| Element | Starting specification | Adaptation and checks |
+|---|---|---|
+| Header | Full-width background and bottom rule; inner content aligned to the page container. Start at 80px desktop height and a 160px-wide image for the 738 × 134 wordmark. | Preserve visible-artwork alignment and clear space from § 3. Let height grow when content wraps. A sticky header must not obscure focus or anchor destinations. |
+| Navigation | Subordinate system-sans text, starting at 14px. Ordinary navigation links have no filled button treatment or persistent underline; the primary action uses the clipped corner when present. | Retain clear hover, focus and current-page states. Keep labels useful to this site instead of importing the corporate navigation. |
+| Theme selection | Compact native System / Light / Dark select; mono text starting at 12px, no prominent border, a small chevron and an accessible name. Optional ◐ / ☀ / ☾ symbols accompany the words. | Keep a minimum 44px hit height. System follows the device preference and removes a stored override. Provide usable focus, contrast and equivalent hierarchy in both themes. |
+| Footer variants | Full corporate footer: relevant navigation plus entity/contact details. Compact project footer: entity/contact details and essential links, without mandatory service columns or a repeated company introduction. | Keep the required legal information and privacy/contact links below. Choose the variant by the page’s purpose, not by its viewport width. |
+| Compact footer layout | Start with entity identifiers on the left and email/address on the right on wide screens; stack on narrow screens. Supporting text starts at 12px. Keep utility links separate if they crowd the details. | Use readable supporting-text tokens and adequate link targets. Enlarge text or strengthen contrast when needed; copying an existing low-contrast value does not satisfy § 9. |
+
+### Existing implementation example
 
 Example using existing website utilities; no new component API is implied:
 
@@ -377,6 +408,7 @@ Use this checklist on the actual output. Record each applicable item as verified
 
 - [ ] **Identity:** reader understands the offer or report/tool purpose; approved voice and service emphasis; no retired phrase, false authorship, or "A/" substitute mark.
 - [ ] **Assets:** correct official variant, visible bounds, clear space and final-size legibility; legacy exception explicit where relevant; real portrait accessible; no guessed filenames.
+- [ ] **Identity surfaces — Default:** inspect the actual browser-tab icon and title, sharing preview, error pages and exported document metadata where applicable. Remove starter branding. Verify the referenced or embedded assets in the delivered artifact, not merely the presence of correct files in the source tree; check favicons at 16px and 32px as specified in § 3.
 - [ ] **Hierarchy:** one dominant opening subject; repeatable type roles; readable measure; meaningful section order; no empty grid slots or arbitrary motif accumulation.
 - [ ] **Color/themes:** exact current brand values; readable text/focus/control combinations; equivalent hierarchy in both themes; selected/state meaning also conveyed without color.
 - [ ] **Evidence:** each material claim has its actual basis, period/scope and caveat; private claims have retained sources and permission; every link resolves to the intended evidence; no volatile figures copied from old design copy.
