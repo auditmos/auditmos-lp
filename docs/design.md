@@ -419,6 +419,7 @@ Use this checklist on the actual output. Record each applicable item as verified
 - [ ] **Export/print:** when applicable, inspect actual-size pages, font embedding/fallbacks, grayscale meaning, page breaks, repeated table headers, captions and working references.
 - [ ] **Website integration:** when code changes, preserve shared layout, provenance, markdown/discovery and project performance constraints; run the required `pnpm types`, `pnpm test`, `pnpm lint`, and `pnpm knip`. Measure numeric performance criteria under the specified conditions rather than estimating them.
 - [ ] **Video:** apply § 15; inspect typography, composition and overlays at playback size, plus motion and reading time.
+- [ ] **Narrative series — Default:** brand tokens only on the frame, never inside story art; resolved colors match the current § 4 snapshot; Polish diacritics render in the final video; a sponsored episode is labeled on its opening card and in the post's first line.
 - [ ] **Handoff:** enumerate verified and unverified criteria. State any missing evidence/assets or real-environment checks; do not call an artifact verified because its source compiles.
 
 Reference method: [Vercel's design.md](https://vercel.com/design.md) informed the depth of instruction and review, not Auditmos's aesthetics or restrictions. Auditmos's palette, font roles, visible theme control, restrained report motifs, official assets, and human presence remain its own.
@@ -472,3 +473,69 @@ Captions, when present, use at most two lines with a contrasting solid or suffic
 ### Motion
 
 Keep movement quiet and purposeful: a 0.4-second crossfade between slides and a 0.4-second fade-in with at most 20px upward travel at the reference resolution, easing out without bounce. No flashing, decorative zoom or continuous movement behind reading text. Reveal list items sequentially and leave earlier items visible. Allow at least 3 seconds of stable reading time after the final item appears. A static view must show the complete composition.
+
+### Narrative series and motion comics — Default
+
+Auditmos may appear in a narrative series, such as a vertical motion comic or comic drama, as its sponsor or its author. The brand dresses the **frame** of the episode, not the world of the story: the narrator's captions, speech bubbles, closing stamp, cover, and opening and closing cards use the tokens of § 4, while scenes keep the palette the story needs. § 15's flat canvas and quiet motion suit slides; story panels have a world of their own, which the brand frames rather than repaints.
+
+Do not tint story art cyan, put the logo inside a scene, or give a character Auditmos copy to speak. The claims of § 2 apply to anything the series says about Auditmos: a closing card states what Auditmos does and points to evidence ("Read the audits."), without superlatives. The story itself makes no claim about Auditmos.
+
+#### Resolved colors for renderers without CSS
+
+For a renderer that takes plain colors (for example, a Remotion composition drawing with hex values), use these resolved values instead of resolving § 4 by hand. Light values are the manual's own hex; dark values are its `oklch` converted to sRGB (hue 220). Resolved from the § 4 snapshot on 2026-09-29; resolve them again when `src/styles/globals.css` changes, and keep this table in step with it. The conversion reproduces § 4's own check: `#04d9ff` on `#f8fbfc` 1.63:1, `#00788c` on `#f8fbfc` 4.97:1.
+
+| Role | Token | Dark | Light |
+|---|---|---|---|
+| Canvas | `neutral-950` | `#060c0e` | `#f8fbfc` |
+| Subordinate surface | `neutral-900` | `#11191b` | `#edf4f6` |
+| Heading | `neutral-50` | `#ffffff` | `#132226` |
+| Body | `neutral-300` | `#cdd6d9` | `#34484d` |
+| Supporting text | `neutral-400` | `#99a3a6` | `#43585e` |
+| Rule | `neutral-800` | `#1f282b` | `#c9d8dc` |
+| Accent fill | `brand-accent` | `#04d9ff` | `#04d9ff` |
+| Text on accent | `accent-contrast` | `#060c0e` | `#060c0e` |
+| Accent text | `brand-ink` | `#04d9ff` | `#00788c` |
+
+Machine-readable form of the same table:
+
+```yaml
+video-tokens:
+  dark:  { canvas: "#060c0e", surface: "#11191b", heading: "#ffffff", body: "#cdd6d9", support: "#99a3a6", rule: "#1f282b", accent: "#04d9ff", on-accent: "#060c0e", ink: "#04d9ff" }
+  light: { canvas: "#f8fbfc", surface: "#edf4f6", heading: "#132226", body: "#34484d", support: "#43585e", rule: "#c9d8dc", accent: "#04d9ff", on-accent: "#060c0e", ink: "#00788c" }
+```
+
+Contrast of the pairs a video uses, computed from the opaque sRGB values using relative luminance:
+
+| Pair | Ratio |
+|---|---|
+| Heading on canvas, dark / light | 19.69 / 15.72 |
+| Body on canvas, dark / light | 13.33 / 9.26 |
+| Supporting text on canvas, dark / light | 7.63 / 7.22 |
+| Cyan on dark canvas (and canvas on cyan) | 11.60 |
+| White on cyan | **1.70** — never use |
+
+Opacity, speech-bubble fills over story art, and other surfaces need their own checks.
+
+#### Fonts for rendered video
+
+A video renderer loads named fonts; "system sans" does not exist in a render, and the website's vendored font files are Latin only.
+
+- Display: **Space Grotesk** (Google Fonts, weights 300–700, `latin-ext`), as § 5.
+- Body: **IBM Plex Sans** (Google Fonts, `latin-ext`) in place of the system stack. It shares the family of the approved mono, so the pairing stays within two families as § 5 asks.
+- Mono: **IBM Plex Mono** from Google Fonts with `latin-ext`, not the Latin-only vendored file.
+
+Video renders load named fonts with Latin Extended; check a Polish sentence with ą ć ę ł ń ó ś ź ż in the final render.
+
+#### Logo in vertical video
+
+- Use the tagline-free wordmark from § 3 (`wordmark/auditmos-wordmark-cyan-transparent.svg` on a dark card, `wordmark/auditmos-wordmark-black-transparent.svg` on a light one), on the opening and closing cards only, as § 15 already says for slides.
+- At 1080 × 1920, start at **400px of visible lettering** (§ 3's 144 CSS px minimum at a phone's roughly 2.8 output pixels per CSS pixel); the symbol alone at least **72px** visible height. Clear space 0.5H, as § 3.
+- Place it inside the platforms' safe area, clear of their overlays (top bar, account line and caption at the bottom, action column on the right). Starting insets at 1080 × 1920: **300px top, 672px bottom, 150px right, 90px left**. Check them against each platform's current interface before publishing.
+- The wordmark files live in the branding repository, which an outside producer may not be able to reach. Supply the actual exports to the production rather than guessing remote URLs (§ 13).
+
+#### Sponsorship notice
+
+- A sponsored episode says so in the language of the episode. For Polish: *"Materiał sponsorowany · Auditmos"* on the opening card, in body type at § 15's supporting-prose size or larger, with the brand's name as text. The logo may stand beside the text, never replace it.
+- Repeat the same label as the first line of the post, and set the platform's own paid-promotion switch at upload.
+- A sponsored piece says so where the viewer sees it first, in plain words. It is never styled to be missed: no low contrast, no small print, no label shown only at the end.
+- Before first use, verify the current UOKiK recommendations on marking advertising in social media and each platform's rules, and date whatever is recorded from them.
