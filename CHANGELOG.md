@@ -1,3 +1,10 @@
+## [1.39.1](https://github.com/auditmos/auditmos-lp/compare/v1.39.0...v1.39.1) (2026-09-30)
+
+
+### Bug Fixes
+
+* **build:** silence the prerender "No environment found" warning ([76cf044](https://github.com/auditmos/auditmos-lp/commit/76cf04448a65dfa0d5850b1988f51ea26693eb39))
+
 # [1.39.0](https://github.com/auditmos/auditmos-lp/compare/v1.38.0...v1.39.0) (2026-09-09)
 
 
