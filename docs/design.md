@@ -76,7 +76,7 @@ Measure **visible artwork**, not the SVG element box. Legacy full-lockup SVGs us
 - Let **H** be the visible symbol height, excluding canvas padding. Keep at least **0.5H clear space** around the visible lockup or standalone symbol. Measure to neighboring text, borders, and trim edges; transparent padding may satisfy the space but must not obscure alignment.
 - Start at **144 CSS px visible wordmark width** for a tagline-free screen lockup, **32mm** for print. For the legacy lockup, start at **240 CSS px / 50mm** and enlarge if its tagline is not legible. These are proposed minimums requiring inspection of the final export.
 - Standalone symbol: **24 CSS px visible height / 6mm** minimum for ordinary placement. Favicons are a separate optical check at 16px and 32px; use the official symbol, not the full lockup or a typeset imitation. A container may need to be larger because of internal padding.
-- Align visible lettering with the content edge. Website header: leading edge. Report: cover/masthead, with a quiet running identifier inside if needed. Tool: compact header outside the working controls. Do not watermark every chart or repeat a large logo in every section.
+- Align visible lettering with the content edge. Website header: leading edge. Report: cover/masthead, with a quiet running identifier inside if needed. Tool: compact header outside the working controls. Do not watermark every chart or repeat a large logo in every section. (A narrative series' corner symbol, § 15, is the one running mark allowed.)
 - Use cyan on a dark field; black artwork on light. The website's `brightness(0)` treatment is an existing controlled conversion to black, not permission for arbitrary filters. Prefer explicit approved export variants for portable artifacts.
 - The new white-transparent wordmark is a monochrome reversed export for dark placement when cyan is unsuitable. It does not replace cyan as the primary brand treatment.
 - Keep proportions, spacing, symbol shape, and lettering intact. No stretching, rotation, outline, glow, shadow, gradient recoloring, decorative clipping, letter substitution, or attaching verification seals to the mark. Do not place it over visually busy photography.
@@ -419,7 +419,7 @@ Use this checklist on the actual output. Record each applicable item as verified
 - [ ] **Export/print:** when applicable, inspect actual-size pages, font embedding/fallbacks, grayscale meaning, page breaks, repeated table headers, captions and working references.
 - [ ] **Website integration:** when code changes, preserve shared layout, provenance, markdown/discovery and project performance constraints; run the required `pnpm types`, `pnpm test`, `pnpm lint`, and `pnpm knip`. Measure numeric performance criteria under the specified conditions rather than estimating them.
 - [ ] **Video:** apply § 15; inspect typography, composition and overlays at playback size, plus motion and reading time.
-- [ ] **Narrative series — Default:** brand tokens only on the frame, never inside story art; resolved colors match the current § 4 snapshot; Polish diacritics render in the final video; a sponsored episode is labeled on its opening card and in the post's first line.
+- [ ] **Narrative series — Default:** the treatment (Frame or Full branding) is stated for the series; with Frame, brand tokens only on the frame and story art in its own palette; with Full branding, story art in the § 4 neutrals with cyan as accent and light, skin and hair natural; the corner symbol stays inside the safe area and clear of captions; no logo or brand name inside a scene; resolved colors match the current § 4 snapshot; Polish diacritics render in the final video; a sponsored episode is labeled on its opening card and in the post's first line.
 - [ ] **Handoff:** enumerate verified and unverified criteria. State any missing evidence/assets or real-environment checks; do not call an artifact verified because its source compiles.
 
 Reference method: [Vercel's design.md](https://vercel.com/design.md) informed the depth of instruction and review, not Auditmos's aesthetics or restrictions. Auditmos's palette, font roles, visible theme control, restrained report motifs, official assets, and human presence remain its own.
@@ -476,9 +476,14 @@ Keep movement quiet and purposeful: a 0.4-second crossfade between slides and a 
 
 ### Narrative series and motion comics — Default
 
-Auditmos may appear in a narrative series, such as a vertical motion comic or comic drama, as its sponsor or its author. The brand dresses the **frame** of the episode, not the world of the story: the narrator's captions, speech bubbles, closing stamp, cover, and opening and closing cards use the tokens of § 4, while scenes keep the palette the story needs. § 15's flat canvas and quiet motion suit slides; story panels have a world of their own, which the brand frames rather than repaints.
+Auditmos may appear in a narrative series, such as a vertical motion comic or comic drama, as its sponsor or its author. § 15's flat canvas and quiet motion suit slides; story panels have a world of their own. A series is made in one of two treatments, chosen for the whole series:
 
-Do not tint story art cyan, put the logo inside a scene, or give a character Auditmos copy to speak. The claims of § 2 apply to anything the series says about Auditmos: a closing card states what Auditmos does and points to evidence ("Read the audits."), without superlatives. The story itself makes no claim about Auditmos.
+| Treatment | Frame | Logo | Story art | Cards |
+|---|---|---|---|---|
+| **Frame** | The narrator's captions, speech bubbles, closing stamp and cover use the tokens of § 4. | The symbol in a top corner for the whole episode, on a dark plate. | Keeps the palette the story needs. | None. |
+| **Full branding** | As Frame. | The symbol in a top corner for the whole episode, as a watermark (the artwork alone at reduced opacity), and the wordmark on the cards. | Repainted in the brand's palette: the § 4 neutrals (hue 220) for walls, furniture and night; cyan as the accent and as light (screens, lamps, signs, highlights). Skin and hair keep natural colors. | An opening card and a closing card on the dark canvas. |
+
+The corner logo is the one running mark this manual allows; § 3's "do not watermark every chart" still holds everywhere else. Do not put the logo or the brand's name inside a scene, or give a character Auditmos copy to speak. The claims of § 2 apply to anything the series says about Auditmos: a closing card states what Auditmos does and points to evidence ("Read the audits."), without superlatives. The story itself makes no claim about Auditmos.
 
 #### Resolved colors for renderers without CSS
 
@@ -528,14 +533,15 @@ Video renders load named fonts with Latin Extended; check a Polish sentence with
 
 #### Logo in vertical video
 
-- Use the tagline-free wordmark from § 3 (`wordmark/auditmos-wordmark-cyan-transparent.svg` on a dark card, `wordmark/auditmos-wordmark-black-transparent.svg` on a light one), on the opening and closing cards only, as § 15 already says for slides.
-- At 1080 × 1920, start at **400px of visible lettering** (§ 3's 144 CSS px minimum at a phone's roughly 2.8 output pixels per CSS pixel); the symbol alone at least **72px** visible height. Clear space 0.5H, as § 3.
+- **On the cards** (Full branding): the tagline-free wordmark from § 3 (`wordmark/auditmos-wordmark-cyan-transparent.svg` on a dark card, `wordmark/auditmos-wordmark-black-transparent.svg` on a light one), at 1080 × 1920 starting at **400px of visible lettering** (§ 3's 144 CSS px minimum at a phone's roughly 2.8 output pixels per CSS pixel).
+- **In the corner** (both treatments, the whole episode): the transparent symbol (`icon/auditmos-icon-transparent.svg`), at least **72px** visible height, in a top corner. Frame: on a small plate of the dark canvas, so it reads over any scene. Full branding: the symbol alone at reduced opacity, as a watermark over the brand-colored story art. Use the wordmark there, at about 300px visible width, only when no symbol export is available. Captions, bubbles and the stamp keep clear of it.
+- Clear space 0.5H, as § 3, in both places.
 - Place it inside the platforms' safe area, clear of their overlays (top bar, account line and caption at the bottom, action column on the right). Starting insets at 1080 × 1920: **300px top, 672px bottom, 150px right, 90px left**. Check them against each platform's current interface before publishing.
 - The wordmark files live in the branding repository, which an outside producer may not be able to reach. Supply the actual exports to the production rather than guessing remote URLs (§ 13).
 
 #### Sponsorship notice
 
-- A sponsored episode says so in the language of the episode. For Polish: *"Materiał sponsorowany · Auditmos"* on the opening card, in body type at § 15's supporting-prose size or larger, with the brand's name as text. The logo may stand beside the text, never replace it.
+- A sponsored episode says so in the language of the episode. For Polish: *"Materiał sponsorowany · Auditmos"* on the opening card (Full branding) or, in the Frame treatment, which has no cards, beside the corner symbol for the first 3 seconds, in body type at § 15's supporting-prose size or larger, with the brand's name as text. The logo may stand beside the text, never replace it.
 - Repeat the same label as the first line of the post, and set the platform's own paid-promotion switch at upload.
 - A sponsored piece says so where the viewer sees it first, in plain words. It is never styled to be missed: no low contrast, no small print, no label shown only at the end.
 - Before first use, verify the current UOKiK recommendations on marking advertising in social media and each platform's rules, and date whatever is recorded from them.

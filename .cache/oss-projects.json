@@ -1,19 +1,19 @@
 [
   {
-    "fullName": "auditmos/tstack-on-cf",
-    "description": "Full-stack web app template — TanStack Start + Hono on Cloudflare Workers, Neon Postgres + Drizzle, shadcn/ui.",
-    "url": "https://github.com/auditmos/tstack-on-cf",
-    "stars": 0,
-    "language": "TypeScript",
-    "updatedAt": "2026-08-28T14:43:04Z"
-  },
-  {
     "fullName": "auditmos/saas-on-cf",
     "description": "Multi-app SaaS monorepo — TanStack Start frontend + Hono API on Cloudflare Workers, Better Auth, Neon Postgres + Drizzle, shadcn/ui, service bindings.",
     "url": "https://github.com/auditmos/saas-on-cf",
-    "stars": 14,
+    "stars": 15,
     "language": "TypeScript",
-    "updatedAt": "2026-08-24T08:13:14Z"
+    "updatedAt": "2026-09-11T17:19:37Z"
+  },
+  {
+    "fullName": "auditmos/tstack-on-cf",
+    "description": "Full-stack web app template — TanStack Start + Hono on Cloudflare Workers, Neon Postgres + Drizzle, shadcn/ui.",
+    "url": "https://github.com/auditmos/tstack-on-cf",
+    "stars": 1,
+    "language": "TypeScript",
+    "updatedAt": "2026-09-09T23:23:27Z"
   },
   {
     "fullName": "auditmos/hono-on-cf",
