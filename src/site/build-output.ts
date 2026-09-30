@@ -205,16 +205,33 @@ interface AstroRouteData {
 	type: string;
 }
 
-function astroManifestRoutes(): AstroRouteData[] {
-	const source = workerEntrySource();
-	// Astro emits `var _manifest = deserializeManifest({...})` in the SSR entry;
-	// match on the assignment so a `const`/`var` change doesn't break parsing.
-	const marker = "_manifest = deserializeManifest(";
-	const start = source.indexOf(marker);
+// Astro emits `var _manifest = deserializeManifest({...})`; match on the
+// assignment so a `const`/`var` change doesn't break parsing.
+const MANIFEST_MARKER = "_manifest = deserializeManifest(";
 
-	if (start === -1) {
-		throw new Error("No serialized Astro manifest found in worker entry");
+// Astro 7.1 inlined the manifest into `entry.mjs`; 7.3 moved it into a chunk
+// the entry imports (`chunks/entrypoints_<hash>.mjs`). Search the entry first,
+// then every server chunk, so the next reshuffle doesn't break this too.
+function serializedManifestSource(): string {
+	const chunksDir = resolve(root, "dist", "server", "chunks");
+	const chunks = existsSync(chunksDir)
+		? readdirSync(chunksDir)
+				.filter((name) => name.endsWith(".mjs"))
+				.map((name) => () => readFileSync(resolve(chunksDir, name), "utf8"))
+		: [];
+
+	for (const read of [workerEntrySource, ...chunks]) {
+		const source = read();
+		if (source.includes(MANIFEST_MARKER)) return source;
 	}
+
+	throw new Error("No serialized Astro manifest found in the worker entry or its chunks");
+}
+
+function astroManifestRoutes(): AstroRouteData[] {
+	const source = serializedManifestSource();
+	const marker = MANIFEST_MARKER;
+	const start = source.indexOf(marker);
 
 	const manifest = JSON.parse(extractJsonObject(source, start + marker.length)) as {
 		routes: { routeData: AstroRouteData }[];
