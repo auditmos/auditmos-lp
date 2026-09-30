@@ -39,8 +39,13 @@ jobs:
       - name: Seed .dev.vars so Env types include runtime secrets
         run: cp .dev.vars.example .dev.vars
 
+      # `prepare` also generates the gitignored `.cache/oss-projects.json` that
+      # `src/oss/projects.ts` imports statically; the token keeps the GitHub API
+      # call off the shared unauthenticated rate limit of hosted runners.
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
 
       - name: Validate
         run: pnpm types && pnpm lint && pnpm knip && pnpm test

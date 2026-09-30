@@ -8,7 +8,7 @@
 		"node": ">=22.12.0"
 	},
 	"scripts": {
-		"prepare": "simple-git-hooks && wrangler types",
+		"prepare": "simple-git-hooks && wrangler types && pnpm run oss:refresh",
 		"init-project": "tsx scripts/init-project.ts",
 		"new-project": "tsx scripts/new-project.ts",
 		"import-article": "tsx scripts/import-article.ts",

@@ -1,6 +1,6 @@
 #!/usr/bin/env tsx
 /**
- * Refreshes the committed OSS aggregator cache (`.cache/oss-projects.json`) from the
+ * Refreshes the gitignored OSS aggregator cache (`.cache/oss-projects.json`) from the
  * GitHub API before `astro build`. Runs in Node — where `fetch` and `fs` work — so the
  * prerendered `/open-source` page can statically import the JSON instead of doing any
  * network or filesystem work inside the Cloudflare Workers build runtime.
@@ -9,6 +9,7 @@
  * on any GitHub error, and this wrapper additionally swallows its own IO errors.
  */
 
+import { existsSync } from "node:fs";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fetchOssProjects, type OssProject, type OssProjectCache } from "../src/oss/aggregator";
@@ -26,6 +27,14 @@ const fileCache: OssProjectCache = {
 	},
 };
 
+// `src/oss/projects.ts` imports the cache statically, so a missing file fails the typecheck
+// and the build. The aggregator writes only on a successful fetch; on a fresh clone with
+// GitHub unreachable it returns an empty list and writes nothing, so seed that list here.
+async function ensureCacheFile(projects: readonly OssProject[]): Promise<void> {
+	if (existsSync(CACHE_FILE)) return;
+	await fileCache.write(projects);
+}
+
 try {
 	const projects = await fetchOssProjects({
 		fetch,
@@ -33,6 +42,7 @@ try {
 		token: process.env.GITHUB_TOKEN,
 		logger: console,
 	});
+	await ensureCacheFile(projects);
 	console.log(`oss cache refreshed: ${projects.length} repositories`);
 } catch (error) {
 	console.error("oss cache refresh skipped:", error);
