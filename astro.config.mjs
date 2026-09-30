@@ -4,6 +4,7 @@ import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
 import { agentDiscoveryHeaders } from "./src/site/discovery-headers";
 import { ASTRO_MINIFLARE_STATE_PATH } from "./src/site/miniflare-state";
+import { scopeCloudflareEnvAroundPrerender } from "./src/site/prerender-env";
 
 // https://astro.build/config
 export default defineConfig({
@@ -57,7 +58,9 @@ export default defineConfig({
 	// No sitemap integration: `src/pages/sitemap.xml.ts` owns the sitemap, at the
 	// path robots.txt advertises. `agentDiscoveryHeaders` appends to the `_headers`
 	// file the Cloudflare adapter writes, so it must stay after the adapter.
-	integrations: [agentDiscoveryHeaders()],
+	// `scopeCloudflareEnvAroundPrerender` must stay before it: its restore has to
+	// land before `agentDiscoveryHeaders` reads CLOUDFLARE_ENV in `astro:build:done`.
+	integrations: [scopeCloudflareEnvAroundPrerender(), agentDiscoveryHeaders()],
 	vite: {
 		plugins: [tailwindcss()],
 	},
