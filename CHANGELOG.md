@@ -1,3 +1,10 @@
+## [1.39.2](https://github.com/auditmos/auditmos-lp/compare/v1.39.1...v1.39.2) (2026-10-07)
+
+
+### Bug Fixes
+
+* **seo:** serve a square social image only to Slack ([26a01bd](https://github.com/auditmos/auditmos-lp/commit/26a01bda2a9ae998371fb69421f5d17377ad15d8))
+
 ## [1.39.1](https://github.com/auditmos/auditmos-lp/compare/v1.39.0...v1.39.1) (2026-09-30)
 
 
