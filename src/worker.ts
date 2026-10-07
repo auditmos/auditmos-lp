@@ -1,9 +1,8 @@
 /**
  * The deployed Worker entry (`main` in `wrangler.jsonc`).
  *
- * It exists only to wrap the Cloudflare adapter's handler in two request-level
- * rules: trailing-slash canonicalisation, then `Accept: text/markdown` content
- * negotiation. Everything the adapter does is unchanged: prerendered pages
+ * Wraps the adapter with canonical redirects, markdown negotiation and the
+ * Slack-only social image variant. Everything the adapter does is unchanged: prerendered pages
  * still resolve to static assets, and `/mcp` and `/api/contact` still render on
  * demand.
  *
@@ -16,6 +15,7 @@ import { originProtectedResourceResponse } from "./oauth/server";
 import { canonicalRedirect } from "./site/canonical-url";
 import { withMarkdownNegotiation } from "./site/markdown-negotiation";
 import { withSecurityHeaders } from "./site/security-headers";
+import { withSlackPreview } from "./site/slack-preview";
 
 export default {
 	async fetch(request, env, context) {
@@ -35,7 +35,7 @@ export default {
 				// asset server answers 404 before this runs.
 				originProtectedResourceResponse(request) ??
 				(await withMarkdownNegotiation(request, env.ASSETS, () =>
-					astro.fetch(request, env, context),
+					withSlackPreview(request, (upstream) => astro.fetch(upstream, env, context)),
 				)),
 			env.CLOUDFLARE_ENV,
 		);

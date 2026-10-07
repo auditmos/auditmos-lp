@@ -1,0 +1,62 @@
+<!doctype html>
+<!--
+	Slack-only square adaptation of og-image.html: the same logo, fonts,
+	blue-black palette, blueprint dots and hatch tape. Large central branding
+	stays legible in a thumbnail; the original claim survives in the expanded view.
+	Keep at least 100px clear space around the main content.
+
+	Regenerate using agent-browser with file access enabled. Open this file,
+	THEN set viewport to 800 800 1, wait for document.fonts.ready and screenshot
+	to public/og-slack.png. Update the 12-digit SHA-256 version in
+	src/site/slack-preview.ts. Never overwrite the wide public/og.png.
+-->
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>Auditmos — Slack image</title>
+		<style>
+			@font-face {
+				font-family: "Space Grotesk";
+				font-weight: 300 700;
+				src: url("../src/assets/fonts/space-grotesk-latin-wght-normal.woff2") format("woff2-variations");
+			}
+			* { box-sizing: border-box; margin: 0; }
+			body {
+				width: 800px;
+				height: 800px;
+				overflow: hidden;
+				background: oklch(0.148 0.01 220);
+				color: white;
+				font-family: "Space Grotesk", sans-serif;
+			}
+			main {
+				width: 100%;
+				height: 100%;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				text-align: center;
+				background-image: radial-gradient(oklch(0.708 0.012 220 / 0.13) 1.5px, transparent 1.5px);
+				background-size: 26px 26px;
+			}
+			.mark { width: 320px; height: 320px; margin-top: -48px; }
+			.wordmark { width: 600px; height: auto; margin-top: -40px; }
+			h1 { margin-top: 38px; font-size: 38px; font-weight: 600; line-height: 1.22; }
+			.hatch {
+				width: 160px;
+				height: 12px;
+				margin-top: 36px;
+				background-image: repeating-linear-gradient(-45deg, #04d9ff 0, #04d9ff 1.5px, transparent 1.5px, transparent 9px);
+			}
+		</style>
+	</head>
+	<body>
+		<main>
+			<img class="mark" src="../src/assets/logos/auditmos-icon-transparent.svg" width="200" height="200" alt="" />
+			<img class="wordmark" src="../src/assets/logos/auditmos-wordmark-cyan-transparent.svg" width="738" height="134" alt="Auditmos" />
+			<h1>Senior software delivery<br />that survives the handover.</h1>
+			<div class="hatch"></div>
+		</main>
+	</body>
+</html>

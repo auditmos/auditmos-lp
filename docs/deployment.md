@@ -130,6 +130,42 @@ Post-deploy checks:
 - Contact form end-to-end (both emails arrive).
 - OG card scrape (opengraph.xyz or LinkedIn Post Inspector) picks up `/og.png`.
 
+### Slack social preview
+
+`Slackbot-LinkExpanding` receives `/og-slack.png?v=<hash>` (800 × 800) in
+`og:image` and `twitter:image`. Other clients keep the existing `/og.png`
+(1200 × 630) and their original HTML. The source artwork is
+`scripts/og-slack-image.html`; regenerate at 800 × 800, then update the first
+12 SHA-256 digits in `src/site/slack-preview.ts`.
+
+The existing `run_worker_first` page routes are essential: the Worker rewrites
+the response **after** the ASSETS binding returns the unchanged cached source.
+No transformed response is written to the Cache API. Both final HTML variants
+send `Cache-Control: no-store`, `CDN-Cache-Control: no-store` and
+`Cloudflare-CDN-Cache-Control: no-store`, plus `Vary: User-Agent` alongside
+`Accept`. [Cloudflare does not use arbitrary Vary values as cache keys by
+default](https://developers.cloudflare.com/cache/concepts/cache-control/), so
+Vary alone is insufficient. Slack requests discard asset validators and Range
+headers; their responses omit the original ETag, last-modified and byte length.
+Images and other static assets retain their normal caching.
+
+Do not add a Cache Rule that forces caching of final HTML or overrides these
+directives. If such a rule already exists outside the repository, remove/bypass
+it for page URLs and purge its old entries when deploying this change. Local
+preview tests cannot validate zone-level rules or the live CDN cache.
+
+`pnpm test src/site/slack-preview.test.ts` builds once and starts `pnpm preview`
+to check real HTTP responses on the homepage and subpages with alternating
+Slack/browser/social-bot User-Agents, conditional requests, image bytes and PNG
+dimensions. After an authorized deployment, repeat requests against the public
+host in both UA orders and check that final HTML never becomes a shared cache
+HIT. The image URL remains production-canonical, including on staging, so fetch
+its path from the staging host when checking a staging-only release.
+
+Finally inspect a fresh unfurl **inside Slack**, both the small thumbnail and
+the expanded preview. HTTP tests and a local image preview do not establish
+Slack's actual appearance, and Slack may retain previously scraped previews.
+
 ## Decommission (after a few days of soak)
 
 - Delete the `auditmos-web` Worker; archive the `auditmos/web` repo.
