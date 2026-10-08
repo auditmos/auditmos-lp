@@ -1,3 +1,11 @@
+# [1.40.0](https://github.com/auditmos/auditmos-lp/compare/v1.39.2...v1.40.0) (2026-10-08)
+
+
+### Features
+
+* **docs:** publish the project-template selector at /templates.md ([34ba261](https://github.com/auditmos/auditmos-lp/commit/34ba2616c54ca5542d473b47ee69027239acef8a))
+* **oss:** count ts-template in the open-source inventory ([89accf9](https://github.com/auditmos/auditmos-lp/commit/89accf9675f4c44b22c43b45721f6eef18cfb778))
+
 ## [1.39.2](https://github.com/auditmos/auditmos-lp/compare/v1.39.1...v1.39.2) (2026-10-07)
 
 
