@@ -1,6 +1,7 @@
 /** Integration tests: real HTTP through `astro preview`, including the asset router. */
 import { createHash } from "node:crypto";
-import { execa } from "execa";
+import { setTimeout as delay } from "node:timers/promises";
+import { execa, execaSync } from "execa";
 import { buildRunCount } from "./build-once";
 import { buildSite, generatedHtmlRoutes, htmlFor } from "./build-output";
 
@@ -41,13 +42,59 @@ async function page(
 	});
 }
 
+/** Every process below `pid` — under `astro preview`, its `esbuild` and `workerd`. */
+function processTree(pid: number): number[] {
+	const pairs = execaSync("ps", ["-A", "-o", "pid=,ppid="])
+		.stdout.trim()
+		.split("\n")
+		.map((line) => line.trim().split(/\s+/).map(Number));
+	const below = (parent: number): number[] =>
+		pairs.flatMap(([child, ppid]) =>
+			child !== undefined && ppid === parent ? [child, ...below(child)] : [],
+		);
+	return below(pid);
+}
+
+function isAlive(pid: number): boolean {
+	try {
+		process.kill(pid, 0);
+		return true;
+	} catch {
+		return false;
+	}
+}
+
+/** The processes still running after `withinMs`, named so a failure says what leaked. */
+async function survivors(pids: number[], withinMs: number): Promise<string[]> {
+	const deadline = Date.now() + withinMs;
+	let alive = pids.filter(isAlive);
+	while (alive.length > 0 && Date.now() < deadline) {
+		await delay(100);
+		alive = alive.filter(isAlive);
+	}
+	return alive.map(
+		(pid) =>
+			`${pid} ${execaSync("ps", ["-o", "comm=", "-p", String(pid)], { reject: false }).stdout}`,
+	);
+}
+
+// SIGINT, like Ctrl-C: it stops `astro preview` with its esbuild and workerd, and
+// unlike SIGTERM it also stopped previews left orphaned by an earlier run.
+async function stopPreview(): Promise<void> {
+	server?.kill("SIGINT");
+	await server;
+}
+
 describe("Slack preview over HTTP", () => {
 	beforeAll(async () => {
 		await buildSite();
 		// Astro 7 auto-backgrounds in agent sessions; keep this process owned by
 		// the test and isolated from any developer's running preview daemon.
-		server = execa("pnpm", ["preview", "--ignore-lock", "--host", "127.0.0.1", "--port", "0"], {
+		// Spawned directly, not via `pnpm preview`: pnpm does not forward signals
+		// to the script it runs, so the server could never be stopped.
+		server = execa("astro", ["preview", "--ignore-lock", "--host", "127.0.0.1", "--port", "0"], {
 			env: { NO_COLOR: "1" },
+			preferLocal: true,
 			reject: false,
 		});
 		origin = await new Promise<string>((resolve, reject) => {
@@ -70,8 +117,7 @@ describe("Slack preview over HTTP", () => {
 	}, 180_000);
 
 	afterAll(async () => {
-		server?.kill();
-		await server;
+		await stopPreview();
 	});
 
 	it("shares the production build", () => expect(buildRunCount()).toBe(1));
@@ -161,4 +207,17 @@ describe("Slack preview over HTTP", () => {
 		expect([wide.readUInt32BE(16), wide.readUInt32BE(20)]).toEqual([1200, 630]);
 		expect(createHash("sha256").update(wide).digest("hex").slice(0, 12)).toBe("5faba9e50d91");
 	});
+
+	// Last on purpose: it shuts down the server every test above uses, and tests
+	// in a file run in order. Not awaited — a teardown that hangs must still let
+	// the assertion report which processes it left behind.
+	it("stops the preview server and every process it started", async () => {
+		const root = server.pid;
+		expect(root).toBeTypeOf("number");
+		const pids = root === undefined ? [] : [root, ...processTree(root)];
+
+		void stopPreview();
+
+		expect(await survivors(pids, 10_000)).toEqual([]);
+	}, 20_000);
 });
