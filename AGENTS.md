@@ -25,7 +25,7 @@ The auditmos.com landing page — Astro on Cloudflare Workers, static-first.
 | Testing | Vitest |
 | Dead-code | knip |
 | Release | semantic-release |
-| Package manager | pnpm 10 |
+| Package manager | pnpm 12 |
 
 ## Project Structure
 
