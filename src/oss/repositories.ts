@@ -20,4 +20,5 @@ export const OSS_REPOSITORIES = [
 	"auditmos/hono-on-cf",
 	"auditmos/tstack-on-cf",
 	"auditmos/tstack-on-cf-onchain",
+	"auditmos/ts-template",
 ] as const satisfies readonly RepositoryPath[];
