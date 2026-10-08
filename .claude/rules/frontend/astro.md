@@ -21,9 +21,9 @@
 - Validate input with Zod at the endpoint boundary. Return `400` on parse failure with the error message in body.
 - For multi-route APIs use `[...slug].ts` catch-all + a small dispatcher.
 
-## Cloudflare runtime access (Astro v6 + `@astrojs/cloudflare` v13)
+## Cloudflare runtime access (`@astrojs/cloudflare`)
 
-- Access bindings via `import { env } from "cloudflare:workers"` — this is now the only supported path in Astro v6. The old `Astro.locals.runtime.env` was removed.
+- Access bindings via `import { env } from "cloudflare:workers"` — the only supported path since Astro 6 + `@astrojs/cloudflare` 13 removed the old `Astro.locals.runtime.env`.
 - For request-scoped values: `Astro.request.cf` (CF metadata), global `caches`, `Astro.locals.cfContext` (ExecutionContext).
 - `env` is typed automatically via `worker-configuration.d.ts`. Re-run `pnpm cf-typegen` after editing `wrangler.jsonc` bindings.
 

@@ -11,7 +11,7 @@ The auditmos.com landing page — Astro on Cloudflare Workers, static-first.
 
 | Layer | Technology |
 |-------|-----------|
-| Framework | Astro 6 (mostly `prerender = true`) |
+| Framework | Astro 7 (mostly `prerender = true`) |
 | Adapter | `@astrojs/cloudflare` |
 | Runtime | Cloudflare Workers (`nodejs_compat`) |
 | Styling | Tailwind CSS v4 (`@tailwindcss/vite`) |
@@ -117,7 +117,7 @@ Technology-specific rules live in `.claude/rules/`. Activate automatically when 
 
 ## Cloudflare runtime
 
-Access bindings through `import { env } from "cloudflare:workers"` — this is the only supported pattern in Astro v6 + `@astrojs/cloudflare` v13 (the old `Astro.locals.runtime.env` was removed). `env` is typed against `worker-configuration.d.ts`. After editing `wrangler.jsonc` bindings, run `pnpm cf-typegen`.
+Access bindings through `import { env } from "cloudflare:workers"` — this has been the only supported pattern since Astro 6 + `@astrojs/cloudflare` 13 removed the old `Astro.locals.runtime.env`. `env` is typed against `worker-configuration.d.ts`. After editing `wrangler.jsonc` bindings, run `pnpm cf-typegen`.
 
 `wrangler.jsonc` ships with three env blocks (`dev`, `staging`, `production`) — each gets its own Worker name. Deploy a specific env with `pnpm deploy:<env>` (staging → `staging.auditmos.com`, production → `auditmos.com`). Full runbook incl. the one-time Turnstile/Resend setup and the cutover from the legacy `auditmos-web` Worker: [`docs/deployment.md`](./docs/deployment.md).
 
