@@ -21,6 +21,7 @@ import {
 	OAUTH_PROTECTED_RESOURCE_PATH,
 } from "@/oauth/server";
 import designGuide from "../../docs/design.md?raw";
+import templatesGuide from "../../docs/templates.md?raw";
 import { buildRunCount } from "./build-once";
 import {
 	assetExists,
@@ -88,12 +89,13 @@ describe("static build output", () => {
 		}
 	});
 
-	it("publishes the canonical design manual as a discoverable markdown asset", () => {
-		expect(assetText("/design.md")).toBe(designGuide);
-		expect(headerRuleBlocks().get("/design.md")).toContain(
-			"Content-Type: text/markdown; charset=utf-8",
-		);
-		expect(assetText("/llms.txt")).toContain("https://auditmos.com/design.md");
+	it.each([
+		["/design.md", designGuide],
+		["/templates.md", templatesGuide],
+	])("publishes %s verbatim as a discoverable markdown asset", (path, source) => {
+		expect(assetText(path)).toBe(source);
+		expect(headerRuleBlocks().get(path)).toContain("Content-Type: text/markdown; charset=utf-8");
+		expect(assetText("/llms.txt")).toContain(`https://auditmos.com${path}`);
 	});
 
 	it("keeps each prerendered page within its HTML plus CSS budget", () => {

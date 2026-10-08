@@ -333,6 +333,10 @@ export function renderLlmsTxt(pages: readonly MarkdownMirrorPage[]): string {
 		"",
 		`- [Design manual](${site.url}/design.md): Auditmos brand rules, assets, composition, and verification checklist; standalone markdown.`,
 		"",
+		"## Project templates",
+		"",
+		`- [Project templates](${site.url}/templates.md): the six Auditmos GitHub templates, how to choose one for a new project, and how to start from it; standalone markdown.`,
+		"",
 		"## Pages",
 		"",
 		...pages.map(

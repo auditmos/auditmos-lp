@@ -128,6 +128,7 @@ function linkHeaders(links: readonly DiscoveryLink[]): string[] {
  */
 const mediaTypeRules: readonly { pattern: string; type: string }[] = [
 	{ pattern: "/design.md", type: "text/markdown" },
+	{ pattern: "/templates.md", type: "text/markdown" },
 	// RFC 9727 reserves `/.well-known/api-catalog` without an extension, so the
 	// asset server has nothing to infer the linkset media type from. Not a
 	// registered surface: the catalog is the index of the registry, not in it.

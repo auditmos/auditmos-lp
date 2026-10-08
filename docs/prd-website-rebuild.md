@@ -212,6 +212,7 @@ Every project explicitly declares one or more `capabilities`: `software`, `secur
 | `/<path>.md` | Prerendered | Markdown twin of every URL above (except `/api/contact`) |
 | `/llms.txt` | Prerendered | Index for AI agents |
 | `/design.md` | Prerendered | Standalone design manual, sourced directly from `docs/design.md`, with `text/markdown; charset=utf-8` and public CORS headers; listed in `/llms.txt`. No HTML twin or request-time rendering. Owner-authorized 2026-09-09. |
+| `/templates.md` | Prerendered | Standalone project-template selector, sourced directly from `docs/templates.md`, served and listed exactly like `/design.md`. No HTML twin or request-time rendering. Owner-authorized 2026-10-08. |
 | `/sitemap.xml` | Prerendered | Search engine sitemap |
 | `/robots.txt` | Static | Crawler directives |
 

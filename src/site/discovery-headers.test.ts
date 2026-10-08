@@ -197,7 +197,9 @@ describe("renderDiscoveryHeaders", () => {
 		]);
 		const patterns = [...headerRuleBlocks(renderDiscoveryHeaders([])).keys()];
 
-		fixed.add("/design.md"); // Standalone guide exists independently of HTML pages.
+		// Standalone guides exist independently of HTML pages.
+		fixed.add("/design.md");
+		fixed.add("/templates.md");
 		expect(patterns.filter((pattern) => !fixed.has(pattern))).toEqual([]);
 		expect(patterns).toContain("/*");
 	});
