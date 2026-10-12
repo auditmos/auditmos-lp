@@ -18,7 +18,7 @@ stack:
   - "Claude"
   - "PostgreSQL"
 featured: true
-order: 0
+order: 1
 ---
 
 ## TLDR

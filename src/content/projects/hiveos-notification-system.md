@@ -16,7 +16,7 @@ stack:
   - "Neon Postgres"
   - "TypeScript"
 featured: false
-order: 1
+order: 2
 ---
 
 ## TLDR

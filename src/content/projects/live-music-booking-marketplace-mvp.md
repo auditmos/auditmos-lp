@@ -17,7 +17,7 @@ stack:
   - "Drizzle ORM"
   - "Durable Objects"
 featured: false
-order: 5
+order: 0
 ---
 
 ## TLDR

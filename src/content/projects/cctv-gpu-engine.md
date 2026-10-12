@@ -17,7 +17,7 @@ stack:
   - "Qwen2.5-VL"
   - "PyTorch"
 featured: true
-order: 2
+order: 3
 ---
 
 ## TLDR
