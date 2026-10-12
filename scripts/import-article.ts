@@ -19,6 +19,7 @@ import {
 	projectFilePath,
 	projectOrder,
 	resolveArticlePath,
+	shiftProjectOrder,
 } from "./import-article-lib";
 
 /**
@@ -218,7 +219,7 @@ async function readArticle(
 	throw new ArticleImportError("No readable article path given.");
 }
 
-function otherProjectFiles(exclude: string): string[] {
+function otherProjectFiles(exclude: string): { file: string; contents: string }[] {
 	if (!fs.existsSync(PROJECTS_DIR)) return [];
 
 	return fs
@@ -226,7 +227,25 @@ function otherProjectFiles(exclude: string): string[] {
 		.filter((entry) => entry.endsWith(".md"))
 		.map((entry) => path.join(PROJECTS_DIR, entry))
 		.filter((file) => file !== exclude)
-		.map((file) => fs.readFileSync(file, "utf-8"));
+		.map((file) => ({ file, contents: fs.readFileSync(file, "utf-8") }));
+}
+
+/**
+ * Re-importing an edited article keeps the slot the project already holds; a
+ * new one takes the top of /work and moves every other project down one.
+ */
+function resolveSlot(target: string, targetExists: boolean) {
+	const keptOrder = targetExists ? projectOrder(fs.readFileSync(target, "utf-8")) : undefined;
+	if (keptOrder !== undefined) return { order: keptOrder, movedDown: [] };
+
+	const others = otherProjectFiles(target);
+	return {
+		order: nextProjectOrder(others.map(({ contents }) => contents)),
+		movedDown: others.flatMap(({ file, contents }) => {
+			const shifted = shiftProjectOrder(contents);
+			return shifted === contents ? [] : [{ file, shifted }];
+		}),
+	};
 }
 
 function clientDisplay(client: ProjectClient): string {
@@ -333,10 +352,7 @@ async function run(session: PromptSession, positionals: string[], flags: Flags):
 
 	const target = projectFilePath(ROOT, defaults.slug);
 	const targetExists = fs.existsSync(target);
-	// Re-importing an edited article keeps the slot the project already holds.
-	const order =
-		(targetExists ? projectOrder(fs.readFileSync(target, "utf-8")) : undefined) ??
-		nextProjectOrder(otherProjectFiles(target));
+	const { order, movedDown } = resolveSlot(target, targetExists);
 
 	const projectInput = {
 		title: defaults.title,
@@ -362,6 +378,11 @@ async function run(session: PromptSession, positionals: string[], flags: Flags):
 	console.log(`  Industry: ${industry || "(none)"}`);
 	console.log(`  Year:     ${year}`);
 	console.log(`  Order:    ${order}`);
+	if (movedDown.length > 0) {
+		console.log(
+			`  Moves down one slot: ${movedDown.map(({ file }) => path.basename(file)).join(", ")}`,
+		);
+	}
 	console.log(`  Target:   ${path.relative(ROOT, target)}${targetExists ? " (exists)" : ""}`);
 	console.log(`  URL:      https://auditmos.com/work/${defaults.slug}`);
 
@@ -378,6 +399,7 @@ async function run(session: PromptSession, positionals: string[], flags: Flags):
 	}
 
 	fs.mkdirSync(path.dirname(target), { recursive: true });
+	for (const { file, shifted } of movedDown) fs.writeFileSync(file, shifted, "utf-8");
 	fs.writeFileSync(target, markdown, "utf-8");
 
 	console.log(`\nWrote ${path.relative(ROOT, target)}`);

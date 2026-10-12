@@ -382,8 +382,8 @@ export function articleDefaults(source: ArticleSource, fallbackYear: number): Ar
 }
 
 /**
- * Next free `order` value, so an imported project lands at the end of `/work`
- * instead of behind every already-ordered entry.
+ * `/work` lists the newest case study first, so an imported project takes the
+ * top slot; the caller moves every existing project down with `shiftProjectOrder`.
  */
 export function nextProjectOrder(existingProjectFiles: readonly string[]): number {
 	const orders = existingProjectFiles.flatMap((contents) => {
@@ -391,7 +391,19 @@ export function nextProjectOrder(existingProjectFiles: readonly string[]): numbe
 		return order === undefined ? [] : [order];
 	});
 
-	return orders.length > 0 ? Math.max(...orders) + 1 : 1;
+	return orders.length > 0 ? Math.min(...orders) : 0;
+}
+
+/** The project one slot further down `/work`. Only the frontmatter is touched. */
+export function shiftProjectOrder(contents: string): string {
+	const match = FRONTMATTER_BLOCK.exec(contents);
+	if (!match) return contents;
+
+	const [block] = match;
+	const shifted = block.replace(ORDER_LINE, (_line, order: string) => {
+		return `order: ${Number.parseInt(order, 10) + 1}`;
+	});
+	return `${shifted}${contents.slice(block.length)}`;
 }
 
 /** The `order:` already published for a project, so re-importing keeps its slot. */

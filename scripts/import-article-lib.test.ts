@@ -24,6 +24,7 @@ import {
 	projectFilePath,
 	projectOrder,
 	resolveArticlePath,
+	shiftProjectOrder,
 } from "./import-article-lib";
 
 const ARTICLE = `---
@@ -224,13 +225,36 @@ describe("projectOrder", () => {
 });
 
 describe("nextProjectOrder", () => {
-	it("returns one past the highest published order", () => {
-		expect(nextProjectOrder(["order: 2\n", "order: 6\n", "featured: true\n"])).toBe(7);
+	// /work lists the newest case study first, so a new import takes the top slot.
+	it("gives a new project the top slot on /work", () => {
+		expect(nextProjectOrder(["order: 2\n", "order: 0\n", "featured: true\n"])).toBe(0);
 	});
 
-	it("starts at one when nothing is ordered", () => {
-		expect(nextProjectOrder([])).toBe(1);
-		expect(nextProjectOrder(["title: x\n"])).toBe(1);
+	it("takes the lowest published order even when it is not zero", () => {
+		expect(nextProjectOrder(["order: 3\n", "order: 6\n"])).toBe(3);
+	});
+
+	it("starts at zero when nothing is ordered", () => {
+		expect(nextProjectOrder([])).toBe(0);
+		expect(nextProjectOrder(["title: x\n"])).toBe(0);
+	});
+});
+
+describe("shiftProjectOrder", () => {
+	it("moves an ordered project one slot down", () => {
+		expect(shiftProjectOrder('---\ntitle: "x"\norder: 3\n---\n\nBody.\n')).toBe(
+			'---\ntitle: "x"\norder: 4\n---\n\nBody.\n',
+		);
+	});
+
+	it("leaves an unordered project untouched", () => {
+		const contents = '---\ntitle: "x"\n---\n\nBody.\n';
+		expect(shiftProjectOrder(contents)).toBe(contents);
+	});
+
+	it("never rewrites an order line in the body", () => {
+		const contents = '---\ntitle: "x"\n---\n\n```yaml\norder: 3\n```\n';
+		expect(shiftProjectOrder(contents)).toBe(contents);
 	});
 });
 
