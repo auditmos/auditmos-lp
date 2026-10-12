@@ -1,3 +1,16 @@
+# [1.41.0](https://github.com/auditmos/auditmos-lp/compare/v1.40.0...v1.41.0) (2026-10-12)
+
+
+### Bug Fixes
+
+* **scripts:** import new articles at the top of /work ([1e7a184](https://github.com/auditmos/auditmos-lp/commit/1e7a184bbb8933f7068ca3b550d8aaea81ba5b9e))
+
+
+### Features
+
+* **work:** add live-music booking marketplace case study ([6c6c574](https://github.com/auditmos/auditmos-lp/commit/6c6c5743eea0be9f6e0405b429536cb4c4985dca))
+* **work:** list the live-music case study first on /work ([07dbf7e](https://github.com/auditmos/auditmos-lp/commit/07dbf7eb2ee6eceb077274255365fd1942d794f5))
+
 # [1.40.0](https://github.com/auditmos/auditmos-lp/compare/v1.39.2...v1.40.0) (2026-10-08)
 
 
