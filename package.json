@@ -3,7 +3,7 @@
 	"private": true,
 	"version": "0.0.0",
 	"type": "module",
-	"packageManager": "pnpm@12.8.1",
+	"packageManager": "pnpm@12.23.0",
 	"engines": {
 		"node": ">=22.12.0"
 	},
@@ -45,31 +45,31 @@
 		"audits:refresh": "tsx scripts/refresh-audits-cache.ts"
 	},
 	"dependencies": {
-		"@astrojs/cloudflare": "^14.3.3",
-		"@tailwindcss/vite": "^4.3.3",
-		"astro": "^7.3.5",
-		"tailwindcss": "^4.3.3"
+		"@astrojs/cloudflare": "^14.4.9",
+		"@tailwindcss/vite": "^4.3.5",
+		"astro": "^7.4.13",
+		"tailwindcss": "^4.3.5"
 	},
 	"devDependencies": {
-		"@astrojs/check": "^0.9.10",
+		"@astrojs/check": "^0.9.12",
 		"@biomejs/biome": "2.4.4",
 		"@semantic-release/changelog": "^6.0.3",
 		"@semantic-release/git": "^10.0.1",
-		"@types/node": "^26.6.3",
-		"@vitest/coverage-v8": "^4.1.11",
+		"@types/node": "^26.6.6",
+		"@vitest/coverage-v8": "^4.1.12",
 		"execa": "^9.6.1",
-		"knip": "^6.38.0",
+		"knip": "^6.47.0",
 		"semantic-release": "^25.0.9",
 		"simple-git-hooks": "^2.14.0",
 		"taze": "^19.17.2",
 		"tsx": "^4.23.15",
 		"typescript": "^6.0.3",
-		"vitest": "^4.1.11",
-		"wrangler": "^4.143.0",
+		"vitest": "^4.1.12",
+		"wrangler": "^4.166.0",
 		"yaml": "^2.9.1"
 	},
 	"overrides": {
-		"vite": "^8.3.1"
+		"vite": "^8.3.8"
 	},
 	"simple-git-hooks": {
 		"pre-commit": "pnpm run lint:ci",
