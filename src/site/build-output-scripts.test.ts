@@ -111,18 +111,20 @@ describe("static build browser scripts", () => {
 		}
 	});
 
-	it("loads the Turnstile widget script only on contact", () => {
+	it("ships the Turnstile loader only on contact and omits the eager script tag", () => {
+		const turnstileScript = "https://challenges.cloudflare.com/turnstile/v0/api.js";
 		for (const route of prerenderedRoutes) {
 			const html = htmlFor(route);
 
 			if (route === "/contact") {
-				expect(html).toContain("https://challenges.cloudflare.com/turnstile/v0/api.js");
-				expect(html).toContain("cf-turnstile");
+				expect(inlineScriptsIn(html).some(({ tag }) => tag.includes(turnstileScript))).toBe(false);
+				expect(html).toContain('id="contact-turnstile"');
+				expect(scriptContaining(html, turnstileScript)).toContain("render=explicit");
 				continue;
 			}
 
-			expect(html).not.toContain("https://challenges.cloudflare.com/turnstile/v0/api.js");
-			expect(html).not.toContain("cf-turnstile");
+			expect(html).not.toContain(turnstileScript);
+			expect(html).not.toContain('id="contact-turnstile"');
 		}
 	});
 

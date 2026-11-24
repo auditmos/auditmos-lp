@@ -25,11 +25,8 @@ import { buildOnce } from "./build-once";
 const root = resolve(import.meta.dirname, "..", "..");
 const distClient = resolve(root, "dist", "client");
 
-/** Class names owned by something other than the stylesheet, so Tailwind is
- * not expected to emit a rule for them: the Turnstile widget finds its mount
- * point by class name and styles itself, and Astro's Shiki highlighter emits
- * these on fenced code blocks with the colours inlined in a `style` attribute. */
-const thirdPartyClasses = new Set(["cf-turnstile", "astro-code", "github-dark-default", "line"]);
+/** Shiki emits these classes on fenced code blocks and inlines their colours. */
+const thirdPartyClasses = new Set(["astro-code", "github-dark-default", "line"]);
 
 /**
  * Runs the production build the assertions then read — once per test run, no

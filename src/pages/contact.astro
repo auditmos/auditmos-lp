@@ -85,7 +85,10 @@ const turnstileSiteKey =
 						</p>
 					</div>
 
-					<div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-theme="auto"></div>
+					<div>
+						<div id="contact-turnstile" data-sitekey={turnstileSiteKey}></div>
+						<p id="contact-progress" class="text-neutral-400 text-sm" role="status"></p>
+					</div>
 
 					<div
 						id="contact-success"
@@ -118,12 +121,66 @@ const turnstileSiteKey =
 			</div>
 		</section>
 	</main>
-	<script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 	<script is:inline>
 		const form = document.querySelector("#contact-form");
 		const success = document.querySelector("#contact-success");
 		const error = document.querySelector("#contact-error");
 		const submit = document.querySelector("#contact-submit");
+		const widget = document.querySelector("#contact-turnstile");
+		const progress = document.querySelector("#contact-progress");
+		let widgetReady;
+		let receiveToken;
+
+		function prepareTurnstile() {
+			widgetReady ??= new Promise((resolve) => {
+				const script = document.createElement("script");
+				script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+				const timeout = setTimeout(fail, 12_000);
+				function fail() {
+					clearTimeout(timeout);
+					script.remove();
+					resolve(null);
+				}
+				script.onerror = fail;
+				script.onload = () => {
+					if (!script.isConnected) return;
+					try {
+						const widgetId = globalThis.turnstile.render(widget, {
+							sitekey: widget.dataset.sitekey,
+							callback: (token) => receiveToken?.(token),
+						});
+						if (!widgetId) return fail();
+						clearTimeout(timeout);
+						resolve(widgetId);
+					} catch {
+						fail();
+					}
+				};
+				document.head.append(script);
+			}).then((widgetId) => {
+				if (!widgetId) widgetReady = undefined;
+				return widgetId;
+			});
+			return widgetReady;
+		}
+
+		function waitForToken(widgetId) {
+			const existing = globalThis.turnstile.getResponse(widgetId);
+			if (existing && !globalThis.turnstile.isExpired(widgetId)) return existing;
+			return new Promise((resolve) => {
+				const timeout = setTimeout(() => finish(null), 60_000);
+				function finish(token) {
+					clearTimeout(timeout);
+					receiveToken = undefined;
+					resolve(token);
+				}
+				receiveToken = finish;
+			});
+		}
+
+		form.addEventListener("focusin", (event) => {
+			if (event.target.matches("input, textarea")) prepareTurnstile();
+		});
 
 		function showNotice(target, message) {
 			success.classList.add("hidden");
@@ -135,43 +192,52 @@ const turnstileSiteKey =
 
 		form.addEventListener("submit", async (event) => {
 			event.preventDefault();
+			if (submit.disabled) return;
 			success.classList.add("hidden");
 			error.classList.add("hidden");
 			submit.disabled = true;
+			progress.textContent = "Waiting for anti-spam verification…";
 
 			const formData = new FormData(form);
-			const payload = {
-				name: formData.get("name"),
-				email: formData.get("email"),
-				message: formData.get("message"),
-				turnstileToken: formData.get("cf-turnstile-response") ?? "",
-			};
+			let widgetId;
 
 			try {
+				widgetId = await prepareTurnstile();
+				const turnstileToken = widgetId && (await waitForToken(widgetId));
+				if (!turnstileToken) {
+					showNotice(error, "Anti-spam verification could not complete. Try again, or email tom@auditmos.com directly.");
+					return;
+				}
+
+				progress.textContent = "Sending message…";
 				const response = await fetch("/api/contact", {
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify(payload),
+					body: JSON.stringify({
+						name: formData.get("name"),
+						email: formData.get("email"),
+						message: formData.get("message"),
+						turnstileToken,
+					}),
 				});
 				const body = await response.json().catch(() => ({}));
 
 				if (response.ok) {
 					form.reset();
-					globalThis.turnstile?.reset();
 					showNotice(success, "Message sent. Check your inbox for the confirmation email.");
 					return;
 				}
 
-				globalThis.turnstile?.reset();
 				showNotice(
 					error,
 					body.error ?? "The message could not be sent. Try again, or email tom@auditmos.com directly.",
 				);
 			} catch {
-				globalThis.turnstile?.reset();
 				showNotice(error, "Network error. Try again, or email tom@auditmos.com directly.");
 			} finally {
+				progress.textContent = "";
 				submit.disabled = false;
+				if (widgetId) globalThis.turnstile.reset(widgetId);
 			}
 		});
 	</script>
