@@ -1,3 +1,10 @@
+## [1.41.1](https://github.com/auditmos/auditmos-lp/compare/v1.41.0...v1.41.1) (2026-11-24)
+
+
+### Performance Improvements
+
+* **contact:** defer Turnstile and report client asset sizes ([0788a64](https://github.com/auditmos/auditmos-lp/commit/0788a6489e2ea0a2f61d2ffaf3087d03fa416b33))
+
 # [1.41.0](https://github.com/auditmos/auditmos-lp/compare/v1.40.0...v1.41.0) (2026-10-12)
 
 
